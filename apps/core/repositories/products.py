@@ -1,5 +1,5 @@
 from django.db import connection
-from apps.core.models import Product
+from apps.core.models.products import Product
 from apps.core.schema import ProductSerializer
 
 
