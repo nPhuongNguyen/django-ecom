@@ -7,6 +7,10 @@ class ProductService:
         return ProductRepository.create(data)
 
     @staticmethod
+    def get_product_by_slug(slug):
+        return ProductRepository.get_by_slug(slug)
+
+    @staticmethod
     def get_all_products():
         return ProductRepository.get_all()
     
