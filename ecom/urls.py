@@ -21,4 +21,5 @@ from apps.core.views import ProductView
 urlpatterns = [
     path('admin', admin.site.urls),
     path('products', ProductView.as_view()),
+    path('products/<slug:slug>', ProductView.as_view()),
 ]
