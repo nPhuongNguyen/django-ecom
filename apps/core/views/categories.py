@@ -1,74 +1,74 @@
 from rest_framework.views import APIView
-from apps.core.schema.products import ProductOutputSerializer, ProductSerializer
-from apps.core.services.products import ProductService
+from apps.core.schema.categories import CategorySerializer
+from apps.core.services.categories import CategoryService
 from apps.utils.decorator import validate_serializer
 from rest_framework.response import Response
 # Create your views here.
 
-class ProductView(APIView):
-    @validate_serializer(ProductSerializer)
+class CategoryView(APIView):
+    @validate_serializer(CategorySerializer)
     def post(self, request):
         serializer = request.validated_data
-        product = ProductService.create_product(serializer)
+        category = CategoryService.create_category(serializer)
 
         return Response(
             {
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": ProductOutputSerializer(product).data
+                "data": CategorySerializer(category).data
             }
         )
     def get(self, request, slug=None):
         if slug:
-            product = ProductService.get_product_by_slug(slug)
-            if not product:
+            category = CategoryService.get_category_by_slug(slug)
+            if not category:
                 return Response({
                     "statusCode": 0,
-                    "message": "Product not found",
+                    "message": "Category not found",
                     "data": None
                 })
             return Response({
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": ProductOutputSerializer(product).data
+                "data": CategorySerializer(category).data
             })
         # Nếu không có slug → trả về list
-        products = ProductService.get_all_products()
+        categories = CategoryService.get_all_categories()
         return Response({
             "statusCode": 1,
             "message": "Thành công",
-            "data": ProductOutputSerializer(products, many=True).data
+            "data": CategorySerializer(categories, many=True).data
         })
 
-    
-    @validate_serializer(ProductSerializer)
+
+    @validate_serializer(CategorySerializer)
     def put(self, request, slug, *args, **kwargs):
-        validated_data = request.validated_data 
-        product = ProductService.update_product(slug, validated_data)
-        if not product:
+        validated_data = request.validated_data
+        category = CategoryService.update_category(slug, validated_data)
+        if not category:
             return Response({
                 "statusCode": 0,
-                "message": "Product not found",
+                "message": "Category not found",
                 "data": None
             })
         return Response({
             "statusCode": 1,
-            "message": "Cập nhật sản phẩm thành công",
-            "data": ProductOutputSerializer(product).data
+            "message": "Cập nhật danh mục thành công",
+            "data": CategorySerializer(category).data
         })
     
     def delete(self, request, slug, *args, **kwargs):
-        product = ProductService.delete_product(slug)
-        if not product:
+        category = CategoryService.delete_category(slug)
+        if not category:
             return Response({
                 "statusCode": 0,
-                "message": "Product not found",
+                "message": "Category not found",
                 "data": None
             })
         
         return Response({
             "statusCode": 1,
-            "message": "Xóa sản phẩm thành công",
-            "data": ProductOutputSerializer(product).data
+            "message": "Xóa danh mục thành công",
+            "data": CategorySerializer(category).data
         })
     
