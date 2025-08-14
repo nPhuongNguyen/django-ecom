@@ -15,9 +15,9 @@ class CollectionRepository:
         return collection_list
     
     @staticmethod
-    def get_by_slug(slug : str):
+    def get_by_sku(sku : str):
         try:
-            return Collection.objects.get(slug=slug, is_deleted=False)
+            return Collection.objects.get(sku=sku, is_deleted=False)
         except Collection.DoesNotExist:
             return None
 

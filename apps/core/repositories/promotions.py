@@ -1,22 +1,29 @@
 from django.db import connection, transaction
 from apps.core.models.products import Product
+from apps.core.models.promotions import Promotion
 from apps.core.schema.products import ProductSerializer
 
 
-class ProductRepository:
+class PromotionRepository:
     @staticmethod
     def create(data):
+        products = data.pop('product', [])
+        categories = data.pop('category', [])
         collections = data.pop('collection', [])
         with transaction.atomic():
-            product = Product.objects.create(**data)
+            promotion = Promotion.objects.create(**data)
+            if products:
+                promotion.product.set(products)
+            if categories:
+                promotion.category.set(categories)
             if collections:
-                product.collection.set(collections)
-        return product
-
+                promotion.collection.set(collections)
+        return promotion
+            
     @staticmethod
     def get_all():
-        product_list = Product.objects.all()
-        return product_list
+        promotion_list = Promotion.objects.all()
+        return promotion_list
     
     @staticmethod
     def get_by_slug(slug : str):

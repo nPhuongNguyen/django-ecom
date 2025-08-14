@@ -18,9 +18,9 @@ class CategoryView(APIView):
                 "data": CategorySerializer(category).data
             }
         )
-    def get(self, request, slug=None):
-        if slug:
-            category = CategoryService.get_category_by_slug(slug)
+    def get(self, request, sku=None):
+        if sku:
+            category = CategoryService.get_category_by_sku(sku)
             if not category:
                 return Response({
                     "statusCode": 0,
@@ -42,9 +42,9 @@ class CategoryView(APIView):
 
 
     @validate_serializer(CategorySerializer)
-    def put(self, request, slug, *args, **kwargs):
+    def put(self, request, sku, *args, **kwargs):
         validated_data = request.validated_data
-        category = CategoryService.update_category(slug, validated_data)
+        category = CategoryService.update_category(sku, validated_data)
         if not category:
             return Response({
                 "statusCode": 0,
@@ -57,8 +57,8 @@ class CategoryView(APIView):
             "data": CategorySerializer(category).data
         })
     
-    def delete(self, request, slug, *args, **kwargs):
-        category = CategoryService.delete_category(slug)
+    def delete(self, request, sku, *args, **kwargs):
+        category = CategoryService.delete_category(sku)
         if not category:
             return Response({
                 "statusCode": 0,
