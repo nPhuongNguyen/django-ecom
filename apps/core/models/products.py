@@ -9,8 +9,8 @@ class Product(models.Model):
     description = models.TextField(blank=True, null=True)
     img = models.CharField(max_length=255, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
-    category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True, blank=True)
-    collection = models.ManyToManyField('Collection', null=True, blank=True)
+    category = models.ForeignKey('core.Category', on_delete=models.PROTECT, blank=True, null = True)
+    collection = models.ManyToManyField('core.Collection', blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -23,11 +23,6 @@ class Product(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
 
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-    sku = models.CharField(max_length=150, unique=True)
 
-class Collection(models.Model):
-    name = models.CharField(max_length=100)
-    sku = models.CharField(max_length=150, unique=True)
+
 

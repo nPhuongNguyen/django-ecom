@@ -1,12 +1,17 @@
-from django.db import connection
+from django.db import connection, transaction
+from apps.core.models.collection import Collection
 from apps.core.models.products import Product
-from apps.core.schema import ProductSerializer
+from apps.core.schema.products import ProductSerializer
 
 
 class ProductRepository:
     @staticmethod
     def create(data):
-        product = Product.objects.create(**data)
+        collections = data.pop('collection', [])
+        with transaction.atomic():
+            product = Product.objects.create(**data)
+            if collections:
+                product.collection.set(collections)
         return product
 
     @staticmethod
@@ -23,9 +28,16 @@ class ProductRepository:
 
     @staticmethod
     def update(product, validated_data):
-        serializer = ProductSerializer(product, data=validated_data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        return serializer.save()
+        category = validated_data.pop('category', None)
+        collections = validated_data.pop('collection', None)
+        Product.objects.filter(pk=product.pk).update(**validated_data)
+        if category is not None:
+            product.category = category
+            product.save()
+        if collections is not None:
+            product.collection.set(collections)
+        return product
+
 
     @staticmethod
     def delete(product):
