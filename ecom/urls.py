@@ -19,6 +19,7 @@ from django.urls import path
 from apps.core.views.categories import CategoryView
 from apps.core.views.collection import CollectionView
 from apps.core.views.products import ProductView
+from apps.core.views.promotions import PromotionView
 
 
 
@@ -27,7 +28,8 @@ urlpatterns = [
     path('products', ProductView.as_view()),
     path('products/<slug:slug>', ProductView.as_view()),
     path('collections', CollectionView.as_view()),
-    path('collections/<slug:slug>', CollectionView.as_view()),
+    path('collections/<str:sku>', CollectionView.as_view()),
     path('categories', CategoryView.as_view()),
-    path('categories/<slug:slug>', CategoryView.as_view()),
+    path('categories/<str:sku>', CategoryView.as_view()),
+    path('promotions',PromotionView.as_view()),
 ]

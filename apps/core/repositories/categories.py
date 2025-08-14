@@ -15,9 +15,9 @@ class CategoryRepository:
         return category_list
     
     @staticmethod
-    def get_by_slug(slug : str):
+    def get_by_sku(sku : str):
         try:
-            return Category.objects.get(slug=slug, is_deleted=False)
+            return Category.objects.get(sku=sku, is_deleted=False)
         except Category.DoesNotExist:
             return None
 

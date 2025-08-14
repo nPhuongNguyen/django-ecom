@@ -18,9 +18,9 @@ class CollectionView(APIView):
                 "data": CollectionSerializer(collection).data
             }
         )
-    def get(self, request, slug=None):
-        if slug:
-            collection = CollectionService.get_collection_by_slug(slug)
+    def get(self, request, sku=None):
+        if sku:
+            collection = CollectionService.get_collection_by_sku(sku)
             if not collection:
                 return Response({
                     "statusCode": 0,
@@ -42,9 +42,9 @@ class CollectionView(APIView):
 
 
     @validate_serializer(CollectionSerializer)
-    def put(self, request, slug, *args, **kwargs):
+    def put(self, request, sku, *args, **kwargs):
         validated_data = request.validated_data
-        collection = CollectionService.update_collection(slug, validated_data)
+        collection = CollectionService.update_collection(sku, validated_data)
         if not collection:
             return Response({
                 "statusCode": 0,
@@ -57,8 +57,8 @@ class CollectionView(APIView):
             "data": CollectionSerializer(collection).data
         })
     
-    def delete(self, request, slug, *args, **kwargs):
-        collection = CollectionService.delete_collection(slug)
+    def delete(self, request, sku, *args, **kwargs):
+        collection = CollectionService.delete_collection(sku)
         if not collection:
             return Response({
                 "statusCode": 0,
