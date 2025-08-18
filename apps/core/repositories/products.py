@@ -26,24 +26,18 @@ class ProductRepository:
             return None
 
     @staticmethod
-    def update(product, validated_data):
+    def update(product: Product, validated_data: dict):
         category = validated_data.pop('category', None)
         collections = validated_data.pop('collection', None)
         with transaction.atomic():
-            serializer = ProductSerializer(product, data=validated_data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            updated_product = serializer.save()
-
+            for attr, value in validated_data.items():
+                setattr(product, attr, value)
             if category is not None:
-                updated_product.category = category
-                updated_product.save(update_fields=['category'])
-
+                product.category = category
+            product.save() 
             if collections is not None:
-                updated_product.collection.set(collections)
-
-        return updated_product
-
-
+                product.collection.set(collections)
+        return product
 
     @staticmethod
     def delete(product):

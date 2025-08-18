@@ -1,29 +1,43 @@
 from apps.core.repositories.products import ProductRepository
+from apps.core.schema.products import ProductOutputSerializer
 
 
 class ProductService:
     @staticmethod
     def create_product(data):
-        return ProductRepository.create(data)
+        product = ProductRepository.create(data)
+        product_validate_serializer = ProductOutputSerializer(product)
+        return product_validate_serializer.data
 
     @staticmethod
     def get_product_by_slug(slug):
-        return ProductRepository.get_by_slug(slug)
+        product =  ProductRepository.get_by_slug(slug)
+        if product is None:
+            return None
+        product_validate_serializer = ProductOutputSerializer(product)
+        return product_validate_serializer.data
 
     @staticmethod
     def get_all_products():
-        return ProductRepository.get_all()
+        product = ProductRepository.get_all()
+        product_validate_serializer = ProductOutputSerializer(product, many = True)
+        return product_validate_serializer.data
     
     @staticmethod
-    def update_product(slug, data):
+    def update_product(slug, validated_data):
         product = ProductRepository.get_by_slug(slug)
         if not product:
             return None
-        return ProductRepository.update(product, data)
+        update_product = ProductRepository.update(product, validated_data)
+        product_validate_serializer = ProductOutputSerializer(update_product)
+        return product_validate_serializer.data
+
 
     @staticmethod
     def delete_product(slug):
         product = ProductRepository.get_by_slug(slug)
         if not product:
             return None
-        return ProductRepository.delete(product)
+        delete_product = ProductRepository.delete(product)
+        product_validate_serializer = ProductOutputSerializer(delete_product)
+        return product_validate_serializer.data

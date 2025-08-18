@@ -15,7 +15,7 @@ class CollectionView(APIView):
             {
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": CollectionSerializer(collection).data
+                "data": collection
             }
         )
     def get(self, request, sku=None):
@@ -24,20 +24,20 @@ class CollectionView(APIView):
             if not collection:
                 return Response({
                     "statusCode": 0,
-                    "message": "Collection not found",
+                    "message": "Collection không tồn tại!",
                     "data": None
                 })
             return Response({
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": CollectionSerializer(collection).data
+                "data": collection
             })
         # Nếu không có slug → trả về list
         collections = CollectionService.get_all_collections()
         return Response({
             "statusCode": 1,
             "message": "Thành công",
-            "data": CollectionSerializer(collections, many=True).data
+            "data": collections
         })
 
 
@@ -48,13 +48,13 @@ class CollectionView(APIView):
         if not collection:
             return Response({
                 "statusCode": 0,
-                "message": "Collection not found",
+                "message": "Collection không tồn tại!",
                 "data": None
             })
         return Response({
             "statusCode": 1,
             "message": "Cập nhật bộ sưu tập thành công",
-            "data": CollectionSerializer(collection).data
+            "data": collection
         })
     
     def delete(self, request, sku, *args, **kwargs):
@@ -62,13 +62,13 @@ class CollectionView(APIView):
         if not collection:
             return Response({
                 "statusCode": 0,
-                "message": "Collection not found",
+                "message": "Collection không tồn tại!",
                 "data": None
             })
         
         return Response({
             "statusCode": 1,
             "message": "Xóa bộ sưu tập thành công",
-            "data": CollectionSerializer(collection).data
+            "data": collection
         })
     

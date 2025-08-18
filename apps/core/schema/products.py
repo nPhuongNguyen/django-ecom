@@ -11,6 +11,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['slug', 'is_deleted']
 
+
 class ProductOutputSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     collection = CollectionSerializer(many=True, read_only=True)
