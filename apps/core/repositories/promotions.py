@@ -6,7 +6,7 @@ from apps.core.schema.products import ProductSerializer
 
 class PromotionRepository:
     @staticmethod
-    def create(data):
+    def create(data: dict):
         products = data.pop('product', [])
         categories = data.pop('category', [])
         collections = data.pop('collection', [])
@@ -28,32 +28,34 @@ class PromotionRepository:
     @staticmethod
     def get_by_slug(slug : str):
         try:
-            return Product.objects.get(slug=slug, is_deleted=False)
-        except Product.DoesNotExist:
+            return Promotion.objects.get(slug=slug, is_activate=True)
+        except Promotion.DoesNotExist:
             return None
 
     @staticmethod
-    def update(product, validated_data):
-        category = validated_data.pop('category', None)
-        collections = validated_data.pop('collection', None)
+    def update(promotion: Promotion, validated_data: dict):
+        categories = validated_data.pop('category', [])
+        collections = validated_data.pop('collection', [])
+        products = validated_data.pop('product', [])
         with transaction.atomic():
-            serializer = ProductSerializer(product, data=validated_data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            updated_product = serializer.save()
+            for attr, value in validated_data.items():
+                setattr(promotion, attr, value)
+            promotion.save()
+            if categories:
+                promotion.category.set(categories)
 
-            if category is not None:
-                updated_product.category = category
-                updated_product.save(update_fields=['category'])
+            if collections:
+                promotion.collection.set(collections)
+            
+            if products:
+                promotion.product.set(products)
 
-            if collections is not None:
-                updated_product.collection.set(collections)
-
-        return updated_product
+        return promotion
 
 
 
     @staticmethod
-    def delete(product):
-        product.is_deleted = True
-        product.save()
-        return product
+    def delete(promotion: Promotion):
+        promotion.is_activate = False
+        promotion.save()
+        return promotion

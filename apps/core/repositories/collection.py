@@ -5,7 +5,7 @@ from apps.core.schema.collection import CollectionSerializer
 
 class CollectionRepository:
     @staticmethod
-    def create(data):
+    def create(data : dict):
         collection = Collection.objects.create(**data)
         return collection
 
@@ -22,10 +22,11 @@ class CollectionRepository:
             return None
 
     @staticmethod
-    def update(collection, validated_data):
-        serializer = CollectionSerializer(collection, data=validated_data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        return serializer.save()
+    def update(collection: Collection, validated_data: dict):
+        for attr, value in validated_data.items():
+            setattr(collection, attr, value)
+        collection.save()
+        return collection
 
     @staticmethod
     def delete(collection):

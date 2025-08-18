@@ -1,29 +1,42 @@
 from apps.core.repositories.promotions import PromotionRepository
+from apps.core.schema.promotions import PromotionOutputSerializer, PromotionSerializer
 
 
 class PromotionService:
     @staticmethod
     def create_promotion(data):
-        return PromotionRepository.create(data)
+        promotion = PromotionRepository.create(data)
+        promotion_validate_serializer = PromotionSerializer(promotion)
+        return promotion_validate_serializer.data
 
     @staticmethod
-    def get_product_by_slug(slug):
-        return PromotionRepository.get_by_slug(slug)
+    def get_promotion_by_slug(slug):
+        promotion = PromotionRepository.get_by_slug(slug)
+        if not promotion:
+            return None
+        promotion_validate_serializer = PromotionSerializer(promotion)
+        return promotion_validate_serializer.data
 
     @staticmethod
     def get_all_promotions():
-        return PromotionRepository.get_all()
+        promotion = PromotionRepository.get_all()
+        promotion_validate_serializer = PromotionSerializer(promotion, many = True)
+        return promotion_validate_serializer.data
     
     @staticmethod
-    def update_product(slug, data):
-        product = PromotionRepository.get_by_slug(slug)
-        if not product:
+    def update_promotion(slug: str, data: dict):
+        promotion = PromotionRepository.get_by_slug(slug)
+        if not promotion:
             return None
-        return PromotionRepository.update(product, data)
+        update_promotion = PromotionRepository.update(promotion, data)
+        update_validate_serializer = PromotionOutputSerializer(update_promotion)
+        return update_validate_serializer.data
 
     @staticmethod
-    def delete_product(slug):
-        product = PromotionRepository.get_by_slug(slug)
-        if not product:
+    def delete_promotion(slug):
+        promotion = PromotionRepository.get_by_slug(slug)
+        if not promotion:
             return None
-        return PromotionRepository.delete(product)
+        delete_promotion = PromotionRepository.delete(promotion)
+        promotion_validate_serializer = PromotionOutputSerializer(delete_promotion)
+        return promotion_validate_serializer.data

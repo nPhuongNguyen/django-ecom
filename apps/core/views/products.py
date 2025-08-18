@@ -15,7 +15,7 @@ class ProductView(APIView):
             {
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": ProductOutputSerializer(product).data
+                "data": product
             }
         )
     def get(self, request, slug=None):
@@ -24,20 +24,19 @@ class ProductView(APIView):
             if not product:
                 return Response({
                     "statusCode": 0,
-                    "message": "Product not found",
+                    "message": "Sản phẩm không tồn tại!",
                     "data": None
                 })
             return Response({
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": ProductOutputSerializer(product).data
+                "data": product
             })
-        # Nếu không có slug → trả về list
         products = ProductService.get_all_products()
         return Response({
             "statusCode": 1,
             "message": "Thành công",
-            "data": ProductOutputSerializer(products, many=True).data
+            "data": products
         })
 
     
@@ -48,13 +47,13 @@ class ProductView(APIView):
         if not product:
             return Response({
                 "statusCode": 0,
-                "message": "Product not found",
+                "message": "Sản phẩm không tồn tại!",
                 "data": None
             })
         return Response({
             "statusCode": 1,
             "message": "Cập nhật sản phẩm thành công",
-            "data": ProductOutputSerializer(product).data
+            "data": product
         })
     
     def delete(self, request, slug, *args, **kwargs):
@@ -62,13 +61,13 @@ class ProductView(APIView):
         if not product:
             return Response({
                 "statusCode": 0,
-                "message": "Product not found",
+                "message": "Sản phẩm không tồn tại!",
                 "data": None
             })
         
         return Response({
             "statusCode": 1,
             "message": "Xóa sản phẩm thành công",
-            "data": ProductOutputSerializer(product).data
+            "data": product
         })
     

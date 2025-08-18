@@ -1,29 +1,41 @@
 from apps.core.repositories.collection import CollectionRepository
+from apps.core.schema.collection import CollectionSerializer
 
 
 class CollectionService:
     @staticmethod
-    def create_collection(data):
-        return CollectionRepository.create(data)
-
+    def create_collection(data: dict):
+        collection = CollectionRepository.create(data)
+        collection_validate_serializer = CollectionSerializer(collection)
+        return collection_validate_serializer.data
     @staticmethod
     def get_collection_by_sku(sku):
-        return CollectionRepository.get_by_sku(sku)
-
-    @staticmethod
-    def get_all_collections():
-        return CollectionRepository.get_all()
-
-    @staticmethod
-    def update_collection(sku, data):
         collection = CollectionRepository.get_by_sku(sku)
         if not collection:
             return None
-        return CollectionRepository.update(collection, data)
+        collection_validate_serializer = CollectionSerializer(collection)
+        return collection_validate_serializer.data
+
+    @staticmethod
+    def get_all_collections():
+        collection = CollectionRepository.get_all()
+        collection_validate_serializer = CollectionSerializer(collection, many =True)
+        return collection_validate_serializer.data
+
+    @staticmethod
+    def update_collection(sku: str, data: dict):
+        collection = CollectionRepository.get_by_sku(sku)
+        if not collection:
+            return None
+        update_collection = CollectionRepository.update(collection, data)
+        collection_validate_serializer = CollectionSerializer(update_collection)
+        return collection_validate_serializer.data
 
     @staticmethod
     def delete_collection(sku):
         collection = CollectionRepository.get_by_sku(sku)
         if not collection:
             return None
-        return CollectionRepository.delete(collection)
+        delete_collection = CollectionRepository.delete(collection)
+        collection_validate_serializer = CollectionSerializer(delete_collection)
+        return collection_validate_serializer.data

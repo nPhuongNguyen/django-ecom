@@ -22,10 +22,11 @@ class CategoryRepository:
             return None
 
     @staticmethod
-    def update(category, validated_data):
-        serializer = CategorySerializer(category, data=validated_data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        return serializer.save()
+    def update(category : Category, validated_data: dict):
+        for attr, value in validated_data.items():
+            setattr(category, attr, value)
+        category.save()
+        return category
 
     @staticmethod
     def delete(category):

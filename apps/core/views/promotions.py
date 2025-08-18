@@ -17,60 +17,60 @@ class PromotionView(APIView):
             {
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": PromotionOutputSerializer(promotion).data
+                "data": promotion
             }
         )
     def get(self, request, slug=None):
         if slug:
-            product = ProductService.get_product_by_slug(slug)
-            if not product:
+            promotion = PromotionService.get_promotion_by_slug(slug)
+            if not promotion:
                 return Response({
                     "statusCode": 0,
-                    "message": "Product not found",
+                    "message": "Promotion không tồn tại!",
                     "data": None
                 })
             return Response({
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": ProductOutputSerializer(product).data
+                "data": promotion
             })
         # Nếu không có slug → trả về list
         promotions = PromotionService.get_all_promotions()
         return Response({
             "statusCode": 1,
             "message": "Thành công",
-            "data": PromotionOutputSerializer(promotions, many=True).data
+            "data": promotions
         })
 
     
-    @validate_serializer(ProductSerializer)
+    @validate_serializer(PromotionSerializer)
     def put(self, request, slug, *args, **kwargs):
         validated_data = request.validated_data 
-        product = ProductService.update_product(slug, validated_data)
-        if not product:
+        promotion = PromotionService.update_promotion(slug, validated_data)
+        if not promotion:
             return Response({
                 "statusCode": 0,
-                "message": "Product not found",
+                "message": "Promotion không tồn tại!",
                 "data": None
             })
         return Response({
             "statusCode": 1,
-            "message": "Cập nhật sản phẩm thành công",
-            "data": ProductOutputSerializer(product).data
+            "message": "Cập nhật Promotion thành công",
+            "data": promotion
         })
     
     def delete(self, request, slug, *args, **kwargs):
-        product = ProductService.delete_product(slug)
-        if not product:
+        promotion = PromotionService.delete_promotion(slug)
+        if not promotion:
             return Response({
                 "statusCode": 0,
-                "message": "Product not found",
+                "message": "Promotion không tồn tại!",
                 "data": None
             })
         
         return Response({
             "statusCode": 1,
             "message": "Xóa sản phẩm thành công",
-            "data": ProductOutputSerializer(product).data
+            "data": promotion
         })
     

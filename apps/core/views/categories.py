@@ -15,7 +15,7 @@ class CategoryView(APIView):
             {
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": CategorySerializer(category).data
+                "data": category
             }
         )
     def get(self, request, sku=None):
@@ -24,20 +24,20 @@ class CategoryView(APIView):
             if not category:
                 return Response({
                     "statusCode": 0,
-                    "message": "Category not found",
+                    "message": "Category không tồn tại!",
                     "data": None
                 })
             return Response({
                 "statusCode": 1,
                 "message": "Thành công",
-                "data": CategorySerializer(category).data
+                "data": category
             })
         # Nếu không có slug → trả về list
         categories = CategoryService.get_all_categories()
         return Response({
             "statusCode": 1,
             "message": "Thành công",
-            "data": CategorySerializer(categories, many=True).data
+            "data": categories
         })
 
 
@@ -48,13 +48,13 @@ class CategoryView(APIView):
         if not category:
             return Response({
                 "statusCode": 0,
-                "message": "Category not found",
+                "message": "Category không tồn tại!",
                 "data": None
             })
         return Response({
             "statusCode": 1,
             "message": "Cập nhật danh mục thành công",
-            "data": CategorySerializer(category).data
+            "data": category
         })
     
     def delete(self, request, sku, *args, **kwargs):
@@ -62,13 +62,13 @@ class CategoryView(APIView):
         if not category:
             return Response({
                 "statusCode": 0,
-                "message": "Category not found",
+                "message": "Category không tồn tại!",
                 "data": None
             })
         
         return Response({
             "statusCode": 1,
             "message": "Xóa danh mục thành công",
-            "data": CategorySerializer(category).data
+            "data": category
         })
     
