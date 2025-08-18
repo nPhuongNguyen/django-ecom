@@ -6,6 +6,7 @@ from apps.core.schema.collection import CollectionSerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    img = serializers.ImageField(required=False)
     class Meta:
         model = Product
         fields = '__all__'
