@@ -11,6 +11,23 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+
+#MinIO
+MINIO_ENDPOINT = config("MINIO_ENDPOINT")
+MINIO_ACCESS_KEY = config("MINIO_ACCESS_KEY")
+MINIO_SECRET_KEY = config("MINIO_SECRET_KEY")
+MINIO_BUCKET_NAME = config("MINIO_BUCKET_NAME")
+MINIO_BASE_URL = config("MINIO_BASE_URL")
+MINIO_LOCATION = config("MINIO_LOCATION")
+MINIO_PORT = config("MINIO_PORT")
+
+#Database
+MYSQL_DATABASE_NAME = config("DB_NAME")
+MYSQL_DATABASE_USER = config("DB_USER")
+MYSQL_DATABASE_PASSWORD = config("DB_PASSWORD")
+MYSQL_DATABASE_HOST = config("DB_HOST")
+MYSQL_DATABASE_PORT = config("DB_PORT")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,11 +96,11 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_ecom',
-        'USER': 'root',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': MYSQL_DATABASE_NAME,
+        'USER': MYSQL_DATABASE_USER,
+        'PASSWORD': MYSQL_DATABASE_PASSWORD,
+        'HOST': MYSQL_DATABASE_HOST,
+        'PORT': MYSQL_DATABASE_PORT,
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
