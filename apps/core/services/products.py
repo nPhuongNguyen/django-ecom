@@ -1,6 +1,5 @@
 from apps.core.repositories.products import ProductRepository
 from apps.core.schema.products import ProductOutputSerializer
-from apps.utils.get_request import get_request_id
 from apps.utils.decorator import *
 
 

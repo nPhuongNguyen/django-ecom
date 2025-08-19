@@ -24,11 +24,11 @@ from apps.utils import get_request
 #         except Exception as e:
 #             print(f"Error Exception Decorator Func {func_name}: ",str(e))
 #     return wrapper
-
+request_id = get_request.get_request_id()
 def catch_exceptions(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        request_id = get_request.get_request_id()
+        
         func_name = f"{func.__module__}.{func.__qualname__}"
         
         lg.log_info(request_id=request_id, func_name=func_name, message=f"Input args: {args}, kwargs: {kwargs}")
@@ -57,5 +57,17 @@ def validate_serializer(serializer_class : type[serializers.Serializer]):
             return func(self, request, *args, **kwargs)
         return wrapper
     return decorator
-
-
+def log_sql(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_index = len(connection.queries)
+        result = func(*args, **kwargs)
+        new_queries = connection.queries[start_index:] 
+        for q in new_queries:
+            lg.log_info(
+                request_id=request_id,  # đã có từ trên
+                func_name=f"{func.__module__}.{func.__qualname__}",
+                message=f"[SQL] {q['sql']} | time: {q['time']}s"
+            )
+        return result
+    return wrapper

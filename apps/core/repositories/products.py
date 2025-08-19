@@ -8,6 +8,7 @@ from apps.utils.decorator import *
 class ProductRepository:
     @staticmethod
     @catch_exceptions
+    @log_sql
     def create(data: dict):
         collections = data.pop('collection', [])
         with transaction.atomic():
@@ -22,18 +23,22 @@ class ProductRepository:
     
     @staticmethod
     @catch_exceptions
+    @log_sql
     def get_all():
         product_list = Product.objects.all()
         return product_list
     @staticmethod
     @catch_exceptions
+    @log_sql
     def get_by_slug(slug : str):
         try:
-            return Product.objects.get(slug=slug, is_deleted=False)
+            product = Product.objects.get(slug=slug, is_deleted=False)
+            return product
         except Product.DoesNotExist:
             return None
     @staticmethod
     @catch_exceptions
+    @log_sql
     def update(product: Product, validated_data: dict):
         category = validated_data.pop('category', None)
         collections = validated_data.pop('collection', None)
@@ -53,6 +58,7 @@ class ProductRepository:
         return product
     @staticmethod
     @catch_exceptions
+    @log_sql
     def delete(product: Product):
         product.is_deleted = True
         product.save()
