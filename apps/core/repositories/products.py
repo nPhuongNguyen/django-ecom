@@ -25,7 +25,7 @@ class ProductRepository:
     @catch_exceptions
     @log_sql
     def get_all():
-        product_list = Product.objects.all()
+        product_list = list(Product.objects.all())
         return product_list
     @staticmethod
     @catch_exceptions
