@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+#logging kibana
+KAFKA_TOPIC = "django-ecom-kafka-topic"
+SERVICE_NAME = "django-ecom"
 
 #MinIO
 MINIO_ENDPOINT = config("MINIO_ENDPOINT")

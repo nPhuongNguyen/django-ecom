@@ -1,0 +1,45 @@
+
+version: '3'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - ek_network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ek_network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.5.0
+    environment:
+      - LOGSTASH_MONITORING_ENABLED=false  
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./elastic-cloud-ca.pem:/usr/share/logstash/config/elastic-cloud-ca.pem
+    depends_on:
+      - kafka
+    ports:
+      - "5000:5000"
+    networks:
+      - ek_network
+
+networks:
+  ek_network:
+    driver: bridge

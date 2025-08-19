@@ -8,3 +8,4 @@ tzdata==2025.2
 python-decouple==3.6
 minio==7.1.14
 Pillow==11.3.0
+confluent-kafka==2.10.0
