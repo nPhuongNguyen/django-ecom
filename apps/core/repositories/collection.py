@@ -7,16 +7,19 @@ from apps.utils.decorator import *
 class CollectionRepository:
     @staticmethod
     @catch_exceptions
+    @log_sql
     def create(data : dict):
         collection = Collection.objects.create(**data)
         return collection
     @staticmethod
     @catch_exceptions
+    @log_sql
     def get_all():
         collection_list = Collection.objects.all()
         return collection_list
     @staticmethod
     @catch_exceptions
+    @log_sql
     def get_by_sku(sku : str):
         try:
             return Collection.objects.get(sku=sku, is_deleted=False)
@@ -31,6 +34,7 @@ class CollectionRepository:
         return collection
     @staticmethod
     @catch_exceptions
+    @log_sql
     def delete(collection: Collection):
         collection.is_deleted = True
         collection.save()
