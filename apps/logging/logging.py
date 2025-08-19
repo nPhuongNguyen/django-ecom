@@ -1,6 +1,6 @@
 # --- Cấu hình logger ---
 import logging
-
+from apps.logging.kibana_log import *
 logger = logging.getLogger("ecom_logger")
 logger.setLevel(logging.INFO)
 console_handler = logging.StreamHandler()
@@ -17,7 +17,6 @@ if not logger.handlers:
 
 # --- Hàm log ---
 def log_info(request_id, func_name, message, **kwargs):
-    if kwargs:
-        message = f"{message} | {kwargs}"
-    logger.info(f"{CYAN}{request_id}{RESET} | [{func_name}] | {message}")
+    logger.info(f"{CYAN}{request_id}{RESET} | [{func_name}] | {message} | {kwargs}")
+    send_log_to_kibana(request_id= request_id,level= func_name, msg=message, metadata=kwargs)
 
