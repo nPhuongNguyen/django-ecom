@@ -1,11 +1,12 @@
 from rest_framework.views import APIView
 from apps.core.schema.collection import CollectionSerializer
 from apps.core.services.collection import CollectionService
-from apps.utils.decorator import validate_serializer
+from apps.utils.decorator import *
 from rest_framework.response import Response
 # Create your views here.
 
 class CollectionView(APIView):
+    @catch_exceptions
     @validate_serializer(CollectionSerializer)
     def post(self, request):
         serializer = request.validated_data
@@ -18,6 +19,7 @@ class CollectionView(APIView):
                 "data": collection
             }
         )
+    @catch_exceptions
     def get(self, request, sku=None):
         if sku:
             collection = CollectionService.get_collection_by_sku(sku)
@@ -40,7 +42,7 @@ class CollectionView(APIView):
             "data": collections
         })
 
-
+    @catch_exceptions
     @validate_serializer(CollectionSerializer)
     def put(self, request, sku, *args, **kwargs):
         validated_data = request.validated_data
@@ -57,6 +59,7 @@ class CollectionView(APIView):
             "data": collection
         })
     
+    @catch_exceptions
     def delete(self, request, sku, *args, **kwargs):
         collection = CollectionService.delete_collection(sku)
         if not collection:

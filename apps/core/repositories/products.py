@@ -3,9 +3,11 @@ from apps.core.models.products import Product
 from apps.core.schema.products import ProductSerializer
 from apps.utils import minio as S3
 from datetime import datetime
+from apps.utils.decorator import *
 
 class ProductRepository:
     @staticmethod
+    @catch_exceptions
     def create(data: dict):
         collections = data.pop('collection', [])
         with transaction.atomic():
@@ -17,20 +19,21 @@ class ProductRepository:
             if collections:
                 product.collection.set(collections)
         return product
-
+    
     @staticmethod
+    @catch_exceptions
     def get_all():
         product_list = Product.objects.all()
         return product_list
-    
     @staticmethod
+    @catch_exceptions
     def get_by_slug(slug : str):
         try:
             return Product.objects.get(slug=slug, is_deleted=False)
         except Product.DoesNotExist:
             return None
-
     @staticmethod
+    @catch_exceptions
     def update(product: Product, validated_data: dict):
         category = validated_data.pop('category', None)
         collections = validated_data.pop('collection', None)
@@ -48,9 +51,9 @@ class ProductRepository:
             if collections is not None:
                 product.collection.set(collections)
         return product
-
     @staticmethod
-    def delete(product):
+    @catch_exceptions
+    def delete(product: Product):
         product.is_deleted = True
         product.save()
         return product
