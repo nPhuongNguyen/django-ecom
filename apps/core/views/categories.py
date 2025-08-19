@@ -1,11 +1,12 @@
 from rest_framework.views import APIView
 from apps.core.schema.categories import CategorySerializer
 from apps.core.services.categories import CategoryService
-from apps.utils.decorator import validate_serializer
+from apps.utils.decorator import *
 from rest_framework.response import Response
 # Create your views here.
 
 class CategoryView(APIView):
+    @catch_exceptions
     @validate_serializer(CategorySerializer)
     def post(self, request):
         serializer = request.validated_data
@@ -18,6 +19,7 @@ class CategoryView(APIView):
                 "data": category
             }
         )
+    @catch_exceptions   
     def get(self, request, sku=None):
         if sku:
             category = CategoryService.get_category_by_sku(sku)
@@ -40,7 +42,7 @@ class CategoryView(APIView):
             "data": categories
         })
 
-
+    @catch_exceptions
     @validate_serializer(CategorySerializer)
     def put(self, request, sku, *args, **kwargs):
         validated_data = request.validated_data
@@ -56,7 +58,7 @@ class CategoryView(APIView):
             "message": "Cập nhật danh mục thành công",
             "data": category
         })
-    
+    @catch_exceptions    
     def delete(self, request, sku, *args, **kwargs):
         category = CategoryService.delete_category(sku)
         if not category:

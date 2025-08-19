@@ -3,11 +3,12 @@ from apps.core.schema.products import ProductOutputSerializer, ProductSerializer
 from apps.core.schema.promotions import PromotionOutputSerializer, PromotionSerializer
 from apps.core.services.products import ProductService
 from apps.core.services.promotions import PromotionService
-from apps.utils.decorator import validate_serializer
+from apps.utils.decorator import *
 from rest_framework.response import Response
 # Create your views here.
 
 class PromotionView(APIView):
+    @catch_exceptions
     @validate_serializer(PromotionSerializer)
     def post(self, request):
         serializer = request.validated_data
@@ -20,6 +21,7 @@ class PromotionView(APIView):
                 "data": promotion
             }
         )
+    @catch_exceptions
     def get(self, request, slug=None):
         if slug:
             promotion = PromotionService.get_promotion_by_slug(slug)
@@ -42,7 +44,7 @@ class PromotionView(APIView):
             "data": promotions
         })
 
-    
+    @catch_exceptions
     @validate_serializer(PromotionSerializer)
     def put(self, request, slug, *args, **kwargs):
         validated_data = request.validated_data 
@@ -58,7 +60,7 @@ class PromotionView(APIView):
             "message": "Cập nhật Promotion thành công",
             "data": promotion
         })
-    
+    @catch_exceptions
     def delete(self, request, slug, *args, **kwargs):
         promotion = PromotionService.delete_promotion(slug)
         if not promotion:
