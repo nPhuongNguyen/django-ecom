@@ -18,5 +18,5 @@ if not logger.handlers:
 # --- Hàm log ---
 def log_info(request_id, func_name, message, **kwargs):
     logger.info(f"{CYAN}{request_id}{RESET} | [{func_name}] | {message} | {kwargs}")
-    send_log_to_kibana(request_id= request_id,level= func_name, msg=message, metadata=kwargs)
+    # send_log_to_kibana(request_id= request_id,level= func_name, msg=message, metadata=kwargs)
 

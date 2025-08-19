@@ -8,3 +8,9 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
         read_only_fields = ['sku', 'is_deleted']
+
+class CategoryInputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        read_only_fields = ['is_deleted']
