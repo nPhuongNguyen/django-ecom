@@ -10,9 +10,9 @@ class Promotion(models.Model):
     end_date = models.DateTimeField(null = True)
     is_activate = models.BooleanField(default=True)
 
-    product = models.ManyToManyField('core.Product', blank=True)
-    category = models.ManyToManyField('core.Category', blank=True)
-    collection = models.ManyToManyField('core.Collection', blank=True)
+    product = models.ManyToManyField('core.Product', blank=True, related_name="promotions")
+    category = models.ManyToManyField('core.Category', blank=True, related_name="promotions")
+    collection = models.ManyToManyField('core.Collection', blank=True, related_name="promotions")
 
     def save(self, *args, **kwargs):
         if not self.slug:

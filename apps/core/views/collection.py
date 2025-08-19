@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from apps.core.schema.collection import CollectionSerializer
+from apps.core.schema.collection import *
 from apps.core.services.collection import CollectionService
 from apps.utils.decorator import *
 from rest_framework.response import Response
@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 class CollectionView(APIView):
     @catch_exceptions
-    @validate_serializer(CollectionSerializer)
+    @validate_serializer(CollectionInputSerializer)
     def post(self, request):
         serializer = request.validated_data
         collection = CollectionService.create_collection(serializer)

@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from apps.core.schema.categories import CategorySerializer
+from apps.core.schema.categories import *
 from apps.core.services.categories import CategoryService
 from apps.utils.decorator import *
 from rest_framework.response import Response
@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 class CategoryView(APIView):
     @catch_exceptions
-    @validate_serializer(CategorySerializer)
+    @validate_serializer(CategoryInputSerializer)
     def post(self, request):
         serializer = request.validated_data
         category = CategoryService.create_category(serializer)
