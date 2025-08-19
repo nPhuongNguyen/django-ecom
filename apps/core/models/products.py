@@ -34,6 +34,7 @@ class ProductVariant(models.Model):
 
 class Option(models.Model):
     name = models.CharField(max_length=50)
+    is_deleted = models.BooleanField(default=False)
 
 
 class OptionValue(models.Model):
