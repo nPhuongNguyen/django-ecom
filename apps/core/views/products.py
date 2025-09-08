@@ -3,7 +3,7 @@ from apps.core.schema.products import ProductSerializer
 from apps.core.services.products import ProductService
 
 from apps.utils.decorator import *
-from apps.utils.response import ResponseUtil as res
+from apps.utils.response import ResponseFormat as res
 # Create your views here.
 
 class ProductView(APIView):

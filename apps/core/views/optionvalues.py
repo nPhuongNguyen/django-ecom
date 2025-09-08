@@ -3,7 +3,7 @@ from apps.core.schema.optionvalues import OptionValueSerializer
 
 from apps.core.services.optionvalues import OptionValueService
 from apps.utils.decorator import *
-from apps.utils.response import ResponseUtil as res
+from apps.utils.response import ResponseFormat as res
 # Create your views here.
 
 class OptionValueView(APIView):

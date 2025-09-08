@@ -2,7 +2,7 @@
 
 from rest_framework.response import Response
 
-class ResponseUtil:
+class ResponseFormat:
     @staticmethod
     def response_success(message="Thành công", data=None):
         return Response({

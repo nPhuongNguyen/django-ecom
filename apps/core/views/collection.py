@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from apps.core.schema.collection import *
 from apps.core.services.collection import CollectionService
 from apps.utils.decorator import *
-from apps.utils.response import ResponseUtil as res
+from apps.utils.response import ResponseFormat as res
 # Create your views here.
 
 class CollectionView(APIView):

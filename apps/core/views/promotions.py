@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from apps.core.schema.promotions import PromotionSerializer
 from apps.core.services.promotions import PromotionService
 from apps.utils.decorator import *
-from apps.utils.response import ResponseUtil as res
+from apps.utils.response import ResponseFormat as res
 # Create your views here.
 
 class PromotionView(APIView):

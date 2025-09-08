@@ -2,11 +2,11 @@
 from functools import wraps
 
 from django.db import connection
-from rest_framework.response import Response
 from rest_framework import serializers
 
 from apps.logging import logging as lg
 from apps.utils import get_request
+from apps.utils.response import ResponseFormat as res
 
 # def catch_exceptions(func):
 #     @wraps(func) # arguments = [], keyword arguments = {}
@@ -49,7 +49,7 @@ def catch_exceptions(func):
                 func_name=func_name,
                 message=str(e)
             )
-            return None
+            return res.response_error(message="Có lỗi xảy ra, vui lòng thử lại sau!")
     return wrapper
 
 def validate_serializer(serializer_class : type[serializers.Serializer]):
@@ -58,13 +58,7 @@ def validate_serializer(serializer_class : type[serializers.Serializer]):
         def wrapper(self, request, *args, **kwargs):
             serializer = serializer_class(data=request.data)
             if not serializer.is_valid():
-                return Response(
-                    {
-                        "statusCode": 0,
-                        "message": "Validation failed",
-                        "data": serializer.errors
-                    }
-                )
+                return res.response_error(message="Dữ liệu không hợp lệ", data=serializer.errors)
             request.validated_data = serializer.validated_data
             return func(self, request, *args, **kwargs)
         return wrapper
@@ -72,14 +66,22 @@ def validate_serializer(serializer_class : type[serializers.Serializer]):
 def log_sql(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        start_index = len(connection.queries)
-        result = func(*args, **kwargs)
-        new_queries = connection.queries[start_index:]
-        for q in new_queries:
+        try:
+            start_index = len(connection.queries)
+            result = func(*args, **kwargs)
+            new_queries = connection.queries[start_index:]
+            for q in new_queries:
+                lg.log_info(
+                    request_id=get_request.get_request_id(),
+                    func_name=f"{func.__module__}.{func.__qualname__}",
+                    message=f"[SQL] {q['sql']} | time: {q['time']}s"
+                )
+            return result
+        except Exception as e: # pylint: disable=broad-exception-caught
             lg.log_info(
                 request_id=get_request.get_request_id(),
                 func_name=f"{func.__module__}.{func.__qualname__}",
-                message=f"[SQL] {q['sql']} | time: {q['time']}s"
+                message=str(e)
             )
-        return result
+            return res.response_error(message="Có lỗi xảy ra, vui lòng thử lại sau!")
     return wrapper

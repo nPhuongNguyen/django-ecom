@@ -3,7 +3,7 @@ from apps.core.schema.options import OptionSerializer
 from apps.core.services.options import OptionService
 
 from apps.utils.decorator import *
-from apps.utils.response import ResponseUtil as res
+from apps.utils.response import ResponseFormat as res
 # Create your views here.
 
 class OptionView(APIView):
@@ -32,6 +32,7 @@ class OptionView(APIView):
         if not option:
             return res.response_error(message="Option không tồn tại!")
         return res.response_success(message="Cập nhật Option thành công", data=option)
+
     @catch_exceptions
     def delete(self, request, id, *args, **kwargs):
         option = OptionService.delete_option(id)

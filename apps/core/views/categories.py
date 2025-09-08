@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from apps.core.schema.categories import *
 from apps.core.services.categories import CategoryService
 from apps.utils.decorator import *
-from apps.utils.response import ResponseUtil as res
+from apps.utils.response import ResponseFormat as res
 # Create your views here.
 
 class CategoryView(APIView):
@@ -11,7 +11,6 @@ class CategoryView(APIView):
     def post(self, request):
         serializer = request.validated_data
         category = CategoryService.create_category(serializer)
-
         return res.response_success(data=category)
 
     @catch_exceptions
