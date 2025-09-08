@@ -26,7 +26,7 @@ class PromotionService:
         promotion = PromotionRepository.get_all()
         promotion_validate_serializer = PromotionSerializer(promotion, many = True)
         return promotion_validate_serializer.data
-    
+
     @staticmethod
     @catch_exceptions
     def update_promotion(slug: str, data: dict):

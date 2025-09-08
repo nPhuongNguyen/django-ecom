@@ -1,7 +1,10 @@
-from minio import Minio
-from ecom.settings import *
-from PIL import Image
 from io import BytesIO
+
+from minio import Minio
+from PIL import Image
+
+from ecom.settings import *
+
 
 minio_client = Minio(
     endpoint=f"{MINIO_ENDPOINT}:{MINIO_PORT}",
@@ -13,7 +16,7 @@ minio_client = Minio(
 def upload_image(file, filename, format="JPEG"):
     if not filename.lower().endswith(f".{format.lower()}"):
         filename = f"{filename}.{format.lower()}"
-    
+
     object_name = f"{MINIO_LOCATION}/{filename}"
 
     if hasattr(file, "read"):
@@ -23,7 +26,7 @@ def upload_image(file, filename, format="JPEG"):
         raise ValueError("File không hợp lệ")
 
     img_bytes = BytesIO()
-    
+
     if format.upper() == "JPEG":
         if image.mode in ("RGBA", "LA"):
             background = Image.new("RGB", image.size, (255, 255, 255))

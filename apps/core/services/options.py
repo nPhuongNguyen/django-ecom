@@ -1,7 +1,5 @@
 from apps.core.repositories.options import OptionRepository
-from apps.core.repositories.products import ProductRepository
 from apps.core.schema.options import OptionSerializer
-from apps.core.schema.products import ProductOutputSerializer
 from apps.utils.decorator import *
 
 
@@ -13,7 +11,6 @@ class OptionService:
         option_validate_serializer = OptionSerializer(option)
         return option_validate_serializer.data
 
-    
     @staticmethod
     @catch_exceptions
     def get_option_by_id(id: int):
@@ -22,7 +19,7 @@ class OptionService:
             return None
         option_validate_serializer = OptionSerializer(option)
         return option_validate_serializer.data
-    
+
     @staticmethod
     @catch_exceptions
     def get_all_options():

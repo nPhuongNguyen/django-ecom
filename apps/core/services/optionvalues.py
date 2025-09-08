@@ -1,9 +1,6 @@
-from apps.core.repositories.options import OptionRepository
+
 from apps.core.repositories.optionvalues import OptionValueRepository
-from apps.core.repositories.products import ProductRepository
-from apps.core.schema.options import OptionSerializer
-from apps.core.schema.optionvalues import OptionValueOutputSerializer, OptionValueSerializer
-from apps.core.schema.products import ProductOutputSerializer
+from apps.core.schema.optionvalues import OptionValueOutputSerializer
 from apps.utils.decorator import *
 
 
@@ -15,7 +12,6 @@ class OptionValueService:
         option_value_validate_serializer = OptionValueOutputSerializer(option_value)
         return option_value_validate_serializer.data
 
-    
     @staticmethod
     @catch_exceptions
     def get_option_value_by_id(id: int):
@@ -24,7 +20,7 @@ class OptionValueService:
             return None
         option_value_validate_serializer = OptionValueOutputSerializer(option_value)
         return option_value_validate_serializer.data
-    
+
     @staticmethod
     @catch_exceptions
     def get_all_options_value():
@@ -50,4 +46,4 @@ class OptionValueService:
         delete_option_value = OptionValueRepository.delete(id)
         if delete_option_value is True:
             return True
-        return None 
+        return None

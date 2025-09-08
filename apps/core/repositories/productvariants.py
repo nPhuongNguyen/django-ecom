@@ -1,18 +1,18 @@
-from django.db import connection, transaction
-from apps.core.models.products import *
-from apps.core.schema.products import ProductSerializer
-from apps.utils import minio as S3
+
 from datetime import datetime
+
+from apps.core.models.products import ProductVariant
+from apps.utils import minio as S3
 from apps.utils.decorator import *
+
 
 class ProductVariantRepository:
     @staticmethod
     @catch_exceptions
     @log_sql
-    def create(data: dict): 
+    def create(data: dict):
         product_variant = ProductVariant.objects.create(**data)
         return product_variant
-    
     @staticmethod
     @catch_exceptions
     @log_sql

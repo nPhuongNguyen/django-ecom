@@ -1,6 +1,5 @@
-from django.db import connection
+
 from apps.core.models.categories import Category
-from apps.core.schema.categories import CategorySerializer
 from apps.utils.decorator import *
 
 

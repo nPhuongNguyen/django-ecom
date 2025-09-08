@@ -1,12 +1,13 @@
-import uuid
+
+from functools import wraps
+
 from django.db import connection
 from rest_framework.response import Response
 from rest_framework import serializers
-from functools import wraps
-from apps.logging import logging as lg
-import rest_framework
 
+from apps.logging import logging as lg
 from apps.utils import get_request
+
 # def catch_exceptions(func):
 #     @wraps(func) # arguments = [], keyword arguments = {}
 #     def wrapper(*args, **kwargs):
@@ -29,14 +30,26 @@ def catch_exceptions(func):
     def wrapper(*args, **kwargs):
         request_id = get_request.get_request_id()
         func_name = f"{func.__module__}.{func.__qualname__}"
-        
-        lg.log_info(request_id=request_id, func_name=func_name, message=f"Input args: {args}, kwargs: {kwargs}")
+        lg.log_info(
+            request_id=request_id,
+            func_name=func_name,
+            message=f"Input args: {args}, kwargs: {kwargs}"
+        )
         try:
             result = func(*args, **kwargs)
-            lg.log_info(request_id=request_id, func_name=func_name, message=f"Return: {result}")
+            lg.log_info(
+                request_id=request_id,
+                func_name=func_name,
+                message=f"Return: {result}"
+            )
             return result
-        except Exception as e:
-            lg.log_info(request_id=request_id, func_name= func_name, message= str(e))
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            lg.log_info(
+                request_id=request_id,
+                func_name=func_name,
+                message=str(e)
+            )
+            return None
     return wrapper
 
 def validate_serializer(serializer_class : type[serializers.Serializer]):
@@ -61,10 +74,10 @@ def log_sql(func):
     def wrapper(*args, **kwargs):
         start_index = len(connection.queries)
         result = func(*args, **kwargs)
-        new_queries = connection.queries[start_index:] 
+        new_queries = connection.queries[start_index:]
         for q in new_queries:
             lg.log_info(
-                request_id = get_request.get_request_id(), 
+                request_id=get_request.get_request_id(),
                 func_name=f"{func.__module__}.{func.__qualname__}",
                 message=f"[SQL] {q['sql']} | time: {q['time']}s"
             )

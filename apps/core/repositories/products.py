@@ -1,9 +1,11 @@
-from django.db import connection, transaction
-from apps.core.models.products import Product
-from apps.core.schema.products import ProductSerializer
-from apps.utils import minio as S3
 from datetime import datetime
+
+from django.db import transaction
+
+from apps.core.models.products import Product
+from apps.utils import minio as S3
 from apps.utils.decorator import *
+
 
 class ProductRepository:
     @staticmethod
@@ -15,12 +17,12 @@ class ProductRepository:
             if data.get("img"):
                 img_name = "img_product_" + datetime.now().strftime("%Y%m%d%H%M%S")
                 img_url = S3.upload_image(data["img"], img_name)
-                data["img"] = img_url 
+                data["img"] = img_url
             product = Product.objects.create(**data)
             if collections:
                 product.collection.set(collections)
         return product
-    
+
     @staticmethod
     @catch_exceptions
     @log_sql
@@ -52,7 +54,7 @@ class ProductRepository:
                 setattr(product, attr, value)
             if category is not None:
                 product.category = category
-            product.save() 
+            product.save()
             if collections is not None:
                 product.collection.set(collections)
         return product

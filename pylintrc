@@ -1,0 +1,69 @@
+[MASTER]
+load-plugins=pylint_django
+init-hook=import sys, os; sys.path.insert(0, os.getcwd()); os.environ['DJANGO_SETTINGS_MODULE'] = 'ecom.settings'; import django; django.setup()
+ignore-patterns=manage.py,wsgi.py,asgi.py,admin.py,__init__.py,^.*/__init__\.py$,.venv,.env,venv,env,migrations
+
+[MESSAGES CONTROL]
+disable=
+    C0111,  # missing-docstring
+    C0103,  # invalid-name
+    # W0611,  # unused-import
+    R0903,  # too-few-public-methods
+    W0212,  # protected-access
+    R0801,  # duplicate-code
+    W0622,  # redefined-builtin
+    W0614,  # wildcard-import
+    W0401,  # wildcard-import
+    W0201,  # attribute-defined-outside-init
+    W0223,  # abstract-method
+    E1101,  # no-member (thường xảy ra với các model Django)
+    W0143,  # comparison-with-callable
+    W0707,  # raise-missing-from
+
+enable=
+    W0311,  # bad-indentation
+    W0301,  # unnecessary-semicolon
+    E0001   # syntax-error
+
+[REPORTS]
+output-format=colorized
+msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
+
+[FORMAT]
+max-line-length=100
+single-line-if-stmt=yes
+max-module-lines=1000
+
+[BASIC]
+good-names=i,j,k,e,id,pk,_
+function-rgx=[a-z_][a-z0-9_]{2,50}$
+variable-rgx=[a-z_][a-z0-9_]{0,50}$
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+class-rgx=[A-Z_][a-zA-Z0-9]+$
+dummy-variables-rgx=_$|dummy
+
+[MISCELLANEOUS]
+notes=FIXME,XXX,TODO
+
+[SIMILARITIES]
+min-similarity-lines=5
+ignore-imports=yes
+
+[TYPECHECK]
+generated-members=REQUEST,acl_users,aq_parent,objects,DoesNotExist,id,pk,_meta,base_fields,context
+ignored-classes=SQLObject,WSGIRequest,_meta
+
+[CLASSES]
+defining-attr-methods=__init__,__new__,setUp
+valid-classmethod-first-arg=cls
+
+[DESIGN]
+max-args=10
+max-locals=25
+max-public-methods=50
+max-attributes=20
+max-parents=10
+
+[IMPORTS]
+deprecated-modules=regsub,TERMIOS,Bastion,rexec
+analyse-fallback-blocks=no
