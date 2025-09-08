@@ -10,7 +10,7 @@ class CategoryService:
         category = CategoryRepository.create(data)
         category_validate_serializer = CategorySerializer(category)
         return category_validate_serializer.data
-    
+
     @staticmethod
     @catch_exceptions
     def get_category_by_id(id : int):

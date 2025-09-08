@@ -9,3 +9,5 @@ python-decouple==3.6
 minio==7.1.14
 Pillow==11.3.0
 confluent-kafka==2.10.0
+pylint==3.3.7
+python-django==2.6.1

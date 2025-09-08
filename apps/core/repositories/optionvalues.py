@@ -1,7 +1,5 @@
-from django.db import connection, transaction
+
 from apps.core.models.products import *
-from apps.utils import minio as S3
-from datetime import datetime
 from apps.utils.decorator import *
 
 class OptionValueRepository:
@@ -11,7 +9,7 @@ class OptionValueRepository:
     def create(data: dict):
         option_value = OptionValue.objects.create(**data)
         return option_value
-    
+
     @staticmethod
     @catch_exceptions
     @log_sql
@@ -32,7 +30,7 @@ class OptionValueRepository:
     @log_sql
     def update(option_value: OptionValue, validated_data: dict):
         for attr, value in validated_data.items():
-                setattr(option_value, attr, value)
+            setattr(option_value, attr, value)
         option_value.save()
         return option_value
     @staticmethod
@@ -41,7 +39,7 @@ class OptionValueRepository:
     def delete(id: int):
         try:
             obj = OptionValue.objects.get(id=id)
-            obj.delete() 
+            obj.delete()
             return True
         except OptionValue.DoesNotExist:
             return False

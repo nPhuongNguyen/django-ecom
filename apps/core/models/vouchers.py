@@ -8,4 +8,3 @@ class Voucher(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(null = True)
     is_activate = models.BooleanField(default=True)
-

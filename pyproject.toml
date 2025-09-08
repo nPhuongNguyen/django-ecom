@@ -1,0 +1,13 @@
+# pyproject.toml
+
+[tool.mypy]
+plugins = [
+    "mypy_django_plugin.main",
+]
+
+[tool.mypy.plugins.django_settings]
+MODULE_PATH = "ecom.settings"
+
+[tool.pylint]
+load-plugins = ["pylint_django"]
+django-settings-module = "ecom.settings"

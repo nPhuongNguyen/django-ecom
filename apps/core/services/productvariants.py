@@ -1,5 +1,4 @@
 from apps.core.repositories.productvariants import ProductVariantRepository
-from apps.core.schema.products import ProductOutputSerializer
 from apps.core.schema.productvariants import ProductVariantOutputSerializer
 from apps.utils.decorator import *
 
@@ -11,8 +10,6 @@ class ProductVariantService:
         product_variant = ProductVariantRepository.create(data)
         product_variant_validate_serializer = ProductVariantOutputSerializer(product_variant)
         return product_variant_validate_serializer.data
-
-    
     @staticmethod
     @catch_exceptions
     def get_product_variant_by_sku(sku: str):
@@ -21,12 +18,13 @@ class ProductVariantService:
             return None
         product_variant_validate_serializer = ProductVariantOutputSerializer(product_variant)
         return product_variant_validate_serializer.data
-    
+
     @staticmethod
     @catch_exceptions
     def get_all_products_variant():
         product_variant = ProductVariantRepository.get_all()
-        product_variant_validate_serializer = ProductVariantOutputSerializer(product_variant, many = True)
+        product_variant_validate_serializer = ProductVariantOutputSerializer(product_variant,
+                                                                              many = True)
         return product_variant_validate_serializer.data
     @staticmethod
     @catch_exceptions

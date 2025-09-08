@@ -1,7 +1,6 @@
 import json
 from datetime import datetime
 from confluent_kafka import Producer
-from apps.logging import logging as lg
 from ecom.settings import *
 
 def new_brokers() -> list[str]:
@@ -30,6 +29,9 @@ def send_log_to_kibana(request_id, level, msg, metadata):
         def delivery_report(err, msg):
             if err is not None:
                 print(f"Kibana log delivery failed: {err}")
+            else:
+                info = f"{msg.topic()} [{msg.partition()}] at offset {msg.offset()}"
+                print(f"Kibana log delivered successfully: {info}")
 
         producer.produce(
             topic=KAFKA_TOPIC,
@@ -38,5 +40,5 @@ def send_log_to_kibana(request_id, level, msg, metadata):
             callback=delivery_report
         )
         producer.flush(timeout=3)
-    except Exception as e:
+    except Exception as e: # pylint: disable=broad-exception-caught
         print(f"[send_log_to_kibana] Failed to send log: {e}")

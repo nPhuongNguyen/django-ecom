@@ -11,7 +11,6 @@ class ProductService:
         product_validate_serializer = ProductOutputSerializer(product)
         return product_validate_serializer.data
 
-    
     @staticmethod
     @catch_exceptions
     def get_product_by_slug(slug: str):
@@ -20,7 +19,7 @@ class ProductService:
             return None
         product_validate_serializer = ProductOutputSerializer(product)
         return product_validate_serializer.data
-    
+
     @staticmethod
     @catch_exceptions
     def get_all_products():

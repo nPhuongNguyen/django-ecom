@@ -1,6 +1,5 @@
-from django.db import connection
+
 from apps.core.models.collection import Collection
-from apps.core.schema.collection import CollectionSerializer
 from apps.utils.decorator import *
 
 

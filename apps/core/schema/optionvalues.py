@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.core.models.products import Option, OptionValue
+from apps.core.models.products import OptionValue
 from apps.core.schema.options import OptionSerializer
 class OptionValueSerializer(serializers.ModelSerializer):
     class Meta:

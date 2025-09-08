@@ -1,7 +1,5 @@
-from django.db import connection, transaction
-from apps.core.models.products import Product
+from django.db import transaction
 from apps.core.models.promotions import Promotion
-from apps.core.schema.products import ProductSerializer
 from apps.utils.decorator import *
 
 
@@ -52,7 +50,7 @@ class PromotionRepository:
 
             if collections:
                 promotion.collection.set(collections)
-            
+
             if products:
                 promotion.product.set(products)
 
