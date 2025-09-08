@@ -4,7 +4,7 @@ from apps.core.schema.productvariants import *
 
 from apps.core.services.productvariants import ProductVariantService
 from apps.utils.decorator import *
-from apps.utils.response import ResponseUtil as res
+from apps.utils.response import ResponseFormat as res
 # Create your views here.
 
 class ProductVariantView(APIView):
