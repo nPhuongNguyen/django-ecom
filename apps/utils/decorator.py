@@ -8,23 +8,6 @@ from apps.logging import logging as lg
 from apps.utils import get_request
 from apps.utils.response import ResponseFormat as res
 
-# def catch_exceptions(func):
-#     @wraps(func) # arguments = [], keyword arguments = {}
-#     def wrapper(*args, **kwargs):
-#         if len(args) > 1:
-#             request = args[1]
-#             if isinstance(request, rest_framework.request.Request):
-#                 request_id = None
-#                 if request:
-#                     request_id = getattr(request, "request_id", str(uuid.uuid4()))
-#                     setattr(request, "request_id", request_id)
-#         func_name = f"{func.__module__}.{func.__qualname__}"
-#         try:
-#             result = func(*args, **kwargs)
-#             return result
-#         except Exception as e:
-#             print(f"Error Exception Decorator Func {func_name}: ",str(e))
-#     return wrapper
 def catch_exceptions(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -49,7 +32,8 @@ def catch_exceptions(func):
                 func_name=func_name,
                 message=str(e)
             )
-            return res.response_error(message="Có lỗi xảy ra, vui lòng thử lại sau!")
+            return res.response_error(message="Có lỗi xảy ra, vui lòng thử lại sau!",
+                                      data=str(e))
     return wrapper
 
 def validate_serializer(serializer_class : type[serializers.Serializer]):
