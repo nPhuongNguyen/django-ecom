@@ -1,6 +1,6 @@
 # yourapp/utils/get_request_id.py
 import uuid
-from apps.core.middleware.request_id_middleware import get_current_request
+from apps.core.middleware.request_middleware import get_current_request
 
 def get_request_id():
     request = get_current_request()

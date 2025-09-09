@@ -16,5 +16,5 @@ class ResponseFormat:
         return Response({
             "statusCode": 0,
             "message": message,
-        "data": data
+            "data": data
     })
