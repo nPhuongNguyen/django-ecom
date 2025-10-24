@@ -6,8 +6,8 @@ plugins = [
 ]
 
 [tool.mypy.plugins.django_settings]
-MODULE_PATH = "ecom.settings"
+MODULE_PATH = "portal.settings"
 
 [tool.pylint]
 load-plugins = ["pylint_django"]
-django-settings-module = "ecom.settings"
+django-settings-module = "portal.settings"

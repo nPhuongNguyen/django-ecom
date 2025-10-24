@@ -17,13 +17,7 @@ KAFKA_TOPIC = "django-ecom-kafka-topic"
 SERVICE_NAME = "django-ecom"
 
 #MinIO
-MINIO_ENDPOINT = config("MINIO_ENDPOINT")
-MINIO_ACCESS_KEY = config("MINIO_ACCESS_KEY")
-MINIO_SECRET_KEY = config("MINIO_SECRET_KEY")
-MINIO_BUCKET_NAME = config("MINIO_BUCKET_NAME")
-MINIO_BASE_URL = config("MINIO_BASE_URL")
-MINIO_LOCATION = config("MINIO_LOCATION")
-MINIO_PORT = config("MINIO_PORT")
+
 
 #Database
 MYSQL_DATABASE_NAME = config("DB_NAME")
@@ -51,15 +45,21 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'apps.core',
+    'apps.catalogue',
+    'apps.auths',
     'rest_framework',
+    'storages',
+    'vnpay',
+
+    'django_filters',
+    'apps.shared',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "apps.core.middleware.request_middleware.RequestMiddleware",
+    "apps.middleware.request_middleware.RequestMiddleware",
 ]
 
 
@@ -71,9 +71,38 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [],
     'UNAUTHENTICATED_USER': None, 
     'UNAUTHENTICATED_TOKEN': None,
+
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+        'rest_framework.filters.SearchFilter',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'apps.shared.drf.pagination.StandardResultsSetPagination',
+    'PAGE_SIZE': 10,
+    'SEARCH_PARAM': 'search',
+    'ORDERING_PARAM': 'ordering',
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATE_FORMAT': '%Y-%m-%d',
 }
 APPEND_SLASH = False # Bỏ dấu "/" cuối url
 
+MINIO_ENDPOINT = config("MINIO_ENDPOINT")
+MINIO_ACCESS_KEY = config("MINIO_ACCESS_KEY")
+MINIO_SECRET_KEY = config("MINIO_SECRET_KEY")
+MINIO_BUCKET_NAME = config("MINIO_BUCKET_NAME")
+MINIO_BASE_URL = config("MINIO_BASE_URL")
+MINIO_LOCATION = config("MINIO_LOCATION")
+MINIO_PORT = config("MINIO_PORT")
+
+
+STORAGES = {
+    "default": {
+        "BACKEND": "apps.utils.storages.MinioMediaStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 ROOT_URLCONF = 'ecom.urls'
 

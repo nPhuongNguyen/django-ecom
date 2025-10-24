@@ -5,13 +5,37 @@ from PIL import Image
 
 from ecom.settings import *
 
-
 minio_client = Minio(
     endpoint=f"{MINIO_ENDPOINT}:{MINIO_PORT}",
     access_key=MINIO_ACCESS_KEY,
     secret_key=MINIO_SECRET_KEY,
     secure=False
 )
+
+def connect_minio_client(endpoint, port, access_key, secret_key, secure = False):
+    return Minio(
+        endpoint=f"{endpoint}:{port}",
+        access_key=access_key,
+        secret_key=secret_key,
+        secure=secure
+    )
+   
+
+# Upload file lên MinIO
+def upload_minio(minio_client, base_url, bucket_name, object_name, data, content_type):
+    try:
+        result = minio_client.put_object(
+            bucket_name=bucket_name,
+            object_name=object_name,
+            data=data,
+            length=len(data.getvalue()),
+            content_type=content_type
+        )
+        return f"{base_url}/{bucket_name}/{object_name}", None
+    except Exception as e:
+        print("Error upload_minio:", e)
+        return None, "Lỗi khi upload Minio"
+
 
 def upload_image(file, filename, format="JPEG"):
     if not filename.lower().endswith(f".{format.lower()}"):
