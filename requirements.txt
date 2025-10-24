@@ -10,4 +10,7 @@ minio==7.1.14
 Pillow==11.3.0
 confluent-kafka==2.10.0
 pylint==3.3.7
-python-django==2.6.1
+django-storages==1.14.6
+django-vnpay==0.0.19
+django-ipware==7.0.1
+python-ipware==3.0.0
