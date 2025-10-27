@@ -1,6 +1,6 @@
 from apps.auths.models.users import Users
-from apps.auths.serializers.users import UserListSerializer, UserDetailSerializer, UserCreateSerializer
-from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin
+from apps.auths.serializers.users import UserListSerializer, UserDetailSerializer, UserCreateSerializer, UserUpdateSerializer
+from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
 
 
 class UserListAPI(ListMixin, CreateMixin, DestroyMixin):
@@ -14,3 +14,16 @@ class UserListAPI(ListMixin, CreateMixin, DestroyMixin):
     
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy_many(request, *args, **kwargs)
+
+class UserDetailAPI(UpdateMixin, DestroyMixin):
+    queryset = Users.objects.all()
+    serializer_class_update = UserUpdateSerializer
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

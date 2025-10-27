@@ -19,7 +19,8 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path('api/auths/',include('apps.auths.urls_api')),
+    path('api/auths/', include('apps.auths.urls_api')),
+    path('api/products/', include('apps.catalogue.urls_api')),
     #vnpay
     path('vnpay/', include('vnpay.api_urls')),
 ]

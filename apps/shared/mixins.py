@@ -157,7 +157,7 @@ class DestroyMixin(BaseMixin):
     def perform_delete(self, obj, is_purge=False):
         if is_purge is False:
             if issubclass(obj.__class__, BaseModelDeleted):
-                return obj.delete(is_purge=is_purge, deleted_by_id=self.request.user.pk)
+                return obj.delete(is_purge=is_purge, deleted_by_id=self.request.user.pk if self.request.user else None)
         return obj.delete(is_purge=is_purge)
 
     @classmethod
