@@ -4,6 +4,9 @@ import logging
 import sys
 import traceback
 from django.utils import timezone
+
+from apps.logging.kafka import PushO2mSmartlinkAPILog
+from apps.utils import request_func
 logger = logging.getLogger("o2m-smart-link-api-logging")
 
 if not logger.handlers:
@@ -37,9 +40,9 @@ def _log(level: str, message=None, send_kafka=True, **kwargs):
         log_data.update(kwargs)
 
     json_log = json.dumps(log_data, ensure_ascii=False)
-    if send_kafka:
-        task = PushO2mSmartlinkAPILog(log_data)
-        task.run()
+    # if send_kafka:
+    #     task = PushO2mSmartlinkAPILog(log_data)
+    #     task.run()
     if exc_tb:
         log_data["stacktrace"] = traceback.format_exc()
         json_log = json.dumps(log_data, ensure_ascii=False)

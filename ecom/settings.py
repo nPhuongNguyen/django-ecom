@@ -13,19 +13,25 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
-#logging kibana
-KAFKA_TOPIC = "django-ecom-kafka-topic"
-SERVICE_NAME = "django-ecom"
-
+from dotenv import load_dotenv
+load_dotenv()
 #MinIO
 
 
+#
+PREFIX_URL = os.environ.get("PREFIX_URL")
+API_VERSION = os.environ.get("API_VERSION")
+
 #Database
-MYSQL_DATABASE_NAME = config("DB_NAME")
-MYSQL_DATABASE_USER = config("DB_USER")
-MYSQL_DATABASE_PASSWORD = config("DB_PASSWORD")
-MYSQL_DATABASE_HOST = config("DB_HOST")
-MYSQL_DATABASE_PORT = config("DB_PORT")
+MYSQL_DATABASE_NAME = os.environ.get("DB_NAME")
+MYSQL_DATABASE_USER = os.environ.get("DB_USER")
+MYSQL_DATABASE_PASSWORD = os.environ.get("DB_PASSWORD")
+MYSQL_DATABASE_HOST = os.environ.get("DB_HOST")
+MYSQL_DATABASE_PORT = os.environ.get("DB_PORT")
+
+#kafka
+LIST_BROKERS = os.environ.get('LIST_BROKERS').split(',')
+KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -107,7 +113,7 @@ STORAGES = {
     },
 }
 
-ROOT_URLCONF = 'ecom.urls'
+ROOT_URLCONF = 'ecom.urls_base'
 
 TEMPLATES = [
     {
