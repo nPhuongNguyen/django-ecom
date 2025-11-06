@@ -1,71 +1,67 @@
 
 from functools import wraps
-
+import logging
 from django.db import connection
 from rest_framework import serializers
 
 from apps.logging import logging as lg
-from apps.utils import get_request
-from apps.utils.response import ResponseFormat as res
+from apps.shared.response import ResponseFormat
+from apps.utils import request_func
 
-def catch_exceptions(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        request_id = get_request.get_request_id()
-        func_name = f"{func.__module__}.{func.__qualname__}"
-        lg.log_info(
-            request_id=request_id,
-            func_name=func_name,
-            message=f"Input args: {args}, kwargs: {kwargs}"
-        )
-        try:
-            result = func(*args, **kwargs)
+def catch_exceptions():
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
             lg.log_info(
-                request_id=request_id,
-                func_name=func_name,
-                message=f"Return: {result}"
+                message=f"Input args: {args}, kwargs: {kwargs}"
             )
-            return result
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            lg.log_info(
-                request_id=request_id,
-                func_name=func_name,
-                message=str(e)
-            )
-            return res.response_error(message="Có lỗi xảy ra, vui lòng thử lại sau!",
-                                      data=str(e))
-    return wrapper
+            try:
+                result = func(*args, **kwargs)
+                lg.log_info(
+                    message=f"Return: {result}"
+                )
+                return result
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                lg.log_error(
+                    message=str(e)
+                )
+                return ResponseFormat.response_format(
+                    status_code = 50040,
+                    msg = "Hệ thống đang lỗi. Vui lòng thử lại sau!",
+                    data = None
+                )
+        return wrapper
+    return decorator
 
 def validate_serializer(serializer_class : type[serializers.Serializer]):
     def decorator(func):
         @wraps(func)
         def wrapper(self, request, *args, **kwargs):
-            serializer = serializer_class(data=request.data)
+            try:
+                serializer = serializer_class(data=request.data)
+            except Exception as e:
+                lg.log_error(
+                    message=f"JSON parse error: {str(e)}"
+                )
+                return ResponseFormat.response_format(
+                    status_code=40040,
+                    msg="Dữ liệu không hợp lệ. Vui lòng kiểm tra lại!",
+                    data=None
+                )
             if not serializer.is_valid():
-                return res.response_error(message="Dữ liệu không hợp lệ", data=serializer.errors)
+                lg.log_info(
+                    message=f"Serializer invalid: errors={serializer.errors}"
+                )
+                return ResponseFormat.response_format(
+                    status_code = 40040,
+                    msg = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại!",
+                    data = None
+                )
             request.validated_data = serializer.validated_data
+            lg.log_info(
+                message=f"Serializer validated_data: {request.validated_data}"
+            )
             return func(self, request, *args, **kwargs)
         return wrapper
     return decorator
-def log_sql(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            start_index = len(connection.queries)
-            result = func(*args, **kwargs)
-            new_queries = connection.queries[start_index:]
-            for q in new_queries:
-                lg.log_info(
-                    request_id=get_request.get_request_id(),
-                    func_name=f"{func.__module__}.{func.__qualname__}",
-                    message=f"[SQL] {q['sql']} | time: {q['time']}s"
-                )
-            return result
-        except Exception as e: # pylint: disable=broad-exception-caught
-            lg.log_info(
-                request_id=get_request.get_request_id(),
-                func_name=f"{func.__module__}.{func.__qualname__}",
-                message=str(e)
-            )
-            return res.response_error(message="Có lỗi xảy ra, vui lòng thử lại sau!")
-    return wrapper
+
