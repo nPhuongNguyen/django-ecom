@@ -106,3 +106,17 @@ class ResponseFormat:
             data=data,
             status=status_code
         )
+
+    @staticmethod
+    def response_format(status_code = None, msg = "", data = None)->Response:
+        if not data:
+            data = {}
+        body = {
+            "status_code": status_code,
+            "msg": msg,
+            "data": data
+        }
+        return Response(
+            data=body,
+            status=200
+        )
