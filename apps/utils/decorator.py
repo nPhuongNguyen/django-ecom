@@ -1,12 +1,8 @@
 
 from functools import wraps
-import logging
-from django.db import connection
 from rest_framework import serializers
-
 from apps.logging import logging as lg
 from apps.shared.response import ResponseFormat
-from apps.utils import request_func
 
 def catch_exceptions():
     def decorator(func):
