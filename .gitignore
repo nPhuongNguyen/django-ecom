@@ -57,6 +57,13 @@ cover/
 *.mo
 *.pot
 
+#datatables
+datatables/
+
+#UI
+documentation/
+modern-admin/
+
 # Django stuff:
 *.log
 local_settings.py
