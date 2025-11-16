@@ -1,9 +1,47 @@
-{% extends "unfold/layouts/base.html" %}
-{% load static %}
+{% extends 'Admin/base.html' %}
+{% load static i18n %}
+{% block content %}
+<!-- Page Container -->
+<div class="kt-container-fixed space-y-8">
 
-{% block base %}
-<div class="p-4">
-    <h1 class="text-xl font-bold">Danh sách sản phẩm</h1>
-    <!-- Nội dung list sản phẩm -->
+    <!-- Page Header -->
+    <div class="flex flex-wrap items-center justify-between gap-5 pb-6">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-xl font-semibold text-foreground">Product List</h1>
+            <p class="text-sm text-muted-foreground">Manage and customize all products in your store</p>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="pb-6">
+        {% include 'products/statistic.html' %}
+    </div>
+    <!-- Product List -->
+    <div class="grid gap-6">
+        <div class="overflow-x-auto rounded-2xl shadow-sm">
+            <table id="datatables-products" class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
+                data-url-list="{% url 'ProductListAPI' %}"
+                data-url-delete="{% url 'ProductListAPI' %}"
+                data-url-add="{% url 'ProductListAPI' %}"
+                data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}">
+                <thead class="bg-muted text-muted-foreground uppercase text-xs font-semibold">
+                    <tr>
+                        <th class="px-4 py-3">{% trans 'Name' %}</th>
+                        <th class="px-4 py-3">{% trans 'Slug' %}</th>
+                        <th class="px-4 py-3">{% trans 'Description' %}</th>
+                        <th class="px-4 py-3">{% trans 'Price' %}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border"></tbody>
+            </table>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block foot %}
+<script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
+<script src="{% static 'api/api.js' %}" ></script>
+<script src="{% static 'toast/toast_helper.js' %}" ></script>
+<script src="{% static 'products/list.js' %}"></script>
 {% endblock %}

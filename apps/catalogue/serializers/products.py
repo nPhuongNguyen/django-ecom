@@ -5,7 +5,7 @@ from apps.catalogue.models.products import Product
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'price', 'img', 'category']
+        fields = ['id','name', 'slug', 'description', 'price', 'img', 'category']
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:

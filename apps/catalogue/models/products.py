@@ -10,13 +10,13 @@ class Product(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated,
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
     img = models.CharField(max_length=255, blank=True, null=True)
-    category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, blank=True, null=True)
+    category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, default=None)
 
     class Meta:
         db_table = 'catalogue_products'
 
 class ProductVariant(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
-    product = models.ForeignKey(Product, db_column= 'product_id', on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, db_column= 'product_id', on_delete=models.RESTRICT, related_name='variants')
     name = models.CharField(max_length=100, null=True)
     img = models.CharField(max_length=255, null=True, blank=True)
     sku = models.CharField(max_length=100)

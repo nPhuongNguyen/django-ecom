@@ -1,0 +1,65 @@
+{% load static %}
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+
+  <!-- Products Total -->
+  <div
+    class="bg-card border border-border shadow-sm hover:shadow-md transition-all rounded-2xl p-6 flex flex-col gap-4">
+    <div class="flex items-center justify-between px-4">
+      <div>
+        <h3 class="text-2xl font-semibold text-info">850</h3>
+        <p class="text-sm text-muted-foreground">Products Total</p>
+      </div>
+      <i class="ki-outline ki-basket text-info text-3xl"></i>
+    </div>
+    <div class="w-full bg-muted h-2 rounded-full overflow-hidden">
+      <div class="bg-info h-2 rounded-full" style="width:80%"></div>
+    </div>
+  </div>
+
+  <!-- Net Profit -->
+  <div
+    class="bg-card border border-border shadow-sm hover:shadow-md transition-all rounded-2xl p-6 flex flex-col gap-4">
+    <div class="flex items-center justify-between px-4">
+      <div>
+        <h3 class="text-2xl font-semibold text-warning">$748</h3>
+        <p class="text-sm text-muted-foreground">Net Profit</p>
+      </div>
+      <i class="ki-outline ki-basket text-info text-3xl"></i>
+    </div>
+    <div class="w-full bg-muted h-2 rounded-full overflow-hidden">
+      <div class="bg-warning h-2 rounded-full" style="width:65%"></div>
+    </div>
+  </div>
+
+  <!-- New Customers -->
+  <div
+    class="bg-card border border-border shadow-sm hover:shadow-md transition-all rounded-2xl p-6 flex flex-col gap-4">
+    <div class="flex items-center justify-between px-4">
+      <div>
+        <h3 class="text-2xl font-semibold text-success">146</h3>
+        <p class="text-sm text-muted-foreground">New Customers</p>
+      </div>
+      <i class="ki-outline ki-basket text-info text-3xl"></i>
+    </div>
+    <div class="w-full bg-muted h-2 rounded-full overflow-hidden">
+      <div class="bg-success h-2 rounded-full" style="width:75%"></div>
+    </div>
+  </div>
+
+  <!-- Customer Satisfaction -->
+  <div
+    class="bg-card border border-border shadow-sm hover:shadow-md transition-all rounded-2xl p-6 flex flex-col gap-4">
+    <div class="flex items-center justify-between px-4">
+      <div>
+        <h3 class="text-2xl font-semibold text-danger">99.89%</h3>
+        <p class="text-sm text-muted-foreground">Customer Satisfaction</p>
+      </div>
+      <i class="ki-outline ki-heart text-danger text-3xl"></i>
+    </div>
+    <div class="w-full bg-muted h-2 rounded-full overflow-hidden">
+      <div class="bg-danger h-2 rounded-full" style="width:85%"></div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'products/statistic.js' %}"></script>

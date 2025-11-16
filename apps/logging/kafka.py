@@ -44,7 +44,7 @@ class KafkaProducerPool:
 class PushO2mSmartlinkAPILog:
     def __init__(self, message):
         self.message = message
-        self.topic_name = settings.O2M_SMART_LINK_API_TOPIC
+        self.topic_name = settings.KAFKA_TOPIC
         self.producer_pool = KafkaProducerPool()
         self.producer_pool.initialize(settings.LIST_BROKERS)
         self.prefix_url = settings.PREFIX_URL
