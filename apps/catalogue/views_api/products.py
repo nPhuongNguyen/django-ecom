@@ -6,6 +6,8 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     serializer_class_list = ProductListSerializer
     serializer_class_create = ProductCreateSerializer
     serializer_class_detail = ProductDetailSerializer
+    search_fields = ['name']
+    ordering_fields = ['name']
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

@@ -57,12 +57,12 @@ cover/
 *.mo
 *.pot
 
-#datatables
-datatables/
+# #datatables
+# datatables/
 
-#UI
-documentation/
-modern-admin/
+# #UI
+# documentation/
+# modern-admin/
 
 # Django stuff:
 *.log

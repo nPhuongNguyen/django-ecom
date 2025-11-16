@@ -1,52 +1,47 @@
 {% extends 'Admin/base.html' %}
-{% include 'extends/datatables.html' %}
-{% load static %}
+{% load static i18n %}
 {% block content %}
-<div class="row">
-  <div id="recent-transactions" class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Recent Transactions</h4>
-        <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
-        <div class="heading-elements">
-          <ul class="list-inline mb-0">
-            <li><a class="btn btn-sm btn-danger box-shadow-2 round btn-min-width pull-right" href="invoice-summary.html"
-                target="_blank">Invoice Summary</a></li>
-          </ul>
+<!-- Page Container -->
+<div class="kt-container-fixed space-y-8">
+
+    <!-- Page Header -->
+    <div class="flex flex-wrap items-center justify-between gap-5 pb-6">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-xl font-semibold text-foreground">Product List</h1>
+            <p class="text-sm text-muted-foreground">Manage and customize all products in your store</p>
         </div>
-      </div>
-      <div class="card-content">
-        <div class="table-responsive">
-          <table id="datatables-products" class="table table-hover table-xl mb-0">
-            <thead>
-              <tr>
-                <th class="border-top-0">Cột 1</th>
-                <th class="border-top-0">Cột 2</th>
-                <th class="border-top-0">Cột 3</th>
-                <th class="border-top-0">Cột 4</th>
-                <th class="border-top-0">Cột 5</th>
-                <th class="border-top-0">Cột 6</th>
-                <th class="border-top-0">Cột 7</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="text-truncate"></td>
-                <td class="text-truncate"></td>
-                <td class="text-truncate"></td>
-                <td class="text-truncate"></td>
-                <td class="text-truncate"></td>
-                <td class="text-truncate"></td>
-                <td class="text-truncate"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
-  </div>
+
+    <!-- Statistics Section -->
+    <div class="pb-6">
+        {% include 'products/statistic.html' %}
+    </div>
+    <!-- Product List -->
+    <div class="grid gap-6">
+        <div class="overflow-x-auto rounded-2xl shadow-sm">
+            <table id="datatables-products" class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
+                data-url-list="{% url 'ProductListAPI' %}"
+                data-url-delete="{% url 'ProductListAPI' %}"
+                data-url-add="{% url 'ProductListAPI' %}"
+                data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}">
+                <thead class="bg-muted text-muted-foreground uppercase text-xs font-semibold">
+                    <tr>
+                        <th class="px-4 py-3">{% trans 'Name' %}</th>
+                        <th class="px-4 py-3">{% trans 'Slug' %}</th>
+                        <th class="px-4 py-3">{% trans 'Description' %}</th>
+                        <th class="px-4 py-3">{% trans 'Price' %}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border"></tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
+
 {% block foot %}
+<script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
+<script src="{% static 'api/api.js' %}" ></script>
+<script src="{% static 'toast/toast_helper.js' %}" ></script>
 <script src="{% static 'products/list.js' %}"></script>
 {% endblock %}
