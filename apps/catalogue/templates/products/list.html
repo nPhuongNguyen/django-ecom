@@ -8,21 +8,17 @@
     <div class="flex flex-wrap items-center justify-between gap-5 pb-6">
         <div class="flex flex-col gap-1">
             <h1 class="text-xl font-semibold text-foreground">Product List</h1>
-            <p class="text-sm text-muted-foreground">Manage and customize all products in your store</p>
+            <p class="text-sm text-muted-foreground"></p>
         </div>
     </div>
 
-    <!-- Statistics Section -->
-    <div class="pb-6">
-        {% include 'products/statistic.html' %}
-    </div>
     <!-- Product List -->
     <div class="grid gap-6">
         <div class="overflow-x-auto rounded-2xl shadow-sm">
             <table id="datatables-products" class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
                 data-url-list="{% url 'ProductListAPI' %}"
                 data-url-delete="{% url 'ProductListAPI' %}"
-                data-url-add="{% url 'ProductListAPI' %}"
+                data-url-add="{% url 'ProductCreateView' %}"
                 data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}">
                 <thead class="bg-muted text-muted-foreground uppercase text-xs font-semibold">
                     <tr>

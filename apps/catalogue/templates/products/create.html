@@ -1,0 +1,61 @@
+{% extends 'Admin/base.html' %}
+{% load static i18n %}
+{% block content %}
+<!-- Page Container -->
+<div class="kt-container-fixed space-y-8">
+
+    <!-- Page Header -->
+    <div class="flex flex-wrap items-center justify-between gap-5 pb-6">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-xl font-semibold text-foreground">Product Create</h1>
+            <p class="text-sm text-muted-foreground"></p>
+        </div>
+    </div>
+
+    <!-- Product Detail -->
+    <div class="grid gap-6">
+        <div class="overflow-x-auto rounded-2xl shadow-sm">
+            <form class="kt-form">
+                <div class="w-full flex gap-5">
+                    <div class="flex-1 kt-form-item">
+                        <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
+                        <div class="kt-form-control">
+                            <input id="inp_name" type="text" class="kt-input w-full" name="name" />
+                        </div>
+                        <div class="kt-form-description"></div>
+                    </div>
+                    <div class="flex-1 kt-form-item">
+                        <label class="kt-form-label required" for="inp_description">{% trans 'Description' %}:</label>
+                        <div class="kt-form-control">
+                            <textarea id="inp_description" class="kt-input w-full resize-y" name="description"
+                                rows="3"></textarea>
+                        </div>
+                        <div class="kt-form-description"></div>
+                    </div>
+                </div>
+                <div class="w-full flex gap-5">
+                    <div class="flex-1 kt-form-item">
+                        <label class="kt-form-label required" for="inp_price">{% trans 'Price' %}:</label>
+                        <div class="kt-form-control">
+                            <input id="inp_price" type="text" name="price" class="kt-input w-full" />
+                        </div>
+                        <div class="kt-form-description text-sm text-gray-500"></div>
+                    </div>
+                    <div class="flex-1 kt-form-item">
+                        <label class="kt-form-label required" for="inp_price">{% trans 'Is active' %}:</label>
+                        <div class="kt-form-control">
+                            <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_price" name="is_active" checked="" />
+                        </div>
+                        <div class="kt-form-description text-sm text-gray-500"></div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot %}
+<script src="{% static 'products/create.js' %}"></script>
+{% endblock %}
