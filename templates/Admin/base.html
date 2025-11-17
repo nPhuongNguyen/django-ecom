@@ -9,18 +9,18 @@
     <!-- Page -->
     <!-- Main -->
     <div class="flex grow">
-        {% include 'Admin/partials/sidebar.html' %}
+        {% include 'admin/partials/sidebar.html' %}
 
         <!-- Wrapper -->
         <div class="kt-wrapper flex grow flex-col">
-            {% include 'Admin/partials/header.html' %}
+            {% include 'admin/partials/header.html' %}
 
             <!-- Content -->
             <main class="grow pt-5" id="content" role="content">
                 {% block content %}{% endblock %}
             </main>
             <!-- End of Content -->
-            {% include 'Admin/partials/footer.html' %}
+            {% include 'admin/partials/footer.html' %}
         </div>
         <!-- End of Wrapper -->
     </div>

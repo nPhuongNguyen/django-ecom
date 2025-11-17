@@ -1,16 +1,34 @@
 class CallApi {
-    static async request(url, method = "GET", body = null, headers = {}) {
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json", ...headers },
-            body: body ? JSON.stringify(body) : null
-        });
+    static async request(url, method = "GET", body = null, options = {}) {
+        const headers = options.headers || {};
+        let payload = null;
 
-        if (!res.ok) {
-            const msg = await res.text().catch(() => "Request failed");
-            throw new Error(msg);
+        if (body instanceof FormData) {
+            payload = body; 
+        } else if (body) {
+            payload = JSON.stringify(body);
+            headers["Content-Type"] = "application/json";
         }
 
-        return await res.json().catch(() => ({}));
+        try {
+            const res = await fetch(url, { method, headers, body: payload });
+            const contentType = res.headers.get("Content-Type") || "";
+
+            let data;
+            if (contentType.includes("application/json")) {
+                data = await res.json();
+            } else {
+                data = await res.text();
+            }
+
+            if (!res.ok) {
+                return { status: "error", statusCode: res.status, data };
+            }
+
+            return { status: "success", data };
+
+        } catch (err) {
+            return { status: "catch", error: err };
+        }
     }
 }

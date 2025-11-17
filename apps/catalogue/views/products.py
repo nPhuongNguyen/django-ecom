@@ -9,6 +9,7 @@ MASK_VIEW_CONFIG ={
     "accordion": "products",
     "space_code": "product-list"
 }
+
 class ProductListView(View):
     @mask_view(**MASK_VIEW_CONFIG)
     def get(self, request, *args, context, **kwargs):
@@ -26,3 +27,8 @@ class ProductDetailView(View):
             for variant in product_info.variants.all():
                 print(variant.name, variant.price, variant.sku)
         return render(request, 'products/detail.html', context=context)
+    
+class ProductCreateView(View):
+    @mask_view(**MASK_VIEW_CONFIG)
+    def get(self, request, *args, context, **kwargs):
+        return render(request, 'products/create.html', context=context)

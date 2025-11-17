@@ -10,7 +10,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'price', 'price', 'img', 'category']
+        fields = ['name', 'slug', 'description', 'is_active', 'price', 'img', 'category']
 
     def validate_name(self, value):
         if Product.objects.filter(name=value).exists():
