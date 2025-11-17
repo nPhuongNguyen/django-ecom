@@ -16,7 +16,7 @@ class SweetAlertHelper {
         cancelButtonText = 'Cancel',
         url = null,
         method = 'POST',
-        redirectUrl = null
+        data = null,
     } = {}) {
         const result = await Swal.fire({
             title,
@@ -32,9 +32,8 @@ class SweetAlertHelper {
 
         if (result.isConfirmed && url) {
             try {
-                await CallApi.request(url, method);
+                await CallApi.request(url, method, data);
                 ToastHelper.success();
-                if (redirectUrl) window.location.href = redirectUrl;
             } catch (err) {
                 Swal.fire({
                     title: 'Error!',
@@ -51,7 +50,6 @@ class SweetAlertHelper {
         confirmButtonText = 'Delete',
         cancelButtonText = 'Cancel',
         url = null,
-        table = null
     } = {}) {
         const result = await Swal.fire({
             title,
@@ -69,7 +67,6 @@ class SweetAlertHelper {
             try {
                 await CallApi.request(url, 'DELETE');
                 ToastHelper.success();
-                if (table) table.DataTable().ajax.reload();
             } catch (err) {
                 Swal.fire({
                     title: 'Error!',

@@ -1,0 +1,5 @@
+.error {
+    color: var(--destructive);
+    font-size: 0.9rem;
+    border-color: var(--destructive);
+}
