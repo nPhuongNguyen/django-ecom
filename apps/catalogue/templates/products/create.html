@@ -44,12 +44,18 @@
                     <div class="flex-1 kt-form-item">
                         <label class="kt-form-label required" for="inp_price">{% trans 'Is active' %}:</label>
                         <div class="kt-form-control">
-                            <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_price" name="is_active" checked="" />
+                            <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_price" name="is_active"
+                                checked="" />
                         </div>
                         <div class="kt-form-description text-sm text-gray-500"></div>
                     </div>
                 </div>
-
+                <div class="w-full">
+                    <div class="flex-1 kt-form-item">
+                        <label class="kt-form-label required" for="inp_image">{% trans 'Image' %}:</label>
+                        <input type="file" id="inp_image">
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -57,5 +63,6 @@
 {% endblock %}
 
 {% block foot %}
+<script src="{% static 'filepond/filepond-helper.js' %}"></script>
 <script src="{% static 'products/create.js' %}"></script>
 {% endblock %}
