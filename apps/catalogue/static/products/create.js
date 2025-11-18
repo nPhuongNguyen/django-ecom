@@ -45,7 +45,11 @@ $(document).ready(function () {
                     return;
                 }
                 else if (result && result.status == 'success'){
-                    console.log(result.data);
+                    FormValidateLoader.savedNext(event, {
+                        url_save: frm$.data('url-list'),
+                        url_add_another: window.location.pathname,
+                        url_continue_editing: frm$.data('url-detail').replaceAll('__slug__', result.data.results.slug)
+                    });
                     return;
                 }
             }

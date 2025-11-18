@@ -125,13 +125,6 @@ class FormValidateLoader {
     }
 
     static savedNext(event_of_submit_handler, opts, timeout = 200) {
-        if ($.fn.getParam('is_popup') === '1') {
-            setTimeout(
-                () => window.close(),
-                200
-            )
-        }
-
         const {
             url_save,
             url_add_another,
@@ -147,8 +140,8 @@ class FormValidateLoader {
         let funcNext = () => window.location.reload();
         if (submitter) {
             const ele$ = $(submitter);
-            const dataNext = ele$.data('next');
-            if (dataNext === null || dataNext === 'add') {
+            const dataNext = ele$.data('action');
+            if (dataNext === null || dataNext === 'save') {
                 funcNext = () => {
                     window.location.href = url_save;
                 }
