@@ -1,34 +1,53 @@
 class CallApi {
-    static async request(url, method = "GET", body = null, options = {}) {
-        const headers = options.headers || {};
-        let payload = null;
-
-        if (body instanceof FormData) {
-            payload = body; 
-        } else if (body) {
-            payload = JSON.stringify(body);
-            headers["Content-Type"] = "application/json";
+    static parseApiErrors(apiErrors) {
+        const errors = {};
+        if (typeof apiErrors === 'object') {
+            for (const field in apiErrors) {
+                if (apiErrors.hasOwnProperty(field)) {
+                    errors[field] = Array.isArray(apiErrors[field])
+                        ? apiErrors[field].join(", ")
+                        : apiErrors[field];
+                }
+            }
         }
+        return errors;
+    }
 
+    static async request(url, method = "GET", data = null, headers = {}) {
         try {
-            const res = await fetch(url, { method, headers, body: payload });
-            const contentType = res.headers.get("Content-Type") || "";
+            let body = null;
+            if (data instanceof FormData) {
+                body = data;
+                for (let [key, value] of data.entries()) {
+                    console.log(key, value);
+                }
+            } else if (data && typeof data === 'object') {
+                body = JSON.stringify(data);
+                headers["Content-Type"] = "application/json";
+                console.log('body',body);
+            }   
+            const res = await fetch(url, { method, headers, body });
+            let resData = null;
 
-            let data;
+            const contentType = res.headers.get("Content-Type") || "";
             if (contentType.includes("application/json")) {
-                data = await res.json();
+                try {
+                    resData = await res.json();
+                } catch (e) {
+                    resData = null;
+                }
             } else {
-                data = await res.text();
+                resData = await res.text();
             }
 
             if (!res.ok) {
-                return { status: "error", statusCode: res.status, data };
+                return { status: "error", statusCode: res.status, data: resData };
             }
 
-            return { status: "success", data };
-
+            return { status: "success", statusCode: res.status, data: resData };
         } catch (err) {
             return { status: "catch", error: err };
         }
     }
+
 }

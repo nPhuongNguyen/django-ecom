@@ -4,7 +4,7 @@ class FilePondHelper {
             FilePondPluginImagePreview
         );
     }
-    static init(selector, onFileGet) {
+    static init(selector) {
         const input = document.querySelector(selector);
         if (!input) return null;
 
@@ -12,13 +12,7 @@ class FilePondHelper {
             allowMultiple: false,
             allowImagePreview: true,
             labelIdle: 'Kéo thả ảnh vào đây hoặc <span class="filepond--label-action">Chọn ảnh</span>',
-            credits: false,
-            onaddfile: (err, fileItem) => {
-                if (!err) {
-                    const file = fileItem.file;
-                    onFileGet(file);
-                }
-            }
+            credits: false
         });
 
         return pond;

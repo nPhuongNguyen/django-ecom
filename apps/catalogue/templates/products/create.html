@@ -18,6 +18,7 @@
             <form class="kt-form" id="frm_create_product"
                 data-url-add="{% url 'ProductCreateView' %}"
                 data-url="{% url 'ProductCreateAPI' %}"
+                enctype="multipart/form-data"
             >
                 <div class="w-full flex gap-5">
                     <div class="flex-1 kt-form-item">
@@ -76,5 +77,6 @@
 <script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
 <script src="{% static 'toast/toast_helper.js' %}" ></script>
 <script src="{% static 'api/api.js' %}"></script>
+<script src="{% static 'spinner/spin.js' %}" ></script>
 <script src="{% static 'products/create.js' %}"></script>
 {% endblock %}
