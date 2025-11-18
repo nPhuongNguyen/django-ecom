@@ -20,7 +20,7 @@ class ProductDetailView(View):
     def get(self, request, slug, *args, context, **kwargs):
         if slug:
             product_info = (Product.objects.select_related('category')
-                .prefetch_related('variants').get(slug=slug)
+                .prefetch_related('variants').filter(slug=slug)
             )
             if product_info.category:
                 print(product_info.category.name)

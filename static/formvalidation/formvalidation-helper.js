@@ -105,8 +105,13 @@ class FormValidateLoader {
         return this.frm$.validate({
             ...options,
             errorPlacement: function (error, element) {
-                error.appendTo(element.parent());
+                if (element.attr("name") === "image") {
+                    error.appendTo(element.closest('.kt-form-item').find('.kt-form-description'));
+                } else {
+                    error.appendTo(element.parent());
+                }
             },
+
             submitHandler: (form, event) => {
                 const btn_submit$ = $(form).find('button[type=submit], button:not([type])').not(':disabled');
                 btn_submit$.prop('disabled', true);
