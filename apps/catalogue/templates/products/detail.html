@@ -1,5 +1,13 @@
 {% extends 'admin/base.html' %}
 {% load static i18n %}
+{% block head %}
+    {% include 'import/jquery_import.html' %}
+    {% include 'import/jquery_validation.html' %}
+    {% include 'import/filepond_import.html' %}
+    {% include 'import/toastr_import.html' %}
+    {% include 'import/spin_import.html' %}
+    {% include 'import/sweetalert2_import.html' %}
+{% endblock %}
 {% block content %}
 <!-- Page Container -->
 <div class="kt-container-fixed space-y-8">
@@ -46,7 +54,7 @@
                         </div>
                     </div>
                     <div class="flex-1 kt-form-item">
-                        <label class="kt-form-label required" for="inp_is_active">{% trans 'Is active' %}:</label>
+                        <label class="kt-form-label required" for="inp_is_active">{% trans 'Status' %}:</label>
                         <div class="kt-form-control">
                             <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active" name="is_active" 
                             {% if product and product.is_active %}checked{% endif %} />
@@ -74,11 +82,8 @@
 {% endblock %}
 
 {% block foot %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
-<script src="{% static 'formvalidation/formvalidation-helper.js' %}"></script>
-<script src="{% static 'filepond/filepond-helper.js' %}"></script>
+<script src="{% static 'formvalidation/formvalidation_helper.js' %}"></script>
+<script src="{% static 'filepond/filepond_helper.js' %}"></script>
 <script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
 <script src="{% static 'toast/toast_helper.js' %}"></script>
 <script src="{% static 'api/api.js' %}"></script>

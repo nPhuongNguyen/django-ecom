@@ -65,7 +65,10 @@ class DataTableLoader {
             t
             <"dt-footer flex flex-wrap items-center justify-between gap-2 mt-2"
                 <"l-portion"l>
-                <"p-portion flex items-center gap-3"<"info-container"i>p>
+                <"p-portion flex flex-wrap items-center justify-between gap-2 mt-2"
+                <"info-container"i>
+                    p
+                >
             >
         `;
     }

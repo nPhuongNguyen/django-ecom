@@ -3,6 +3,9 @@
 {% block head %}
     {% include 'import/jquery_import.html' %}
     {% include 'import/datatable_import.html' %}
+    {% include 'import/sweetalert2_import.html' %}
+    {% include 'import/toastr_import.html' %}
+    {% include 'import/spin_import.html' %}
 {% endblock %}
 
 {% block content %}
@@ -43,5 +46,9 @@
 
 {% block foot %}
 <script src="{% static 'datatables/datatable_init.js' %}" ></script>
+<script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
+<script src="{% static 'toast/toast_helper.js' %}"></script>
+<script src="{% static 'api/api.js' %}"></script>
+<script src="{% static 'spinner/spin.js' %}"></script>
 <script src="{% static 'products/list.js' %}"></script>
 {% endblock %}
