@@ -92,26 +92,27 @@ class DataTableLoader {
 
     static lengthMenu() { return [10, 25, 50, 100, 200]; }
     static pageLength() { return 10; }
-
     // --- RENDER SAFE TEXT ---
-    static columns_render_text(columns) {
-        return columns.map(item => ({
-            ...item,
-            render(data, type, row, meta) {
-                const original = item.render || ((v) => v);
-                const val = original(data, type, row, meta);
-                
-                if (type !== 'display') return val;
-
-                // Nếu item.allowHtml === true → render HTML, không escape
-                if (item.allowHtml) return val ?? '';
-
-                // Ngược lại escape text bình thường
-                const div = document.createElement('div');
-                div.textContent = val ?? '';
-                return div.innerHTML;
+    static columns_render_text(columns){
+        return columns.map(item => {
+            return {
+                ...item,
+                render: (data, type, row, meta) => {
+                    const originalRender = item.render || function(data) { return data; };
+                    if (type !== 'display') return data;
+                    const cellData = originalRender(data, type, row, meta);
+                    if (
+                        typeof cellData === 'object' && cellData instanceof Element
+                    ) return $.fn.safeHtml(cellData.toString());
+                    if (
+                        typeof cellData === 'string' && (
+                            cellData.indexOf('<') || cellData.indexOf("&lt;")
+                        )
+                    ) return $.fn.safeHtml(cellData);
+                    $.fn.escapeHtml(cellData);
+                }
             }
-        }));
+        })
     }
 
     // --- SELECT ROW ---
@@ -201,12 +202,44 @@ class DataTableLoader {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data);
     }
 
-    static column_price(name = 'price', orderable = false) {
+    static col_is_price(opts) {
+        const {
+            visible,
+            orderable,
+            ...restProps
+        } = {
+            visible: true,
+            orderable: false,
+            ...opts,
+        }
         return {
-            data: name,
-            name: name,
-            orderable: orderable,
+            ...restProps,
+            data: 'price',
+            name: 'price',
+            orderable: !!orderable,
+            visible: !!visible,
             render: DataTableLoader.render_price
         };
+    }
+    static col_is_active(opts){
+        const {
+            visible,
+            orderable,
+            ...restProps
+        } = {
+            visible: true,
+            orderable: false,
+            ...opts,
+        }
+        return {
+            ...restProps,
+            data: 'is_active',
+            name: 'is_active',
+            orderable: !!orderable,
+            visible: !!visible,
+            render: (data, type, row) => {
+                return `<input class="kt-switch" type="checkbox" ${data ? 'checked': ''} disabled />`;
+            }
+        }
     }
 }

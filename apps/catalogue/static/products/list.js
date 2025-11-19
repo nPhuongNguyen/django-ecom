@@ -32,7 +32,8 @@ $(document).ready(function () {
                     return data || '-';
                 }
             },
-            DataTableLoader.column_price(),
+            DataTableLoader.col_is_active(),
+            DataTableLoader.col_is_price(),  
         ],
         selectRow: 'multi',
         selectRowRender: (select_info$) => {

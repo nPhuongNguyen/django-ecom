@@ -49,4 +49,4 @@ class ProductVarianAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, Ba
 
     class Meta:
         db_table = 'catalogue_product_variant_attribute'
-        unique_together = ('product_variant', 'm2m_product_attribute_value')
+        unique_together = ('product_variant_id', 'm2m_product_attribute_value_id')

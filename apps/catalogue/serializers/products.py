@@ -6,7 +6,7 @@ from apps.utils.minio import S3Minio as S3
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id','name', 'slug', 'description', 'price', 'img', 'category']
+        fields = ['id','name', 'slug', 'description', 'price', 'is_active', 'img', 'category']
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     image = serializers.FileField(default = None)
