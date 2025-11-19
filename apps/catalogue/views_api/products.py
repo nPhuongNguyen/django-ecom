@@ -20,10 +20,11 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     
 class ProductDetailAPI(UpdateMixin, DestroyMixin):
     queryset = Product.objects.all()
+    serializer_class_detail = ProductDetailSerializer
     serializer_class_update = ProductUpdateSerializer
 
     def put(self, request, *args, **kwargs):
-        return self.update(request, **args, **kwargs)
+        return self.update(request, *args, **kwargs)
     
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)

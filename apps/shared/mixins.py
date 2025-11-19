@@ -137,7 +137,7 @@ class UpdateMixin(BaseMixin):
         model_cls = getattr(self.queryset, 'model', None)
         if model_cls:
             if issubclass(model_cls, BaseModelUpdated):
-                context['updated_by_id'] = self.request.user.pk
+                context['updated_by_id'] = self.request.user.pk if self.request.user else None
         return context
 
     def update(self, request, *args, partial: bool = False, **kwargs):
@@ -148,8 +148,8 @@ class UpdateMixin(BaseMixin):
                 context=self.get_serializer_context(),
             )
             serializer.is_valid(raise_exception=True)
-            serializer.save(**self.update_save_context())
-            return ResponseFormat.updated()
+            instance_sr = serializer.save(**self.update_save_context())
+            return ResponseFormat.updated(data=self.get_serializer_class_detail(instance=instance_sr).data)
         return ResponseFormat.not_found()
 
 

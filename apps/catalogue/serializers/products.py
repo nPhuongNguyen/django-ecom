@@ -37,17 +37,19 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'price', 'price', 'img', 'category']
+        fields = ['id', 'name', 'slug', 'description', 'price', 'price', 'img', 'category']
         read_only_fields = ['slug']
         
 class ProductUpdateSerializer(serializers.ModelSerializer):
+    image = serializers.FileField(default = None)
+    image_check = serializers.IntegerField()
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'price', 'price', 'img', 'category']
+        fields = ['id', 'name', 'slug', 'description', 'price', 'price', 'image', 'image_check', 'category']
         read_only_fields = ['slug']
 
     def validate_name(self, value):
-        if Product.objects.filter(name=value).exclude(id = self.initial.id).exists():
+        if Product.objects.filter(name=value).exclude(id = self.instance.id).exists():
             raise serializers.ValidationError(_("Name already exists."))
         return value
            
@@ -55,4 +57,16 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         new_name = validated_data.get('name', instance.name)
         if new_name != instance.name:
             instance.slug = slugify(new_name)
+
+        image_check = validated_data.pop('image_check')
+        image = validated_data.pop('image')
+        if image_check == 1:
+            validated_data['img'] = None
+            if(image):
+                img_url = S3.minio_upload_file(file=image, file_name=image.name)
+                if img_url is None:
+                    raise serializers.ValidationError({
+                        "image": _("Upload error")
+                    })
+                validated_data['img'] = img_url
         return super().update(instance, validated_data)

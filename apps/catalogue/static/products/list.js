@@ -12,7 +12,7 @@ $(document).ready(function () {
                 allowHtml: true,
                 render(data, type, row) {
                     const url = tbl$.data('url-detail').replaceAll('__slug__', row['slug'] || '');
-                    return `<a class="kt-link kt-link-underline" href="${url}" onclick="event.stopPropagation();">${data || '-'}</a>`;
+                    return `<a class="kt-link kt-link-underline" href="${url}">${data || '-'}</a>`;
                 }
             },
             { 
