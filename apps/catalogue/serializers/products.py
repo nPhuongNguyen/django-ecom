@@ -2,15 +2,17 @@ from rest_framework import serializers
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from apps.catalogue.models.products import Product
+from apps.utils.minio import S3Minio as S3
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id','name', 'slug', 'description', 'price', 'img', 'category']
+        fields = ['id','name', 'slug', 'description', 'price', 'is_active', 'img', 'category']
 
 class ProductCreateSerializer(serializers.ModelSerializer):
+    image = serializers.FileField(default = None)
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'is_active', 'price', 'img', 'category']
+        fields = ['name', 'slug', 'description', 'is_active', 'image', 'price', 'category']
 
     def validate_name(self, value):
         if Product.objects.filter(name=value).exists():
@@ -20,6 +22,17 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         if not validated_data.get('slug'):
             validated_data['slug'] = slugify(validated_data.get('name', ''))
+        image = validated_data.pop('image', None)
+        if image == None:
+            validated_data['img'] = None
+        else:
+            img_url = S3.minio_upload_file(file=image, file_name=image.name)
+            if img_url is None:
+                raise serializers.ValidationError({
+                    "image": _("Upload error")
+                })
+            validated_data['img'] = img_url
+            
         return super().create(validated_data)
 class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:

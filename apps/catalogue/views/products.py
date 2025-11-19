@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -22,6 +23,7 @@ class ProductDetailView(View):
             product_info = (Product.objects.select_related('category')
                 .prefetch_related('variants').get(slug=slug)
             )
+            context['product'] = product_info
             if product_info.category:
                 print(product_info.category.name)
             for variant in product_info.variants.all():

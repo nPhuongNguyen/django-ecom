@@ -1,5 +1,13 @@
 {% extends 'admin/base.html' %}
 {% load static i18n %}
+{% block head %}
+    {% include 'import/jquery_import.html' %}
+    {% include 'import/datatable_import.html' %}
+    {% include 'import/sweetalert2_import.html' %}
+    {% include 'import/toastr_import.html' %}
+    {% include 'import/spin_import.html' %}
+{% endblock %}
+
 {% block content %}
 <!-- Page Container -->
 <div class="kt-container-fixed space-y-8">
@@ -25,6 +33,7 @@
                         <th class="px-4 py-3">{% trans 'Name' %}</th>
                         <th class="px-4 py-3">{% trans 'Slug' %}</th>
                         <th class="px-4 py-3">{% trans 'Description' %}</th>
+                        <th class="px-4 py-3" >{% trans 'Status' %}</th>
                         <th class="px-4 py-3">{% trans 'Price' %}</th>
                     </tr>
                 </thead>
@@ -36,8 +45,10 @@
 {% endblock %}
 
 {% block foot %}
+<script src="{% static 'datatables/datatable_init.js' %}" ></script>
 <script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
-<script src="{% static 'api/api.js' %}" ></script>
-<script src="{% static 'toast/toast_helper.js' %}" ></script>
+<script src="{% static 'toast/toast_helper.js' %}"></script>
+<script src="{% static 'api/api.js' %}"></script>
+<script src="{% static 'spinner/spin.js' %}"></script>
 <script src="{% static 'products/list.js' %}"></script>
 {% endblock %}

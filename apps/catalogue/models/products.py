@@ -10,7 +10,7 @@ class Product(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated,
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
     img = models.CharField(max_length=255, blank=True, null=True)
-    category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, default=None)
+    category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, default=None, blank=True, null=True)
 
     class Meta:
         db_table = 'catalogue_products'
@@ -49,4 +49,4 @@ class ProductVarianAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, Ba
 
     class Meta:
         db_table = 'catalogue_product_variant_attribute'
-        unique_together = ('product_variant', 'm2m_product_attribute_value')
+        unique_together = ('product_variant_id', 'm2m_product_attribute_value_id')

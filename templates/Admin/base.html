@@ -14,7 +14,7 @@
         <!-- Wrapper -->
         <div class="kt-wrapper flex grow flex-col">
             {% include 'admin/partials/header.html' %}
-
+            {% block head %}{% endblock %}
             <!-- Content -->
             <main class="grow pt-5" id="content" role="content">
                 {% block content %}{% endblock %}

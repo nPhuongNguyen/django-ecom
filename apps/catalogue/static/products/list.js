@@ -32,19 +32,31 @@ $(document).ready(function () {
                     return data || '-';
                 }
             },
-            DataTableLoader.column_price(),
+            DataTableLoader.col_is_active(),
+            DataTableLoader.col_is_price(),  
         ],
         selectRow: 'multi',
         selectRowRender: (select_info$) => {
             const btnDestroy$ = $(`<button class="kt-btn kt-btn-destructive">Delete selected</button>`);
             select_info$.append(btnDestroy$);
-            btnDestroy$.on('click', function (){
+            btnDestroy$.on('click', async function (){
                 const id_selecteds = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
                 if (id_selecteds.length === 0) return;
-                SweetAlertHelper.confirmDelete({
+                const result = await SweetAlertHelper.confirmDelete({
                     url: tbl$.data('url-delete') + '?' + $.param({'ids': id_selecteds}),
                     table: tbl$,
                 })
+                if (result && result.status === 'error') {
+                    console.log(result.data);
+                    if (typeof result.data === 'object') {
+                        validator.showErrors(result.data)
+                    }
+                    return;
+                }
+                else if (result && result.status == 'success'){
+                    tbl$.DataTable().ajax.reload(null, false);
+                    return;
+                }
             })
         },
         
