@@ -2,25 +2,29 @@ $(document).ready(function () {
     const frm$ = $('#frm_create_product')
     FilePondHelper.registerPlugins();
 
-    const pond = FilePondHelper.init("#inp_image");
     const hidden$ = frm$.find('input[name="image"]');
-    pond.on('addfile', () => {
-        hidden$.val('has-file'); 
-        hidden$.valid();   
-        validator.showErrors({image: ''});  
+    let pond; 
+    
+    pond = FilePondHelper.init("#inp_image", null, (pondInstance) => {
+        pond = pondInstance;  
+        
+        pond.on('addfile', () => {
+            hidden$.val('has-file'); 
+            hidden$.valid();   
+            if (validator) validator.showErrors({image: ''});  
+        });
+        
+        pond.on('removefile', () => {
+            hidden$.val('');
+            hidden$.valid();
+            if (validator) validator.showErrors({image: ''});
+        });
     });
-    pond.on('removefile', () => {
-        hidden$.val('');
-        hidden$.valid();
-        validator.showErrors({image: ''});
-    });
-
     const validator = FormValidateLoader.init(
         frm$,
         {
             submitHandler: async function (form, event) {
                 event.preventDefault();
-                // const data = FormValidateLoader.formData(frm$);
                 const data = new FormData(frm$[0]);
                 data.delete('filepond');
                 data.delete('image');
@@ -56,5 +60,3 @@ $(document).ready(function () {
         }
     );
 });
-
-

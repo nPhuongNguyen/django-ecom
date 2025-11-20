@@ -1,5 +1,10 @@
 $(document).ready(function () {
    const frm$ = $('#frm_create_product')
+   $(document).ready(function() {
+      Select2Helper.init('#ai_dropdown', {
+         url: frm$.data('url-list-dropdown-category')
+      });
+   });
    FilePondHelper.registerPlugins();
 
    const img_url = $('input[name="image"]').val();
@@ -19,6 +24,7 @@ $(document).ready(function () {
          hidden$.val('has-file'); 
          hidden$.valid();   
          img_check$.val("1"); 
+         if (validator) validator.showErrors({image: ''});
          console.log("img_check",img_check$.val());
       });
       
@@ -26,8 +32,13 @@ $(document).ready(function () {
          hidden$.val('');
          hidden$.valid();
          img_check$.val("1");
+         if (validator) validator.showErrors({image: ''});
          console.log("img_check",img_check$.val());
       });
+   });
+
+   $('#ai_dropdown').on('change', function() {
+      $('#category_hidden').val($(this).val());
    });
 
    const validator = FormValidateLoader.init(

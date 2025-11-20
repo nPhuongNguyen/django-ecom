@@ -8,5 +8,9 @@ urlpatterns = [
     path('products-create', views_api.ProductListAPI.as_view(), name='ProductCreateAPI'),
 
     #product variant
-    path('product_variants',views_api.ProductVariantListAPI.as_view(),name='ProductVariantListAPI')
+    path('product_variants',views_api.ProductVariantListAPI.as_view(),name='ProductVariantListAPI'),
+
+
+    #category
+    path('category-list', views_api.CategoryListAPI.as_view(), name='CategoryListAPI')
 ]

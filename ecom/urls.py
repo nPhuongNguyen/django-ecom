@@ -22,12 +22,12 @@ from django.urls import include, path
 #API
 urlpatterns = [
     path('api/auths/', include('apps.auths.urls_api')),
-    path('api/products/', include('apps.catalogue.urls_api')),
+    path('api/catalogue/', include('apps.catalogue.urls_api')),
     #vnpay
     path('vnpay/', include('vnpay.api_urls')),
 ]
 
 #View
 urlpatterns +=[
-    path('products/',include('apps.catalogue.urls'))
+    path('catalogue/',include('apps.catalogue.urls'))
 ]
