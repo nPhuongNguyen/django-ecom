@@ -1,5 +1,5 @@
 class SweetAlertHelper {
-    static confirmSave({
+    static async confirmSave({
         title = gettext('Do you want to save changes?'),
         text = '',
         icon = 'question',
@@ -7,9 +7,11 @@ class SweetAlertHelper {
         cancelButtonText = gettext('Cancel'),
         url = null,
         method = 'POST',
-        data = null,
-    } = {}) {
-        const result = Swal.fire({
+        params = {},
+        data = {},
+        timeout = 0
+    }) {
+        const result = await Swal.fire({
             title,
             text,
             icon,
@@ -20,25 +22,23 @@ class SweetAlertHelper {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#6c757d'
         });
-        if (!result.isConfirmed) {
-            return null; 
-        }
+        if (!result.isConfirmed) return null; 
         if (url) {
             try {
                 MyLoading.show();
-                const minTime = 500;
-                const [result_api] = Promise.all([
-                    CallApi.request(url, method, data, {}),
-                    new Promise(r => setTimeout(r, minTime))
-                ]);
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                console.log('Sending data to URL:', url, 'with data:', data);
+                const res = await CallApi.request(
+                    {
+                        url, 
+                        method, 
+                        params, 
+                        data, 
+                        timeout
+                    });
+                return res;
+            } finally {
                 MyLoading.close();
-                return result_api;
-            } catch (err) {
-                console.log({
-                    'err': err
-                })
-                ToastHelper.error();
-                return null;
             }
         }
         return null;
@@ -54,7 +54,7 @@ class SweetAlertHelper {
         params = {},
         data = {},
         timeout = 0
-    } = {}) {
+    }) {
         const result = await Swal.fire({
             title,
             text,
@@ -73,13 +73,15 @@ class SweetAlertHelper {
             MyLoading.show();
             try {
                 await new Promise(resolve => setTimeout(resolve, 1500));
-                const res = await CallApi.request(url, method, params, data, timeout);
-                if (res) {
-                    ToastHelper.success();
-                } else {
-                    ToastHelper.error();
-                } 
-                return res || null;
+                const res = await CallApi.request(
+                    {
+                        url, 
+                        method, 
+                        params, 
+                        data, 
+                        timeout
+                    });
+                return res;
             } finally {
                 MyLoading.close();
             }

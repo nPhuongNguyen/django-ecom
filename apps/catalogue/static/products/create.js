@@ -1,9 +1,7 @@
 $(document).ready(function () {
     const frm$ = $('#frm_create_product')
-    const img = "http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-11-27 102114.png;http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-12-03 104707.png";
-    const uppyInstance  = UppyUploader.init('#image_product', img, {
-        endpoint: '/upload/logo',
-        fieldName: 'logo',
+    // const img = "http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-11-27 102114.png;http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-12-03 104707.png";
+    const uppyInstance  = UppyUploader.init('#image_product', null, {
         uppyOptions: {
             restrictions: {
                 allowedFileTypes: ['.jpg', '.jpeg', '.png'],
@@ -37,16 +35,30 @@ $(document).ready(function () {
                             formdata['image'] = upload_result.data.list_img
                         }
                     }else{
-                        formdata['image'] = "hihihi";
+                        formdata['image'] = "";
                     }
                 }
-                console.log('Final form data to submit:', formdata);
-                return;
                 const result = await SweetAlertHelper.confirmSave({ 
                     url: frm$.data('url'), 
                     data: formdata 
                 });
-
+                if (result) {
+                    if (result.errors == null) {
+                        ToastHelper.success();
+                        FormValidateLoader.savedNext(event, {
+                            url_save: frm$.data('url-list'),
+                            url_add_another: frm$.data('url-add'),
+                            url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
+                        });
+                    }
+                    else {
+                        ToastHelper.error();
+                        validator.showErrors(result.errors);
+                    }
+                }
+                else {
+                    console.error('Errors in product creation:', result.errors);
+                }
             }
         }
     );

@@ -19,6 +19,11 @@ class ResponseCodes:
     SYSTEM_ERROR = ResponseCode(500, "Lỗi hệ thống, vui lòng thử lại sau.")
     SYSTEM_BUSY = ResponseCode(800, "Hệ thống đang bận, vui lòng thử lại sau.")
     INVALID_INPUT = ResponseCode(400, "Dữ liệu không hợp lệ.")
+
+    TOKEN_REQUIRED = ResponseCode(1000, "Token không tồn tại")
+    TOKEN_EXPIRED = ResponseCode(1001, "Token hết hạn")
+    TOKEN_INVALID_TOKEN = ResponseCode(1002, "Token không hợp lệ")
+    TOKEN_APP_ERROR = ResponseCode(10403, "unauthorized")
     
 
 class ResponseBuilder:

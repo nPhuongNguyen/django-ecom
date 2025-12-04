@@ -142,6 +142,34 @@ class UpdateMixin(BaseMixin):
             code=ResponseCodes.SUCCESS,
             data=serializer_detail(instance=instance_sr).data
         )
+    
+    def change_status(self, request, *args, **kwargs):
+        serializer_update = self.get_serializer_class_update()
+        serializer_detail = self.get_serializer_class_detail()
+
+        instance = self.check_info()
+        if not instance:
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT
+            )
+        if instance.is_active is True:
+            instance.is_active = False
+        else:
+            instance.is_active = True
+            
+        serializer = serializer_update(
+            instance=instance, data=self.get_update_data(), partial=True
+        )
+        if not serializer.is_valid():
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT,
+                errors=serializer.errors
+            )
+        instance_sr = serializer.save()
+        return ResponseBuilder.build(
+            code=ResponseCodes.SUCCESS,
+            data=serializer_detail(instance=instance_sr).data
+        )
 
 
 class DestroyMixin(BaseMixin):

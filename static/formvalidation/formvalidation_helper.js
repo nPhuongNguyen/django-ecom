@@ -105,11 +105,7 @@ class FormValidateLoader {
         return this.frm$.validate({
             ...options,
             errorPlacement: function (error, element) {
-                if (element.attr("name") === "image") {
-                    error.appendTo(element.closest('.kt-form-item').find('.kt-form-description'));
-                } else {
-                    error.appendTo(element.parent());
-                }
+                error.appendTo(element.parent());
             },
 
             submitHandler: (form, event) => {
@@ -137,6 +133,7 @@ class FormValidateLoader {
         }
 
         const submitter = event_of_submit_handler.originalEvent.submitter;
+        console.log('submitter:', submitter);
         let funcNext = () => window.location.reload();
         if (submitter) {
             const ele$ = $(submitter);
