@@ -32,8 +32,8 @@ $(document).ready(function () {
                     return data || '-';
                 }
             },
-            DataTableLoader.col_is_active(),
             DataTableLoader.col_is_price(),  
+            DataTableLoader.col_is_active(),
         ],
         selectRow: 'multi',
         selectRowRender: (select_info$) => {
@@ -54,8 +54,6 @@ $(document).ready(function () {
                 }
             });
         },
-
-        
     });
     
 });

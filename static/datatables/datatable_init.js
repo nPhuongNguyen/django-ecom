@@ -58,6 +58,20 @@ class DataTableLoader {
         };
     }
 
+    static attachToggleActiveListener(table$, onToggle) {
+        table$.on("click", ".toggle-active", function (e) {
+            e.stopPropagation(); // chặn selectRow
+
+            const id = $(this).data("id");
+            const isActive = $(this).is(":checked");
+
+            if (typeof onToggle === "function") {
+                onToggle(id, isActive, this);
+            }
+        });
+    }
+
+
     // --- DOM / LAYOUT ---
     static dom() {
         return `
@@ -149,6 +163,7 @@ class DataTableLoader {
             if (func_select_render && typeof func_select_render === 'function') {
                 func_select_render(select_info$);
             }
+           
             const addUrl = table$.data('url-add');
             if (addUrl) {
                 const addBtn$ = $('<button class="kt-btn kt-btn-primary ml-2">Thêm mới</button>');
@@ -243,9 +258,17 @@ class DataTableLoader {
             name: 'is_active',
             orderable: !!orderable,
             visible: !!visible,
-            render: (data, type, row) => {
-                return `<input class="kt-switch" type="checkbox" ${data ? 'checked': ''} disabled />`;
+            render: (data, type, row, meta) => {
+                return `
+                    <input type="checkbox"
+                        class="kt-switch toggle-active"
+                        data-id="${row.id}"
+                        ${data ? 'checked' : ''}
+                    />
+                `;
             }
+
         }
+
     }
 }

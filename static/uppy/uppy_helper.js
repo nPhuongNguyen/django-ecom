@@ -68,11 +68,18 @@ class UppyUploader {
             ...opts.dashboardOptions,
         });
 
+        uppy.on('file-added', file => {
+            if (!uppy._initialFiles) {
+                uppy._initialFiles = [];
+            }
+            if (file.meta.isRemote) {
+                uppy._initialFiles.push(file);
+            }
+        });
+
 
         if (url) {
-            console.log('Adding existing files from URL:', url);
             const urlList = url.split(';');
-            console.log('URL List:', urlList);
             urlList.forEach(u => this.addExistingFile(uppy, u));
         }
 
@@ -95,16 +102,21 @@ class UppyUploader {
     }
 
     static hasChanged(uppyInstance) {
-        const currentFiles = uppyInstance.getFiles();
-        // 1. Có file mới không
-        const hasNew = currentFiles.some(f => !f.meta.isRemote);
-        // 2. Có file remote bị xóa không
-        const initialIds = initialFiles.map(f => f.id);
-        console.log('Initial IDs:', initialIds);
-        const currentIds = currentFiles.map(f => f.id);
-        console.log('Current IDs:', currentIds);
+        if (!uppyInstance) return false;
+
+        const current = uppyInstance.getFiles();
+        const initial = uppyInstance._initialFiles || [];
+
+        // 1. Có file mới (không phải remote)?
+        const hasNew = current.some(f => !f.meta.isRemote);
+
+        // 2. Có file remote bị xóa?
+        const initialIds = initial.map(f => f.id);
+        const currentIds = current.map(f => f.id);
         const hasDeleted = initialIds.some(id => !currentIds.includes(id));
+
         return hasNew || hasDeleted;
     }
+
 
 }
