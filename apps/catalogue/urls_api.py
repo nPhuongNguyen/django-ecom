@@ -3,10 +3,18 @@ from django.urls import path
 from apps.catalogue import views_api
 urlpatterns = [
     #product
-    path('products-list',views_api.ProductListAPI.as_view(), name='ProductListAPI'),
-    path('products-detail', views_api.ProductDetailAPI.as_view(), name= 'ProductDetailAPI'),
-    path('products-create', views_api.ProductListAPI.as_view(), name='ProductCreateAPI'),
+    path('product-list',views_api.ProductListAPI.as_view(), name='ProductListAPI'),
+    path('product-update/<str:pk>', views_api.ProductUpdateAPI.as_view(), name= 'ProductUpdateAPI'),
+    path('product-create', views_api.ProductCreateAPI.as_view(), name='ProductCreateAPI'),
+    path('product-destroy', views_api.ProductDestroyAPI.as_view(), name ='ProductDestroyAPI'),
 
     #product variant
-    path('product_variants',views_api.ProductVariantListAPI.as_view(),name='ProductVariantListAPI')
+    path('product_variants',views_api.ProductVariantListAPI.as_view(),name='ProductVariantListAPI'),
+
+
+    #category
+    path('category-list', views_api.CategoryListAPI.as_view(), name='CategoryListAPI'),
+
+    #upload image
+    path('upload-image', views_api.UploadImageAPI.as_view(), name='UploadImageAPI'),
 ]

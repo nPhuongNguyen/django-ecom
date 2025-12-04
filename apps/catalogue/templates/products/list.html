@@ -6,6 +6,7 @@
     {% include 'import/sweetalert2_import.html' %}
     {% include 'import/toastr_import.html' %}
     {% include 'import/spin_import.html' %}
+    {% include 'import/axios_import.html' %}
 {% endblock %}
 
 {% block content %}
@@ -15,7 +16,7 @@
     <!-- Page Header -->
     <div class="flex flex-wrap items-center justify-between gap-5 pb-6">
         <div class="flex flex-col gap-1">
-            <h1 class="text-xl font-semibold text-foreground">Product List</h1>
+            <h1 class="text-xl font-semibold text-foreground">{% trans 'Product List' %}</h1>
             <p class="text-sm text-muted-foreground"></p>
         </div>
     </div>
@@ -25,7 +26,7 @@
         <div class="overflow-x-auto rounded-2xl shadow-sm">
             <table id="datatables-products" class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
                 data-url-list="{% url 'ProductListAPI' %}"
-                data-url-delete="{% url 'ProductListAPI' %}"
+                data-url-delete="{% url 'ProductDestroyAPI' %}"
                 data-url-add="{% url 'ProductCreateView' %}"
                 data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}">
                 <thead class="bg-muted text-muted-foreground uppercase text-xs font-semibold">
@@ -45,10 +46,5 @@
 {% endblock %}
 
 {% block foot %}
-<script src="{% static 'datatables/datatable_init.js' %}" ></script>
-<script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
-<script src="{% static 'toast/toast_helper.js' %}"></script>
-<script src="{% static 'api/api.js' %}"></script>
-<script src="{% static 'spinner/spin.js' %}"></script>
 <script src="{% static 'products/list.js' %}"></script>
 {% endblock %}

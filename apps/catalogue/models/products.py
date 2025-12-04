@@ -6,11 +6,11 @@ from apps.shared.models import BaseModelActive, BaseModelCreated, BaseModelDelet
 
 class Product(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField(blank=True, null=True)
-    img = models.CharField(max_length=255, blank=True, null=True)
-    category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, default=None, blank=True, null=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    description = models.TextField(blank=True)
+    img = models.CharField(max_length=255, blank=True)
+    category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, default="")
 
     class Meta:
         db_table = 'catalogue_products'

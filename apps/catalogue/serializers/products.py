@@ -3,56 +3,41 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from apps.catalogue.models.products import Product
 from apps.utils.minio import S3Minio as S3
+from apps.utils.utils_generate_unique_slug import generate_unique_slug
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id','name', 'slug', 'description', 'price', 'is_active', 'img', 'category']
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-    image = serializers.FileField(default = None)
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'is_active', 'image', 'price', 'category']
+        fields = ['name', 'description', 'is_active', 'price', 'category', 'slug']
+        read_only_fields = ['slug']
 
-    def validate_name(self, value):
-        if Product.objects.filter(name=value).exists():
-            raise serializers.ValidationError(_("Name already exists."))
-        return value
-    
-    def create(self, validated_data):
-        if not validated_data.get('slug'):
-            validated_data['slug'] = slugify(validated_data.get('name', ''))
-        image = validated_data.pop('image', None)
-        if image == None:
-            validated_data['img'] = None
-        else:
-            img_url = S3.minio_upload_file(file=image, file_name=image.name)
-            if img_url is None:
-                raise serializers.ValidationError({
-                    "image": _("Upload error")
-                })
-            validated_data['img'] = img_url
-            
-        return super().create(validated_data)
+    def validate(self, attrs):
+        name = attrs.get("name")
+        attrs["slug"] = generate_unique_slug(Product, name)
+        return attrs
 class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'price', 'price', 'img', 'category']
-        read_only_fields = ['slug']
-        
+        fields = ['id', 'name', 'slug', 'description', 'price', 'price', 'img', 'category']
+
 class ProductUpdateSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(required = False)
+    price = serializers.DecimalField(max_digits=10, decimal_places=2, required = False)
+    description = serializers.CharField(required = False)
+    img = serializers.CharField(required = False)
+    category = serializers.CharField(required = False)
     class Meta:
         model = Product
-        fields = ['name', 'slug', 'description', 'price', 'price', 'img', 'category']
+        fields = '__all__'
         read_only_fields = ['slug']
 
-    def validate_name(self, value):
-        if Product.objects.filter(name=value).exclude(id = self.initial.id).exists():
-            raise serializers.ValidationError(_("Name already exists."))
-        return value
-           
-    def update(self, instance, validated_data):
-        new_name = validated_data.get('name', instance.name)
-        if new_name != instance.name:
-            instance.slug = slugify(new_name)
-        return super().update(instance, validated_data)
+    def validate(self, attrs):
+        name = attrs.get("name")
+        attrs["slug"] = generate_unique_slug(Product, name)
+        return attrs
+        

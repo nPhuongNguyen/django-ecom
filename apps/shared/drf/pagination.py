@@ -4,7 +4,7 @@ __all__ = [
 
 from rest_framework.pagination import PageNumberPagination
 
-from apps.shared.response import ResponseFormat
+from apps.shared.response import ResponseBuilder, ResponseCodes
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -27,13 +27,18 @@ class StandardResultsSetPagination(PageNumberPagination):
         return self.positive_int(page_size_str, strict=True, cutoff=self.max_page_size)
 
     def get_paginated_response(self, data):
-        return ResponseFormat.pagination(
-            result=data,
-            count=self.page.paginator.count,
-            page_size=self.page.paginator.per_page,
-            next_page=self.page.next_page_number() if self.page.has_next() else 0,
-            previous_page=self.page.previous_page_number() if self.page.has_previous() else 0,
+        format_response = {
+            'result': data,
+            'count': self.page.paginator.count,
+            'page_size': self.page.paginator.per_page,
+            'next_page': self.page.next_page_number() if self.page.has_next() else 0,
+            'previous_page': self.page.previous_page_number() if self.page.has_previous() else 0,
+        }
+        return ResponseBuilder.build(
+            code=ResponseCodes.SUCCESS,
+            data=format_response
         )
+    
 
     @staticmethod
     def positive_int(integer_string, strict=False, cutoff=None):

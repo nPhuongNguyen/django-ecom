@@ -22,9 +22,9 @@ class DataTableLoader {
 
     // --- AJAX CONFIG ---
     static ajax_dataSrc(json) {
-        json.recordsTotal = json.count;
-        json.recordsFiltered = json.count;
-        return json.results;
+        json.recordsTotal = json.data.count;
+        json.recordsFiltered = json.data.count;
+        return json.data.result;
     }
 
     static ajax_data(d) {
@@ -126,9 +126,8 @@ class DataTableLoader {
     }
 
     static _init_select_row(settings, json, options, table$, dtb) {
-        const selectRow = options?.['selectRow'] || null;
         const dt_search$ = DataTableLoader.dt_container$(table$).find('.dt-search');
-        if (selectRow && dt_search$.length > 0) {
+        if (dt_search$.length > 0) {
             dtb.on('draw select deselect', function () {
                 const selectInfo$ = DataTableLoader.dt_select_info$(table$);
                 const selectedRow = DataTableLoader.get_selected_row_data(table$);
@@ -180,7 +179,11 @@ class DataTableLoader {
 
     // --- INIT ---
     static init(table$, options) {
-        options.select = DataTableLoader.get_select_row(options.selectRow || 'single');
+        const selectRowOption = DataTableLoader.get_select_row(options.selectRow || 'single');
+        if (selectRowOption) {
+            selectRowOption.selector = 'td:not(:has(a))';
+        }
+        options.select = selectRowOption;
         options.columns = DataTableLoader.columns_render_text(options.columns || []);
 
         return table$.DataTable({

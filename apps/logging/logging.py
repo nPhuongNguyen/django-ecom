@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from apps.logging.kafka import PushO2mSmartlinkAPILog
 from apps.utils import request_func
+from ecom.settings import IS_DEV
 logger = logging.getLogger("o2m-smart-link-api-logging")
 
 if not logger.handlers:
@@ -16,7 +17,7 @@ if not logger.handlers:
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
-def _log(level: str, message=None, send_kafka=True, **kwargs):
+def _log(level: str, message=None, **kwargs):
     _, _, exc_tb = sys.exc_info()
     def _short_caller(name, filename, lineno):
         file_short = '/'.join(filename.replace('\\','/').split('/')[-2:])
@@ -40,9 +41,9 @@ def _log(level: str, message=None, send_kafka=True, **kwargs):
         log_data.update(kwargs)
 
     json_log = json.dumps(log_data, ensure_ascii=False)
-    # if send_kafka:
-    #     task = PushO2mSmartlinkAPILog(log_data)
-    #     task.run()
+    if IS_DEV == 0:
+        task = PushO2mSmartlinkAPILog(log_data)
+        task.run()
     if exc_tb:
         log_data["stacktrace"] = traceback.format_exc()
         json_log = json.dumps(log_data, ensure_ascii=False)
@@ -51,9 +52,9 @@ def _log(level: str, message=None, send_kafka=True, **kwargs):
     else:
         logger.info(json_log)
 
-def log_info(message=None, send_kafka=True, **kwargs):
-    _log("INFO", message, send_kafka, **kwargs)
+def log_info(message=None, **kwargs):
+    _log("INFO", message, **kwargs)
 
-def log_error(message=None, send_kafka=True, **kwargs):
-    _log("ERROR", message, send_kafka, **kwargs)
+def log_error(message=None, **kwargs):
+    _log("ERROR", message, **kwargs)
 

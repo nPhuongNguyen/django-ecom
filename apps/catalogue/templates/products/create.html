@@ -3,10 +3,11 @@
 {% block head %}
     {% include 'import/jquery_import.html' %}
     {% include 'import/jquery_validation.html' %}
-    {% include 'import/filepond_import.html' %}
     {% include 'import/toastr_import.html' %}
     {% include 'import/spin_import.html' %}
     {% include 'import/sweetalert2_import.html' %}
+    {% include 'import/uppy_import.html' %}
+    {% include 'import/axios_import.html' %}
 {% endblock %}
 {% block content %}
 <!-- Page Container -->
@@ -15,7 +16,7 @@
     <!-- Page Header -->
     <div class="flex flex-wrap items-center justify-between gap-5 pb-6">
         <div class="flex flex-col gap-1">
-            <h1 class="text-xl font-semibold text-foreground">Product Create</h1>
+            <h1 class="text-xl font-semibold text-foreground">{% trans 'Product Create' %}</h1>
             <p class="text-sm text-muted-foreground"></p>
         </div>
     </div>
@@ -23,11 +24,12 @@
     <!-- Product Detail -->
     <div class="grid gap-6">
         <div class="overflow-x-auto rounded-2xl shadow-sm">
-            <form class="kt-form" id="frm_create_product" 
-                data-url-add="{% url 'ProductCreateView' %}"
+            <form class="kt-form" id="frm_create_product" data-url-add="{% url 'ProductCreateView' %}"
                 data-url-list="{% url 'ProductListView' %}"
-                data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
-                data-url="{% url 'ProductCreateAPI' %}" enctype="multipart/form-data">
+                data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}" 
+                data-url="{% url 'ProductCreateAPI' %}"
+                data-url-upload="{% url 'UploadImageAPI' %}"
+                >
                 <div class="w-full flex gap-5">
                     <div class="flex-1 kt-form-item">
                         <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
@@ -60,14 +62,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="w-full">
+                <div class="flex gap-5">
                     <div class="flex-1 kt-form-item">
-                        <label class="kt-form-label" for="inp_image">{% trans 'Image' %}:</label>
+                        <label class="kt-form-label" for="image_product">
+                            {% trans 'Image' %}:
+                        </label>
                         <div class="kt-form-control">
-                            <div id="inp_image"></div>
-                            <input type="hidden" name="image" />
+                            <div id="image_product" name="image_product"></div>
                         </div>
-                        <div class="kt-form-description"></div>
+                        <div class="kt-form-description flex justify-center pt-3"></div>
                     </div>
                 </div>
                 <div class="w-full">
@@ -81,11 +84,5 @@
 {% endblock %}
 
 {% block foot %}
-<script src="{% static 'formvalidation/formvalidation_helper.js' %}"></script>
-<script src="{% static 'filepond/filepond_helper.js' %}"></script>
-<script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
-<script src="{% static 'toast/toast_helper.js' %}"></script>
-<script src="{% static 'spinner/spin.js' %}" ></script>
-<script src="{% static 'api/api.js' %}"></script>
 <script src="{% static 'products/create.js' %}"></script>
 {% endblock %}
