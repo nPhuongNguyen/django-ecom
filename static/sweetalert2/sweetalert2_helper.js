@@ -1,15 +1,15 @@
 class SweetAlertHelper {
-    static async confirmSave({
-        title = 'Do you want to save changes?',
+    static confirmSave({
+        title = gettext('Do you want to save changes?'),
         text = '',
         icon = 'question',
-        confirmButtonText = 'Yes',
-        cancelButtonText = 'Cancel',
+        confirmButtonText = gettext('Yes'),
+        cancelButtonText = gettext('Cancel'),
         url = null,
         method = 'POST',
         data = null,
     } = {}) {
-        const result = await Swal.fire({
+        const result = Swal.fire({
             title,
             text,
             icon,
@@ -27,20 +27,11 @@ class SweetAlertHelper {
             try {
                 MyLoading.show();
                 const minTime = 500;
-                const [result_api] = await Promise.all([
+                const [result_api] = Promise.all([
                     CallApi.request(url, method, data, {}),
                     new Promise(r => setTimeout(r, minTime))
                 ]);
                 MyLoading.close();
-                if(result_api.status == 'error'){
-                    ToastHelper.error();
-                    if (typeof(result_api.data) == 'object'){
-                        result_api.data = CallApi.parseApiErrors(result_api.data)
-                    }
-                }
-                else if (result_api.status == 'success'){
-                    ToastHelper.success();
-                }
                 return result_api;
             } catch (err) {
                 console.log({
@@ -54,13 +45,15 @@ class SweetAlertHelper {
     }
 
     static async confirmDelete({
-        title = 'Are you sure you want to delete this item?',
-        text = 'This action cannot be undone.',
-        confirmButtonText = 'Delete',
-        cancelButtonText = 'Cancel',
-        url = null,
-        method = 'DELETE',
-        data = null,
+        title = gettext('Are you sure you want to delete this item?'),
+        text = gettext('This action cannot be undone.'),
+        confirmButtonText = gettext('Delete'),
+        cancelButtonText = gettext('Cancel'),
+        url = "",
+        method = 'POST',
+        params = {},
+        data = {},
+        timeout = 0
     } = {}) {
         const result = await Swal.fire({
             title,
@@ -73,36 +66,26 @@ class SweetAlertHelper {
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6'
         });
-        if (!result.isConfirmed) {
-            return null; 
-        }
+
+        if (!result.isConfirmed) return null; 
+
         if (url) {
+            MyLoading.show();
             try {
-                MyLoading.show();
-                const minTime = 500;
-                const [result_api] = await Promise.all([
-                    CallApi.request(url, method, data, {}),
-                    new Promise(r => setTimeout(r, minTime))
-                ]);
-                MyLoading.close();
-                if(result_api.status == 'error'){
-                    ToastHelper.error();
-                    if (typeof(result_api.data) == 'object'){
-                        result_api.data = CallApi.parseApiErrors(result_api.data)
-                    }
-                }
-                else if (result_api.status == 'success'){
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                const res = await CallApi.request(url, method, params, data, timeout);
+                if (res) {
                     ToastHelper.success();
-                }
-                return result_api;
-            } catch (err) {
-                console.log({
-                    'err': err
-                })
-                ToastHelper.error();
-                return null;
+                } else {
+                    ToastHelper.error();
+                } 
+                return res || null;
+            } finally {
+                MyLoading.close();
             }
         }
-        return null
+        return null;
     }
+
+
 }

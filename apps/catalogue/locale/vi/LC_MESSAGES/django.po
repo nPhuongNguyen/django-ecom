@@ -1,0 +1,55 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-20 16:05+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Name already exists."
+msgstr "Tên đã tồn tại."
+
+msgid "Slug already exists."
+msgstr "Slug đã tồn tại."
+
+msgid "Upload error."
+msgstr "Lỗi tải lên."
+
+msgid "Name"
+msgstr "Tên"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Description"
+msgstr "Mô tả"
+
+msgid "Status"
+msgstr "Trạng thái"
+
+msgid "Price"
+msgstr "Giá"
+
+msgid "Product List"
+msgstr "Danh sách sản phẩm"
+
+msgid "Product Create"
+msgstr "Thêm mới sản phẩm"
+
+msgid "Image"
+msgstr "Hình ảnh"
+
+msgid "Product Detail"
+msgstr "Chi tiết sản phẩm"

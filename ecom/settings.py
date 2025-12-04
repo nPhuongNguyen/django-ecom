@@ -22,6 +22,9 @@ load_dotenv()
 PREFIX_URL = os.environ.get("PREFIX_URL")
 API_VERSION = os.environ.get("API_VERSION")
 
+#
+IS_DEV = os.environ.get('IS_DEV', 0)
+
 #Database
 MYSQL_DATABASE_NAME = os.environ.get("DB_NAME")
 MYSQL_DATABASE_USER = os.environ.get("DB_USER")
@@ -66,6 +69,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # "apps.middleware.request_middleware.RequestMiddleware",
@@ -157,15 +162,25 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# Ngôn ngữ mặc định
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'vi'
 
+# Múi giờ
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
+# Bật dịch ngôn ngữ
 USE_I18N = True
 
+# Bật timezone
 USE_TZ = True
 
+# Bật định dạng theo locale
+USE_L10N = True
 
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 

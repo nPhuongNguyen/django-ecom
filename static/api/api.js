@@ -1,53 +1,35 @@
 class CallApi {
-    static parseApiErrors(apiErrors) {
-        const errors = {};
-        if (typeof apiErrors === 'object') {
-            for (const field in apiErrors) {
-                if (apiErrors.hasOwnProperty(field)) {
-                    errors[field] = Array.isArray(apiErrors[field])
-                        ? apiErrors[field].join(", ")
-                        : apiErrors[field];
-                }
-            }
-        }
-        return errors;
-    }
+    static async request(
+        {
+            url, 
+            method = 'GET', 
+            params = {}, 
+            data = {}, 
+            timeout = 0
+        }) {
+        const isFormData = data instanceof FormData;
 
-    static async request(url, method = "GET", data = null, headers = {}) {
+        Logger.apiRequest({ url, method, params, data, timeout });
+
         try {
-            let body = null;
-            if (data instanceof FormData) {
-                body = data;
-                for (let [key, value] of data.entries()) {
-                    console.log(key, value);
-                }
-            } else if (data && typeof data === 'object') {
-                body = JSON.stringify(data);
-                headers["Content-Type"] = "application/json";
-                console.log('body',body);
-            }   
-            const res = await fetch(url, { method, headers, body });
-            let resData = null;
+            const response = await axios({
+                url,
+                method,
+                params,
+                data,
+                timeout: timeout > 0 ? timeout : undefined,
+                headers: isFormData
+                    ? { "Content-Type": "multipart/form-data" }
+                    : { "Content-Type": "application/json" },
+            });
 
-            const contentType = res.headers.get("Content-Type") || "";
-            if (contentType.includes("application/json")) {
-                try {
-                    resData = await res.json();
-                } catch (e) {
-                    resData = null;
-                }
-            } else {
-                resData = await res.text();
-            }
+            Logger.apiResponse({ url, method, response: response.data });
+            return response.data;
 
-            if (!res.ok) {
-                return { status: "error", statusCode: res.status, data: resData };
-            }
-
-            return { status: "success", statusCode: res.status, data: resData };
-        } catch (err) {
-            return { status: "catch", error: err };
+        } catch (error) {
+            Logger.apiError({ url, method, error });
+            return null;
         }
     }
-
+    
 }

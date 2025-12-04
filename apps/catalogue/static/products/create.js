@@ -1,61 +1,52 @@
 $(document).ready(function () {
     const frm$ = $('#frm_create_product')
-    FilePondHelper.registerPlugins();
-
-    const hidden$ = frm$.find('input[name="image"]');
-    let pond; 
-    
-    pond = FilePondHelper.init("#inp_image", null, (pondInstance) => {
-        pond = pondInstance;  
-        
-        pond.on('addfile', () => {
-            hidden$.val('has-file'); 
-            hidden$.valid();   
-            if (validator) validator.showErrors({image: ''});  
-        });
-        
-        pond.on('removefile', () => {
-            hidden$.val('');
-            hidden$.valid();
-            if (validator) validator.showErrors({image: ''});
-        });
+    const img = "http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-11-27 102114.png;http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-12-03 104707.png";
+    const uppyInstance  = UppyUploader.init('#image_product', img, {
+        endpoint: '/upload/logo',
+        fieldName: 'logo',
+        uppyOptions: {
+            restrictions: {
+                allowedFileTypes: ['.jpg', '.jpeg', '.png'],
+                maxFileSize: 500 * 1024,
+                maxNumberOfFiles: 5,
+            },
+        },
     });
+    
     const validator = FormValidateLoader.init(
         frm$,
         {
             submitHandler: async function (form, event) {
                 event.preventDefault();
-                const data = new FormData(frm$[0]);
-                data.delete('filepond');
-                data.delete('image');
-                
-                if (pond && pond.getFiles().length > 0) {
-                    const file = pond.getFiles()[0].file;
-                    data.append('image', file);
-                } else {
-                    data.delete('image');
+                const formdata = FormValidateLoader.formData(frm$);
+                const files = UppyUploader.getFiles(uppyInstance);
+                const changed = UppyUploader.hasChanged(uppyInstance);
+                console.log('changed:', changed);
+                if (changed) {
+                    if (files.length > 0) {
+                        const formDataImage = new FormData();
+                        files.forEach(file => formDataImage.append('list_image', file.data));
+                        console.log('Files to upload:', files);
+                        const api_upload = frm$.data('url-upload');
+                        const upload_result = await CallApi.request({
+                            url: api_upload,
+                            method: 'POST',
+                            data: formDataImage,
+                        });
+                        if (upload_result && upload_result.status_code === 1) {
+                            formdata['image'] = upload_result.data.list_img
+                        }
+                    }else{
+                        formdata['image'] = "hihihi";
+                    }
                 }
-                
+                console.log('Final form data to submit:', formdata);
+                return;
                 const result = await SweetAlertHelper.confirmSave({ 
                     url: frm$.data('url'), 
-                    data: data 
+                    data: formdata 
                 });
-                
-                if (result && result.status === 'error') {
-                    console.log(result.data);
-                    if (typeof result.data === 'object') {
-                        validator.showErrors(result.data)
-                    }
-                    return;
-                }
-                else if (result && result.status == 'success'){
-                    FormValidateLoader.savedNext(event, {
-                        url_save: frm$.data('url-list'),
-                        url_add_another: window.location.pathname,
-                        url_continue_editing: frm$.data('url-detail').replaceAll('__slug__', result.data.results.slug)
-                    });
-                    return;
-                }
+
             }
         }
     );

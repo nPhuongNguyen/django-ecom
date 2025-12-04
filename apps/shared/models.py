@@ -16,10 +16,6 @@ from .model_manager import BaseManager
 
 class BaseModel(models.Model):
     objects = BaseManager()
-
-    def delete(self, *args, is_purge: bool = False, **kwargs):  # pylint: disable=W0613
-        return super().delete(*args, **kwargs)
-
     class Meta:
         abstract = True
         ordering = ('-created_at',)
