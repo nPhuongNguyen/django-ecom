@@ -120,7 +120,7 @@ class FormValidateLoader {
         });
     }
 
-    static savedNext(event_of_submit_handler, opts, timeout = 200) {
+    static savedNext(event_of_submit_handler, opts, timeout = 1500) {
         const {
             url_save,
             url_add_another,

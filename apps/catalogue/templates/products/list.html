@@ -4,49 +4,32 @@
     {% include 'import/jquery_import.html' %}
     {% include 'import/datatable_import.html' %}
     {% include 'import/sweetalert2_import.html' %}
-    {% include 'import/toastr_import.html' %}
     {% include 'import/spin_import.html' %}
     {% include 'import/axios_import.html' %}
+    {% include 'import/toast_import.html' %}
 {% endblock %}
 
 {% block content %}
-<!-- Page Container -->
-<div class="kt-container-fixed space-y-8">
-
-    <!-- Page Header -->
-    <div class="flex flex-wrap items-center justify-between gap-5 pb-6">
-        <div class="flex flex-col gap-1">
-            <h1 class="text-xl font-semibold text-foreground">{% trans 'Product List' %}</h1>
-            <p class="text-sm text-muted-foreground"></p>
-        </div>
-    </div>
-
-    <!-- Product List -->
-    <div class="grid gap-6">
-        <div class="overflow-x-auto rounded-2xl shadow-sm">
-            <table id="datatables-products" class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
-                data-url-list="{% url 'ProductListAPI' %}"
-                data-url-delete="{% url 'ProductDestroyAPI' %}"
-                data-url-add="{% url 'ProductCreateView' %}"
-                data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
-                data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}"
-            >
-                <thead class="bg-muted text-muted-foreground uppercase text-xs font-semibold">
-                    <tr>
-                        <th class="px-4 py-3">{% trans 'Name' %}</th>
-                        <th class="px-4 py-3">{% trans 'Slug' %}</th>
-                        <th class="px-4 py-3">{% trans 'Description' %}</th>
-                        <th class="px-4 py-3">{% trans 'Price' %}</th>
-                        <th class="px-4 py-3" >{% trans 'Status' %}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-border"></tbody>
-            </table>
-        </div>
-    </div>
+<div class="">
+    <table id="datatables-products"
+        class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
+        data-url-list="{% url 'ProductListAPI' %}" data-url-delete="{% url 'ProductDestroyAPI' %}"
+        data-url-add="{% url 'ProductCreateView' %}" data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
+        data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}">
+        <thead class="bg-muted text-muted-foreground uppercase text-xs font-semibold">
+            <tr>
+                <th class="px-4 py-3">{% trans 'Name' %}</th>
+                <th class="px-4 py-3">{% trans 'Slug' %}</th>
+                <th class="px-4 py-3">{% trans 'Description' %}</th>
+                <th class="px-4 py-3">{% trans 'Price' %}</th>
+                <th class="px-4 py-3">{% trans 'Status' %}</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-border"></tbody>
+    </table>
 </div>
 {% endblock %}
 
 {% block foot %}
-    <script src="{% static 'products/list.js' %}"></script>
+<script src="{% static 'products/list.js' %}"></script>
 {% endblock %}

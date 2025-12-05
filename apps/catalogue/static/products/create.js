@@ -44,7 +44,7 @@ $(document).ready(function () {
                 });
                 if (result) {
                     if (result.errors == null) {
-                        ToastHelper.success();
+                        ToastHelper.showSuccess();
                         FormValidateLoader.savedNext(event, {
                             url_save: frm$.data('url-list'),
                             url_add_another: frm$.data('url-add'),
@@ -52,7 +52,7 @@ $(document).ready(function () {
                         });
                     }
                     else {
-                        ToastHelper.error();
+                        ToastHelper.showError();
                         validator.showErrors(result.errors);
                     }
                 }
