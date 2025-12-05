@@ -95,28 +95,6 @@ class DataTableLoader {
 
     static lengthMenu() { return [10, 25, 50, 100, 200]; }
     static pageLength() { return 10; }
-    // --- RENDER SAFE TEXT ---
-    static columns_render_text(columns){
-        return columns.map(item => {
-            return {
-                ...item,
-                render: (data, type, row, meta) => {
-                    const originalRender = item.render || function(data) { return data; };
-                    if (type !== 'display') return data;
-                    const cellData = originalRender(data, type, row, meta);
-                    if (
-                        typeof cellData === 'object' && cellData instanceof Element
-                    ) return $.fn.safeHtml(cellData.toString());
-                    if (
-                        typeof cellData === 'string' && (
-                            cellData.indexOf('<') || cellData.indexOf("&lt;")
-                        )
-                    ) return $.fn.safeHtml(cellData);
-                    $.fn.escapeHtml(cellData);
-                }
-            }
-        })
-    }
 
     // --- SELECT ROW ---
     static get_select_row(selectrow){
@@ -186,7 +164,6 @@ class DataTableLoader {
             selectRowOption.selector = 'td:not(:has(a)):not(:has(.toggle-active))';
         }
         options.select = selectRowOption;
-        options.columns = DataTableLoader.columns_render_text(options.columns || []);
 
         const dt = table$.DataTable({
             dom: options.dom || DataTableLoader.dom(),
