@@ -1,37 +1,22 @@
 <!DOCTYPE html>
 <html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
+
 <head>
     {% load static i18n %}
+    <link rel="stylesheet" href="{% static 'metronic/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'metronic/css/my-style.css' %}">
     {% block head %}{% endblock %}
 </head>
 
-<body class="">
-    <!-- Main -->
-    <div class="flex grow">
-        <!-- Side bar -->
-        {% include 'admin/partials/sidebar.html' %}
-        <!-- End of Side bar -->
-        <div class="">
-            <!--Header-->
-            <div>
-                {% include 'admin/partials/header.html' %}
-            </div>
-            <!--End of Header-->
-            <!-- Main Content -->
-            <main class="">
-                {% block content %}{% endblock %}
-            </main>
-            <!-- End of Main Content -->
-            <!-- Footer -->
-            <div>
-                {% include 'admin/partials/footer.html' %}
-            </div>
-            <!-- End of Footer -->
-        </div>
-    </div>
+<body>
+    {% include 'admin/partials/sidebar.html' %}
+    {% include 'admin/partials/header.html' %}
+    {% block content %}{% endblock %}
+    {% include 'admin/partials/footer.html' %}
     <script src="{% url 'javascript-catalog' %}"></script>
     <script src="{% static 'metronic/js/core.bundle.min.js' %}"></script>
     <script src="{% static 'metronic/vendors/ktui/ktui.min.js' %}"></script>
     {% block foot %} {% endblock %}
 </body>
+
 </html>

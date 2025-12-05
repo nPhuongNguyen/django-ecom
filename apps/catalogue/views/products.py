@@ -21,7 +21,7 @@ class ProductDetailView(View):
         try:
             product = Product.objects.get(slug=slug)
         except Product.DoesNotExist:
-            return render(request,'client/notfound.html', context=context)
+            return render(request,'admin/notfound/notfound.html', context=context)
         return render(request, 'products/detail.html', context=context)
     
 class ProductCreateView(View):

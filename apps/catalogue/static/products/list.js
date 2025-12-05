@@ -45,10 +45,10 @@ $(document).ready(function () {
                     console.log("User cancelled");
                 }
                 else if (result.errors){
-                    ToastHelper.error();
+                    ToastHelper.showError();
                 }
                 else{
-                    ToastHelper.success();
+                    ToastHelper.showSuccess();
                 }
             }
             finally{
@@ -72,9 +72,9 @@ $(document).ready(function () {
                 if (res.cancelled){
                     console.log("User cancelled");
                 }else if(res.errors){
-                    ToastHelper.error();
+                    ToastHelper.showError();
                 }else{
-                    ToastHelper.success();
+                    ToastHelper.showSuccess();
                     tbl$.DataTable().ajax.reload();
                 }
             });

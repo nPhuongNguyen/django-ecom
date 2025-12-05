@@ -1,0 +1,30 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'admin/notfound/notfound.css' %}">
+{% endblock %}
+{% block content %}
+  <h1>404</h1>
+  <div class="face">
+    <div class="cheek left"></div>
+    <div class="cheek right"></div>
+
+    <div class="eye left">
+      <div class="eyelid" id="lid-left"></div>
+      <div class="pupil" id="pupil-left"></div>
+    </div>
+
+    <div class="eye right">
+      <div class="eyelid" id="lid-right"></div>
+      <div class="pupil" id="pupil-right"></div>
+    </div>
+
+    <div class="mouth"></div>
+  </div>
+
+  <a href="/" class="home">↩ Go Home</a>
+{% endblock %}
+{% block foot %}
+  <script src="{% static 'admin/notfound/notfound.js' %}" ></script>
+{% endblock %}
+

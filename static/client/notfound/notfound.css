@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    background: #cfe7ff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Comic Sans MS', sans-serif;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 58px;
+    font-weight: 900;
+}
+
+.face {
+    position: relative;
+    width: 260px;
+    height: 240px;
+}
+
+/* Má hồng */
+.cheek {
+    width: 55px;
+    height: 32px;
+    background: rgba(255, 150, 170, 0.45);
+    border-radius: 50%;
+    position: absolute;
+    top: 120px;
+    filter: blur(2px);
+}
+.cheek.left {
+    left: 10px;
+}
+.cheek.right {
+    right: 10px;
+}
+
+/* Mắt to kiểu chibi */
+.eye {
+    width: 95px;
+    height: 95px;
+    background: #ffffff;
+    border: 4px solid #000;
+    border-radius: 50%;
+    position: absolute;
+    overflow: hidden;
+}
+
+.eye.left {
+    top: 40px;
+    left: 10px;
+}
+.eye.right {
+    top: 40px;
+    right: 10px;
+}
+
+/* Eyelid (blink) */
+.eyelid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #cfe7ff;
+    top: -100%;
+    left: 0;
+    border-bottom: 4px solid #000;
+    transition: transform 0.18s ease;
+    z-index: 10;
+}
+.blink {
+    transform: translateY(100%);
+}
+
+/* Con ngươi */
+.pupil {
+    width: 42px;
+    height: 42px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    transition: transform 0.07s linear;
+}
+
+/* highlight long lanh */
+.pupil::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    top: 5px;
+    left: 5px;
+}
+
+/* Miệng "owo" cute */
+.mouth {
+    width: 60px;
+    height: 40px;
+    border: 4px solid #000;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+}
+
+a.home {
+    margin-top: 35px;
+    text-decoration: none;
+    color: #000;
+    font-size: 17px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #000;
+}
