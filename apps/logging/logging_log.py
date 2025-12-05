@@ -5,7 +5,7 @@ import sys
 import traceback
 from django.utils import timezone
 
-from apps.logging.kafka import PushO2mSmartlinkAPILog
+from apps.logging.kafka_log import PushO2mSmartlinkAPILog
 from apps.utils import request_func
 from ecom.settings import IS_DEV
 logger = logging.getLogger("o2m-smart-link-api-logging")

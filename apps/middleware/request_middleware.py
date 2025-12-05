@@ -2,7 +2,7 @@ import json
 import uuid
 import threading
 from datetime import datetime
-from apps.logging import logging as lg
+from apps.logging import logging_log as lg
 from apps.logging.log_request import RequestLogger
 _thread_locals = threading.local()
 

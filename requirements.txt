@@ -1,3 +1,4 @@
+kafka-python
 asgiref==3.9.1
 Django==4.2.23
 djangorestframework==3.16.1

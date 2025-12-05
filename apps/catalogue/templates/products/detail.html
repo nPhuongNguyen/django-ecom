@@ -3,11 +3,10 @@
 {% block head %}
     {% include 'import/jquery_import.html' %}
     {% include 'import/jquery_validation.html' %}
-    {% include 'import/filepond_import.html' %}
+    {% include 'import/uppy_import.html' %}
     {% include 'import/toastr_import.html' %}
     {% include 'import/spin_import.html' %}
     {% include 'import/sweetalert2_import.html' %}
-    {% include 'import/select2_import.html' %}
 {% endblock %}
 {% block content %}
 <!-- Page Container -->
@@ -18,99 +17,49 @@
         <div>
             <h1 class="text-xl font-semibold text-foreground">
                 {% if product %}
-                    {% trans 'Product Detail' %}: {{ product.name }}
+                {% trans 'Product Detail' %}: {{ product.name }}
                 {% else %}
-                    {% trans 'Product Detail' %}
+                {% trans 'Product Detail' %}
                 {% endif %}</h1>
             <p class="text-sm text-muted-foreground"></p>
-        </div>
-        <div>
-            {% if product.category %}
-                <select id="ai_dropdown" name="category">
-                    <option value="{{ product.category.id }}" selected>{{ product.category.name }}</option>
-                </select>
-            {% else %}
-                <select id="ai_dropdown" name="category"></select>
-            {% endif %}
         </div>
     </div>
 
     <!-- Product Detail -->
     <div class="grid gap-6">
         {% if product %}
-            <div class="overflow-x-auto rounded-2xl shadow-sm">
-                <form class="kt-form" id="frm_create_product"
-                    data-url-add="{% url 'ProductCreateView' %}"
-                    data-url-list="{% url 'ProductListView' %}"
-                    data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}" 
-                    data-url="{% url 'ProductDetailAPI' pk=product.pk %}"
-                    data-url-list-dropdown-category="{% url 'CategoryListAPI' %}"
-                    enctype="multipart/form-data">
-                    <input type="hidden" id="category_hidden" name="category" />
-                    <div class="w-full flex gap-5">
-                        <div class="flex-1 kt-form-item">
-                            <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
-                            <div class="kt-form-control">
-                                <input id="inp_name" type="text" class="kt-input w-full" name="name" required
-                                    value="{{ product.name|default:'-' }}" />
-                            </div>
-                            <div class="kt-form-description"></div>
+        <div class="overflow-x-auto rounded-2xl shadow-sm">
+            <form class="kt-form" id="frm_update_product"
+            >
+                <div class="w-full flex gap-5">
+                    <div class="flex-1 kt-form-item">
+                        <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
+                        <div class="kt-form-control">
+                            <input id="inp_name" type="text" class="kt-input w-full" name="name" required
+                                   value="{{ product.name|default:'-' }}"/>
                         </div>
-                        <div class="flex-1 kt-form-item">
-                            <label class="kt-form-label" for="inp_description">{% trans 'Description' %}:</label>
-                            <div class="kt-form-control">
+                        <div class="kt-form-description"></div>
+                    </div>
+                    <div class="flex-1 kt-form-item">
+                        <label class="kt-form-label" for="inp_description">{% trans 'Description' %}:</label>
+                        <div class="kt-form-control">
                                 <textarea id="inp_description" class="kt-input w-full resize-y" name="description"
-                                    rows="3">{{ product.description|default:'' }}</textarea>
-                            </div>
-                            <div class="kt-form-description"></div>
+                                          rows="3">{{ product.description|default:'' }}</textarea>
                         </div>
+                        <div class="kt-form-description"></div>
                     </div>
-                    <div class="w-full flex gap-5">
-                        <div class="flex-1 kt-form-item">
-                            <label class="kt-form-label required" for="inp_price">{% trans 'Price' %}:</label>
-                            <div class="kt-form-control">
-                                <input id="inp_price" type="text" name="price" class="kt-input w-full" required
-                                    value="{{ product.price }}" />
-                            </div>
-                        </div>
-                        <div class="flex-1 kt-form-item">
-                            <label class="kt-form-label required" for="inp_is_active">{% trans 'Status' %}:</label>
-                            <div class="kt-form-control">
-                                <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active" name="is_active" 
-                                {% if product and product.is_active %}checked{% endif %} />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="w-full">
-                        <div class="flex-1 kt-form-item">
-                            <label class="kt-form-label" for="inp_image">{% trans 'Image' %}:</label>
-                            <div class="kt-form-control">
-                                <div id="inp_image"></div>
-                                <input type="hidden" name="image" value="{{ product.img|default:'' }}" />
-                                <input type="hidden" id="image_check" name="image_check" value="0" />
-                            </div>
-                            <div class="kt-form-description"></div>
-                        </div>
-                    </div>
-                    <div class="w-full">
-                        {% include 'button/form-actions-with-delete.html' %}
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="w-full">
+                    {% include 'button/form-actions-with-delete.html' %}
+                </div>
+            </form>
+        </div>
         {% endif %}
-      
+
     </div>
 </div>
 
 {% endblock %}
-
 {% block foot %}
-<script src="{% static 'formvalidation/formvalidation_helper.js' %}"></script>
-<script src="{% static 'filepond/filepond_helper.js' %}"></script>
-<script src="{% static 'sweetalert2/sweetalert2_helper.js' %}"></script>
-<script src="{% static 'toast/toast_helper.js' %}"></script>
-<script src="{% static 'api/api.js' %}"></script>
-<script src="{% static 'spinner/spin.js' %}"></script>
-<script src="{% static 'select2/select2_helper.js' %}"></script>
 <script src="{% static 'products/detail.js' %}"></script>
 {% endblock %}

@@ -1,7 +1,7 @@
 
 from functools import wraps
 from rest_framework import serializers
-from apps.logging import logging as lg
+from apps.logging import logging_log as lg
 from apps.shared.response import ResponseBuilder, ResponseCodes
 
 def validate_serializer(serializer_class : type[serializers.Serializer]):
