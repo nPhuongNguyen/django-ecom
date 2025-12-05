@@ -32,7 +32,7 @@ class ToastHelper{
     ){
         KTToast.show({
             message: message,
-            variant: ToastHelper.variants.error,
+            variant: ToastHelper.variants.destructive,
         });
     }
 
