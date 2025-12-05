@@ -22,12 +22,11 @@ class SweetAlertHelper {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#6c757d'
         });
-        if (!result.isConfirmed) return null; 
+        if (!result.isConfirmed) return { cancelled: true };
         if (url) {
             try {
                 MyLoading.show();
                 await new Promise(resolve => setTimeout(resolve, 1500));
-                console.log('Sending data to URL:', url, 'with data:', data);
                 const res = await CallApi.request(
                     {
                         url, 
@@ -41,7 +40,7 @@ class SweetAlertHelper {
                 MyLoading.close();
             }
         }
-        return null;
+        return { cancelled: true };
     }
 
     static async confirmDelete({
@@ -67,7 +66,7 @@ class SweetAlertHelper {
             cancelButtonColor: '#3085d6'
         });
 
-        if (!result.isConfirmed) return null; 
+        if (!result.isConfirmed) return { cancelled: true };
 
         if (url) {
             MyLoading.show();
@@ -86,7 +85,7 @@ class SweetAlertHelper {
                 MyLoading.close();
             }
         }
-        return null;
+        return { cancelled: true };
     }
 
 
