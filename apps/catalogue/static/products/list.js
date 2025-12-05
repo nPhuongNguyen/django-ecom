@@ -33,8 +33,28 @@ $(document).ready(function () {
                 }
             },
             DataTableLoader.col_is_price(),  
-            DataTableLoader.col_is_active(),
+            DataTableLoader.col_is_active({ useToggle: true }),
         ],
+        ontoggleActive: async (id)=>{
+            const result = await SweetAlertHelper.confirmSave({
+                url: tbl$.data('url-change-status').replaceAll('__pk__', id),
+                method: 'POST',
+            });
+            try{
+                if (result.cancelled){
+                    console.log("User cancelled");
+                }
+                else if (result.errors){
+                    ToastHelper.error();
+                }
+                else{
+                    ToastHelper.success();
+                }
+            }
+            finally{
+                tbl$.DataTable().ajax.reload();
+            } 
+        },
         selectRow: 'multi',
         selectRowRender: (select_info$) => {
             const btnDestroy$ = $(`<button class="kt-btn kt-btn-destructive">Delete selected</button>`);
@@ -49,7 +69,12 @@ $(document).ready(function () {
                     method: 'POST',
                     params: { 'id[]': id_selecteds },
                 });
-                if (res) {
+                if (res.cancelled){
+                    console.log("User cancelled");
+                }else if(res.errors){
+                    ToastHelper.error();
+                }else{
+                    ToastHelper.success();
                     tbl$.DataTable().ajax.reload();
                 }
             });

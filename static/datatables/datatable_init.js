@@ -58,20 +58,6 @@ class DataTableLoader {
         };
     }
 
-    static attachToggleActiveListener(table$, onToggle) {
-        table$.on("click", ".toggle-active", function (e) {
-            e.stopPropagation(); // chặn selectRow
-
-            const id = $(this).data("id");
-            const isActive = $(this).is(":checked");
-
-            if (typeof onToggle === "function") {
-                onToggle(id, isActive, this);
-            }
-        });
-    }
-
-
     // --- DOM / LAYOUT ---
     static dom() {
         return `
@@ -196,12 +182,13 @@ class DataTableLoader {
     static init(table$, options) {
         const selectRowOption = DataTableLoader.get_select_row(options.selectRow || 'single');
         if (selectRowOption) {
-            selectRowOption.selector = 'td:not(:has(a))';
+            // selectRowOption.selector = 'td:not(:has(a))';
+            selectRowOption.selector = 'td:not(:has(a)):not(:has(.toggle-active))';
         }
         options.select = selectRowOption;
         options.columns = DataTableLoader.columns_render_text(options.columns || []);
 
-        return table$.DataTable({
+        const dt = table$.DataTable({
             dom: options.dom || DataTableLoader.dom(),
             language: options.language || DataTableLoader.language(),
             lengthMenu: options.lengthMenu || DataTableLoader.lengthMenu(),
@@ -215,6 +202,15 @@ class DataTableLoader {
                 DataTableLoader.baseInitComplete(settings, json, options, table$);
             },
         });
+        const checkOnToggle = options.ontoggleActive;
+        if (checkOnToggle && typeof checkOnToggle === "function"){
+            const dtb$ = table$.DataTable();
+            dtb$.on("change", ".toggle-active", function () {
+                const id = $(this).data("id");
+                checkOnToggle(id);
+            });
+        }
+        return dt;
         
     }
     static render_price(data, type, row, meta) {
@@ -242,16 +238,21 @@ class DataTableLoader {
             render: DataTableLoader.render_price
         };
     }
-    static col_is_active(opts){
+
+    static col_is_active(opts) {
         const {
             visible,
             orderable,
+            useToggle,
             ...restProps
         } = {
             visible: true,
             orderable: false,
+            useToggle: false,
+            onToggle: null,
             ...opts,
-        }
+        };
+
         return {
             ...restProps,
             data: 'is_active',
@@ -259,16 +260,17 @@ class DataTableLoader {
             orderable: !!orderable,
             visible: !!visible,
             render: (data, type, row, meta) => {
+                const disabledAttr = useToggle ? "" : "disabled";
                 return `
                     <input type="checkbox"
                         class="kt-switch toggle-active"
                         data-id="${row.id}"
-                        ${data ? 'checked' : ''}
+                        ${data ? "checked" : ""}
+                        ${disabledAttr}
                     />
                 `;
             }
-
-        }
-
+        };
     }
+
 }
