@@ -1,5 +1,5 @@
 import time
-from apps.logging import logging as lg
+from apps.logging import logging_log as lg
 import apps.utils as utils
 class QueryLogger:
     def __init__(self):
