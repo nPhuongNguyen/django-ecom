@@ -1,16 +1,16 @@
 {% extends 'admin/base.html' %}
 {% load static i18n %}
 {% block head %}
-    {% include 'import/jquery_import.html' %}
-    {% include 'import/datatable_import.html' %}
-    {% include 'import/sweetalert2_import.html' %}
-    {% include 'import/spin_import.html' %}
-    {% include 'import/axios_import.html' %}
-    {% include 'import/toast_import.html' %}
+{% include 'import/jquery_import.html' %}
+{% include 'import/datatable_import.html' %}
+{% include 'import/sweetalert2_import.html' %}
+{% include 'import/spin_import.html' %}
+{% include 'import/axios_import.html' %}
+{% include 'import/toast_import.html' %}
 {% endblock %}
 
 {% block content %}
-<div class="">
+<div class="kt-container-fixed">
     <table id="datatables-products"
         class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
         data-url-list="{% url 'ProductListAPI' %}" data-url-delete="{% url 'ProductDestroyAPI' %}"

@@ -49,7 +49,7 @@ $(document).ready(function () {
                             url_save: frm$.data('url-list'),
                             url_add_another: frm$.data('url-add'),
                             url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
-                        });
+                        },500);
                     }
                     else {
                         ToastHelper.showError();
