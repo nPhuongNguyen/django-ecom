@@ -12,7 +12,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'is_active', 'price', 'category', 'slug']
+        fields = ['name', 'description', 'is_active', 'price', 'category', 'slug', 'img']
         read_only_fields = ['slug']
 
     def validate(self, attrs):

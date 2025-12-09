@@ -19,31 +19,67 @@ $(document).ready(function () {
                 const formdata = FormValidateLoader.formData(frm$);
                 const files = UppyUploader.getFiles(uppyInstance);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                console.log('changed:', changed);
+                let result = null;
                 if (changed) {
                     if (files.length > 0) {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
-                        console.log('Files to upload:', files);
                         const api_upload = frm$.data('url-upload');
-                        const upload_result = await CallApi.request({
-                            url: api_upload,
-                            method: 'POST',
-                            data: formDataImage,
-                        });
-                        if (upload_result && upload_result.status_code === 1) {
-                            formdata['image'] = upload_result.data.list_img
+                        const check_sw2_alret = await SweetAlertHelper.confirmSave({});
+                        if(check_sw2_alret.confirmed){
+                            try{
+                                MyLoading.show();
+                                await new Promise(resolve => setTimeout(resolve, 1500));
+                                result_api_image = await CallApi.request({
+                                    url: api_upload,
+                                    method: 'POST',
+                                    data: formDataImage
+                                })
+                                if(result_api_image){
+                                    if(result_api_image.status_code !== 1){
+                                        ToastHelper.showError();
+                                        return;
+                                    }else{
+                                        formdata['img'] = result_api_image.data.list_img
+                                        result = await CallApi.request({
+                                            url: frm$.data('url'),
+                                            method: 'POST',
+                                            data: formdata
+                                        })
+                                    }
+                                }else{
+                                    ToastHelper.showError();
+                                    return;
+                                }
+                            }
+                            finally{
+                                MyLoading.close();
+                            }
+                            
                         }
-                    }else{
-                        formdata['image'] = "";
+                        else{
+                            return;
+                        }
+                    }
+                    else{
+                        formdata['img'] = "";
                     }
                 }
-                const result = await SweetAlertHelper.confirmSave({ 
-                    url: frm$.data('url'), 
-                    data: formdata 
-                });
-                if (result) {
-                    if (result.errors == null) {
+                else{
+                    result = await SweetAlertHelper.confirmSave({ 
+                        url: frm$.data('url'), 
+                        data: formdata 
+                    });
+                }
+                if(result){
+                    if (result.cancelled){
+                        return;
+                    }
+                    else if (result.status_code !== 1) {
+                        ToastHelper.showError();
+                        validator.showErrors(result.errors);
+                    }
+                    else {
                         ToastHelper.showSuccess();
                         FormValidateLoader.savedNext(event, {
                             url_save: frm$.data('url-list'),
@@ -51,12 +87,9 @@ $(document).ready(function () {
                             url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
                         },500);
                     }
-                    else {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
                 }
                 else {
+                    ToastHelper.showError();
                     console.error('Errors in product creation:', result.errors);
                 }
             }
