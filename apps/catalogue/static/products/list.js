@@ -41,14 +41,16 @@ $(document).ready(function () {
                 method: 'POST',
             });
             try{
-                if (result.cancelled){
-                    console.log("User cancelled");
-                }
-                else if (result.errors){
-                    ToastHelper.showError();
-                }
-                else{
-                    ToastHelper.showSuccess();
+                if (result){
+                    if (result.cancelled){
+                        console.log("User cancelled");
+                    }
+                    else if (result.status_code !==1){
+                        ToastHelper.showError();
+                    }
+                    else{
+                        ToastHelper.showSuccess();
+                    }
                 }
             }
             finally{
@@ -69,13 +71,19 @@ $(document).ready(function () {
                     method: 'POST',
                     params: { 'id[]': id_selecteds },
                 });
-                if (res.cancelled){
-                    console.log("User cancelled");
-                }else if(res.errors){
-                    ToastHelper.showError();
+                if(res){
+                    if (res.cancelled){
+                        console.log("User cancelled");
+                    }
+                    else if(res.status_code !==1){
+                        ToastHelper.showError();
+                    }
+                    else{
+                        ToastHelper.showSuccess();
+                        tbl$.DataTable().ajax.reload();
+                    }
                 }else{
-                    ToastHelper.showSuccess();
-                    tbl$.DataTable().ajax.reload();
+                    ToastHelper.showError();
                 }
             });
         },

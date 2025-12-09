@@ -40,7 +40,7 @@ class SweetAlertHelper {
                 MyLoading.close();
             }
         }
-        return { cancelled: true };
+        return { confirmed: true };
     }
 
     static async confirmDelete({
@@ -85,8 +85,18 @@ class SweetAlertHelper {
                 MyLoading.close();
             }
         }
-        return { cancelled: true };
+        return { confirmed: true };
     }
 
-
+    static async NotiError({
+        title = 'Lỗi xử lí',
+        text = 'Đã xảy ra lỗi.'
+    }){
+        await Swal.fire({
+            title: title,
+            text: text,
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+    }
 }

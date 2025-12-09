@@ -1,30 +1,38 @@
 {% extends 'admin/base.html' %}
 {% load static %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'admin/notfound/notfound.css' %}">
+
 {% endblock %}
 {% block content %}
-  <h1>404</h1>
-  <div class="face">
-    <div class="cheek left"></div>
-    <div class="cheek right"></div>
+<div class="kt-container-fixed">
+  <div class="row min-h-screen align-items-center justify-content-center bg-gray-700">
+    <div class="col-md-8 text-center py-10">
 
-    <div class="eye left">
-      <div class="eyelid" id="lid-left"></div>
-      <div class="pupil" id="pupil-left"></div>
+      <p class="fs-4 fw-semibold text-primary mb-2">404</p>
+
+      <h1 class="fs-1 fw-bold text-white mb-4">
+        Page not found
+      </h1>
+
+      <p class="fs-5 text-gray-400 mb-10">
+        Sorry, we couldn’t find the page you’re looking for.
+      </p>
+
+      <div class="d-flex flex-center gap-4">
+        <a href="#" class="kt-btn kt-btn-secondary">
+          Go back home
+        </a>
+
+        <a href="#" class="kt-btn kt-btn-primary">
+          Contact support <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
     </div>
-
-    <div class="eye right">
-      <div class="eyelid" id="lid-right"></div>
-      <div class="pupil" id="pupil-right"></div>
-    </div>
-
-    <div class="mouth"></div>
   </div>
+</div>
 
-  <a href="/" class="home">↩ Go Home</a>
 {% endblock %}
 {% block foot %}
-  <script src="{% static 'admin/notfound/notfound.js' %}" ></script>
-{% endblock %}
 
+{% endblock %}

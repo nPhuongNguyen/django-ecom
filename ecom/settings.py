@@ -75,7 +75,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # "apps.middleware.request_middleware.RequestMiddleware",
+    "apps.middleware.request_middleware.RequestMiddleware",
 ]
 
 

@@ -10,5 +10,5 @@ def active_space(context, space_current):
 @register.simple_tag(takes_context=True)
 def accordion(context, accordion):
     if context['accordion'] == accordion:
-        return 'here show kt-menu-item-accordion'
+        return 'show'
     return ''

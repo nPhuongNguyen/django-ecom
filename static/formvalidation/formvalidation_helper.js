@@ -133,7 +133,6 @@ class FormValidateLoader {
         }
 
         const submitter = event_of_submit_handler.originalEvent.submitter;
-        console.log('submitter:', submitter);
         let funcNext = () => window.location.reload();
         if (submitter) {
             const ele$ = $(submitter);

@@ -61,12 +61,12 @@ class DataTableLoader {
     // --- DOM / LAYOUT ---
     static dom() {
         return `
-            <"dt-top flex flex-wrap items-center justify-between gap-2 mb-2"f>
+            <"dt-top flex flex-wrap items-center justify-between kt-card-header min-h-16"f>
             t
-            <"dt-footer flex flex-wrap items-center justify-between gap-2 mt-2"
-                <"l-portion"l>
-                <"p-portion flex flex-wrap items-center justify-between gap-2 mt-2"
-                <"info-container"i>
+            <"dt-footer flex flex-wrap items-center justify-between kt-card-footer"
+                <"kt-datatable-length"l>
+                <"p-portion kt-datatable-pagination flex flex-wrap items-center gap-2"
+                    <"kt-datatable-info"i>
                     p
                 >
             >
@@ -152,7 +152,7 @@ class DataTableLoader {
         const dtb = table$.DataTable();
         const dt_search$ = DataTableLoader.dt_container$(table$).find('.dt-search');
         dt_search$.addClass('min-w-64 max-w-96')
-        dt_search$.find('input').addClass('kt-input w-full');
+        dt_search$.find('input').addClass('kt-input sm:w-48');
         DataTableLoader._init_select_row(settings, json, options, table$, dtb);
     }
 

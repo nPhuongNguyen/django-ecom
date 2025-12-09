@@ -24,12 +24,10 @@ class CallApi {
             });
 
             Logger.apiResponse({ url, method, response: response.data });
-            return response.data;
-
+            return ApiResponse.format_response(response.data);
         } catch (error) {
             Logger.apiError({ url, method, error });
             return null;
         }
     }
-    
 }

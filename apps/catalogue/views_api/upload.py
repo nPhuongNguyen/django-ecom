@@ -17,7 +17,8 @@ class UploadImageAPI(APIView):
         result_img = handle_upload(iput_img, folder)
         if result_img is None:
             return ResponseBuilder.build(
-               code=ResponseCodes.SYSTEM_BUSY
+               code=ResponseCodes.SYSTEM_BUSY,
+               errors="Lỗi upload"
             )
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
