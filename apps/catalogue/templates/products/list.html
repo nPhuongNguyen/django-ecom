@@ -11,22 +11,41 @@
 
 {% block content %}
 <div class="kt-container-fixed">
-    <table id="datatables-products"
-        class="min-w-full border border-border text-sm text-left hover row-border cursor-pointer"
-        data-url-list="{% url 'ProductListAPI' %}" data-url-delete="{% url 'ProductDestroyAPI' %}"
-        data-url-add="{% url 'ProductCreateView' %}" data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
-        data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}">
-        <thead class="bg-muted text-muted-foreground uppercase text-xs font-semibold">
-            <tr>
-                <th class="px-4 py-3">{% trans 'Name' %}</th>
-                <th class="px-4 py-3">{% trans 'Slug' %}</th>
-                <th class="px-4 py-3">{% trans 'Description' %}</th>
-                <th class="px-4 py-3">{% trans 'Price' %}</th>
-                <th class="px-4 py-3">{% trans 'Status' %}</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-border"></tbody>
-    </table>
+    <div class="grid w-full space-y-5">
+        <div class="kt-card">
+            <div class="kt-card-table" data-kt-datatable="true">
+                <div class="kt-table-wrapper">
+                    <table class="kt-table hover cursor-pointer" id="datatables-products" data-kt-datatable-table="true"
+                        data-url-list="{% url 'ProductListAPI' %}" data-url-delete="{% url 'ProductDestroyAPI' %}"
+                        data-url-add="{% url 'ProductCreateView' %}"
+                        data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
+                        data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Name' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Slug' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Description' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Price' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Status' %}
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
