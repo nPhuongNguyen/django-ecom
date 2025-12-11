@@ -25,7 +25,7 @@ $(document).ready(function () {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload');
-                        const check_sw2_alret = await SweetAlertHelper.confirmSave({});
+                        const check_sw2_alret = await SweetAlertHelper.confirmSave();
                         if(check_sw2_alret.confirmed){
                             try{
                                 MyLoading.show();
@@ -37,7 +37,9 @@ $(document).ready(function () {
                                 })
                                 if(result_api_image){
                                     if(result_api_image.status_code !== 1){
-                                        ToastHelper.showError();
+                                        SweetAlertHelper.NotiError({
+                                            text: result_api_image.message
+                                        });
                                         return;
                                     }else{
                                         formdata['img'] = result_api_image.data.list_img
@@ -48,14 +50,13 @@ $(document).ready(function () {
                                         })
                                     }
                                 }else{
-                                    ToastHelper.showError();
+                                    SweetAlertHelper.NotiError();
                                     return;
                                 }
                             }
                             finally{
                                 MyLoading.close();
                             }
-                            
                         }
                         else{
                             return;
@@ -89,7 +90,7 @@ $(document).ready(function () {
                     }
                 }
                 else {
-                    ToastHelper.showError();
+                    SweetAlertHelper.NotiError();
                     console.error('Errors in product creation:', result.errors);
                 }
             }
