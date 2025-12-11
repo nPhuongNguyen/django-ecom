@@ -3,3 +3,14 @@
     font-size: 0.9rem;
     border-color: var(--destructive);
 }
+
+.select2-container--tailwindcss-3 .select2-dropdown {
+    max-height: 300px !important;
+    overflow-y: hidden !important; 
+}
+    
+.select2-container--tailwindcss-3 .select2-results__options {
+    max-height: 280px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
