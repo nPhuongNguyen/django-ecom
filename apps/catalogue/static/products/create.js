@@ -26,6 +26,9 @@ $(document).ready(function () {
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload');
                         const check_sw2_alret = await SweetAlertHelper.confirmSave();
+                        if (check_sw2_alret.cancelled){
+                            return;
+                        }
                         if(check_sw2_alret.confirmed){
                             try{
                                 MyLoading.show();
@@ -58,9 +61,6 @@ $(document).ready(function () {
                                 MyLoading.close();
                             }
                         }
-                        else{
-                            return;
-                        }
                     }
                     else{
                         formdata['img'] = "";
@@ -86,12 +86,11 @@ $(document).ready(function () {
                             url_save: frm$.data('url-list'),
                             url_add_another: frm$.data('url-add'),
                             url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
-                        },500);
+                        });
                     }
                 }
                 else {
                     SweetAlertHelper.NotiError();
-                    console.error('Errors in product creation:', result.errors);
                 }
             }
         }
