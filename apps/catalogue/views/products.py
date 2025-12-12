@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 
 from apps.catalogue.models.products import Product
+from ..serializers.products import ProductDetailSerializer
 from apps.shared.decorator.views import mask_view
 
 MASK_VIEW_CONFIG ={
@@ -26,8 +27,10 @@ class ProductDetailView(View):
     def get(self, request, *args, context, **kwargs):
         slug = kwargs.get('slug')
         try:
-            product = Product.objects.select_related('category').get(slug=slug)
+            product = Product.objects.get(slug=slug, is_deleted = False)
             context['obj_product'] = product
+            info_product = ProductDetailSerializer(instance = product).data
+            print('obj_product',info_product)
         except Product.DoesNotExist:
             return render(request,'admin/notfound/notfound.html', context=context)
         return render(request, 'products/detail.html', context=context)

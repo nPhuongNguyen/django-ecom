@@ -18,6 +18,16 @@ class UppyUploader {
             })
             .catch(error => {
                 console.error('Error adding existing file:', error);
+                uppyInstance.info('Lỗi khi tải ảnh: ' + url, 'error');
+                const fileName = url.split('/').pop() || 'file.png';
+                uppyInstance.addFile({
+                    id: 'existing-error-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                    name: fileName,
+                    type: 'image/png',
+                    data: new Blob(),
+                    // preview: '/static/images/image-error.png', 
+                    meta: { isRemote: true, error: true }
+                });
             });
     }
 

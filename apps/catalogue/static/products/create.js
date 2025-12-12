@@ -1,12 +1,11 @@
 $(document).ready(function () {
     const frm$ = $('#frm_create_product')
-    // const img = "http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-11-27 102114.png;http://localhost:9001/sys/django_ecom/ecom/product/Ảnh chụp màn hình 2025-12-03 104707.png";
     const uppyInstance  = UppyUploader.init('#image_product', null, {
         uppyOptions: {
             restrictions: {
                 allowedFileTypes: ['.jpg', '.jpeg', '.png'],
                 maxFileSize: 500 * 1024,
-                maxNumberOfFiles: 5,
+                maxNumberOfFiles: 1,
             },
         },
     });
@@ -19,6 +18,7 @@ $(document).ready(function () {
                 const formdata = FormValidateLoader.formData(frm$);
                 const files = UppyUploader.getFiles(uppyInstance);
                 const changed = UppyUploader.hasChanged(uppyInstance);
+                const result_api_image = null;
                 let result = null;
                 if (changed) {
                     if (files.length > 0) {

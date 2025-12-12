@@ -1,42 +1,161 @@
 {% extends 'admin/base.html' %}
 {% load static i18n %}
 {% block head %}
-{% include 'import/jquery_import.html' %}
-{% include 'import/jquery_validation.html' %}
-{% include 'import/uppy_import.html' %}
-{% include 'import/toast_import.html' %}
-{% include 'import/spin_import.html' %}
-{% include 'import/sweetalert2_import.html' %}
-{% include 'import/select2_import.html' %}
+    {% include 'import/jquery_import.html' %}
+    {% include 'import/jquery_validation.html' %}
+    {% include 'import/uppy_import.html' %}
+    {% include 'import/toast_import.html' %}
+    {% include 'import/spin_import.html' %}
+    {% include 'import/sweetalert2_import.html' %}
+    {% include 'import/select2_import.html' %}
+    {% include 'import/axios_import.html' %}
 {% endblock %}
 {% block content %}
-<div class="kt-container-fixed">
-    <!-- Page Header -->
-    <div class="w-full flex flex-wrap gap-5">
-        <!-- Tiêu đề -->
-        <div class="flex-1 min-w-[250px] kt-form-item">
-            <h1 class="text-xl font-semibold text-foreground">
-                {% if obj_product %}
-                {% trans 'Product Detail' %}: {{ obj_product.name|default:obj_product.slug }}
-                {% else %}
-                {% trans 'Product Detail' %}
-                {% endif %}
-            </h1>
-        </div>
+<div class="kt-container-fixed space-y-6">
+    <form class="kt-form" id="frm_detail_product"
+        data-url="{% url 'ProductUpdateAPI' pk='__pk__' %}"
+        data-url-upload="{% url 'UploadImageAPI' %}"
+    >
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {% if obj_product %}
+            <div class="lg:col-span-2">
+                <div class="kt-card p-5 rounded-xl border bg-card">
+                    <h2 class="text-lg font-semibold mb-3">Thông tin sản phẩm</h2>
+                    <input class="hidden" id="id_product" value="{{ obj_product.id|default:'' }}">
+                    <!-- Tên & Slug -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Tên sản phẩm:</label>
+                            <input name="name" type="text" class="kt-input w-full"
+                                value="{{ obj_product.name|default:'' }}">
+                        </div>
 
-        <!-- Category -->
-        <div class="flex-1 min-w-[250px] kt-form-item">
-            <label class="kt-form-label" for="inp_select_category">{% trans 'Category' %}:</label>
-            <div class="kt-form-control">
-                <select name="category" id="inp_select_category" class="kt-select w-full"
-                    data-url="{% url 'CategoryListAPI' %}">
-                </select>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Slug:</label>
+                            <input name="slug" type="text" class="kt-input w-full"
+                                value="{{ obj_product.slug|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_0"
+                        id="accordion_content_0">
+                        <div class="kt-accordion-wrapper">
+                            <!-- Mô tả -->
+                            <div class="kt-form-item mt-6">
+                                <label class="kt-form-label">Mô tả:</label>
+                                <input name="description" type="text" class="kt-input w-full"
+                                    value="{{ obj_product.description|default:'' }}">
+                            </div>
+
+                            <!-- Giá & Trạng thái -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                                <div class="kt-form-item">
+                                    <label class="kt-form-label">Giá:</label>
+                                    <input name="price" type="text" step="0.01" min="0" class="kt-input w-full"
+                                        value="{{ obj_product.price|default:'0.00' }}">
+                                </div>
+                                <div class="kt-form-item">
+                                    <label class="kt-form-label">Trạng thái:</label>
+                                    <input name="is_active" type="checkbox" class="kt-switch toggle-active" {% if obj_product.is_active %} checked {% endif %} />
+                                </div>
+
+                            </div>
+                            <!--Hình ảnh-->
+                            <div class="kt-form-item mt-6">
+                                <label class="kt-form-label">Hình ảnh:</label>
+                                <input type="text" id="check_image" class="hidden"
+                                    value="{{ obj_product.img|default:'' }}">
+                                <div class="kt-form-control">
+                                    <div id="image_product" name="image_product"></div>
+                                </div>
+                                <div class="kt-form-description"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-kt-accordion="true" class="kt-accordion mt-6">
+                        <div data-kt-accordion-item="true" class="kt-accordion-item">
+                            <button id="accordion_toggle_0" data-kt-accordion-toggle="true"
+                                aria-controls="accordion_content_0"
+                                class="kt-accordion-toggle flex items-center gap-2 w-full px-6 py-3 rounded-lg bg-accent/50">
+
+                                <!-- Text khi đóng -->
+                                <span
+                                    class="kt-accordion-title kt-accordion-indicator-on flex-1 text-sm font-medium ml-5">
+                                    Xem thêm...
+                                </span>
+
+                                <!-- Text khi mở -->
+                                <span
+                                    class="kt-accordion-title kt-accordion-indicator-off flex-1 text-sm font-medium ml-5">
+                                    Ẩn bớt
+                                </span>
+
+                                <!-- Icon + / - -->
+                                <span aria-hidden="true" class="kt-accordion-indicator flex-shrink-0 mr-5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-plus kt-accordion-indicator-on">
+                                        <path d="M5 12h14"></path>
+                                        <path d="M12 5v14"></path>
+                                    </svg>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-minus kt-accordion-indicator-off">
+                                        <path d="M5 12h14"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="kt-form-description"></div>
-        </div>
-    </div>
+            {% endif %}
 
+            <div>
+                <div class="kt-card p-5 rounded-xl border bg-card space-y-6">
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3">Category</h2>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Danh mục:</label>
+
+                            <select id="inp_select_category" name="category" class="kt-select w-full"
+                                data-url="{% url 'CategoryListAPI' %}">
+                                {% if obj_product.category %}
+                                <option value="{{ obj_product.category.id }}" selected>
+                                    {{ obj_product.category.name }}
+                                </option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="kt-card p-5 rounded-xl border bg-card mt-6">
+            <h2 class="text-lg font-semibold mb-3">Variant san pham</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="kt-form-item">
+                    <label class="kt-form-label">Mau:</label>
+                    <input type="text" class="kt-input w-full">
+                </div>
+                <div class="kt-form-item">
+                    <label class="kt-form-label">Size:</label>
+                    <input type="text" class="kt-input w-full">
+                </div>
+                <div class="kt-form-item">
+                    <label class="kt-form-label">So luong:</label>
+                    <input type="number" class="kt-input w-full">
+                </div>
+            </div>
+        </div>
+        <div class="w-full">
+            {% include 'button/form-actions-with-delete.html' %}
+        </div>
+    </form>
 </div>
+
 {% endblock %}
 {% block foot %}
 <script src="{% static 'products/detail.js' %}"></script>

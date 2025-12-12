@@ -20,17 +20,25 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         attrs["slug"] = generate_unique_slug(Product, name)
         return attrs
 class ProductDetailSerializer(serializers.ModelSerializer):
+    category = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'slug', 'description', 'price', 'price', 'img', 'category']
+        fields = ['id', 'name', 'description', 'is_active', 'price', 'category', 'slug', 'img']
+    
+    def get_category(self, obj):
+        check_category = getattr(obj, 'category', None)
+        if check_category:
+            return {
+                "id": check_category.id,
+                "name": check_category.name
+            }
+        return None
+
+
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(required = False)
-    price = serializers.DecimalField(max_digits=10, decimal_places=2, required = False)
-    description = serializers.CharField(required = False)
-    img = serializers.CharField(required = False)
-    category = serializers.CharField(required = False)
     class Meta:
         model = Product
         fields = '__all__'

@@ -190,11 +190,6 @@ class DataTableLoader {
         return dt;
         
     }
-    static render_price(data, type, row, meta) {
-        if (type !== 'display') return data; 
-        if (data == null) return '-';
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data);
-    }
 
     static col_is_price(opts) {
         const {
@@ -212,7 +207,9 @@ class DataTableLoader {
             name: 'price',
             orderable: !!orderable,
             visible: !!visible,
-            render: DataTableLoader.render_price
+            render:  function(data, type, row) {
+                return data || '-';
+            }
         };
     }
 
