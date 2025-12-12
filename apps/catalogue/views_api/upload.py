@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from apps.catalogue.serializers.upload import UploadImageSerializer
+from ...shared.decorator.decorator import validate_serializer
 from apps.shared.response import ResponseBuilder, ResponseCodes
-from apps.utils.decorator import validate_serializer
 from apps.utils.utils_handle_upload import handle_upload
 
 class UploadImageAPI(APIView):

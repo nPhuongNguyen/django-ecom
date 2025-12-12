@@ -16,7 +16,9 @@
             <div class="kt-card-table" data-kt-datatable="true">
                 <div class="kt-table-wrapper">
                     <table class="kt-table hover cursor-pointer" id="datatables-products" data-kt-datatable-table="true"
-                        data-url-list="{% url 'ProductListAPI' %}" data-url-delete="{% url 'ProductDestroyAPI' %}"
+                        data-url="{% url 'ProductListAPI' %}" 
+                        data-url-list="{% url 'ProductListView' %}" 
+                        data-url-delete="{% url 'ProductDestroyAPI' %}"
                         data-url-add="{% url 'ProductCreateView' %}"
                         data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
                         data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}">

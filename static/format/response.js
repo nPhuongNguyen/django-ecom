@@ -4,7 +4,7 @@ class ApiResponse {
         message,
         data = null,
         errors = null
-    }) {
+    }={}) {
         return {
             status_code,
             message,

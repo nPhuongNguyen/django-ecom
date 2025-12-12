@@ -2,7 +2,7 @@ $(document).ready(function () {
     const tbl$ = $('#datatables-products');
     const dtb = DataTableLoader.init(tbl$, {
         ajax: {
-            url: tbl$.data('url-list'),
+            url: tbl$.data('url'),
             ...DataTableLoader.ajax_base(),
         },
         columns: [

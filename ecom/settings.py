@@ -75,7 +75,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "apps.middleware.request_middleware.RequestMiddleware",
+    # "apps.middleware.request_middleware.RequestMiddleware",
 ]
 
 
@@ -165,8 +165,8 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 # Ngôn ngữ mặc định
-# LANGUAGE_CODE = 'en-us'
-LANGUAGE_CODE = 'vi'
+LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'vi'
 
 # Múi giờ
 TIME_ZONE = 'Asia/Ho_Chi_Minh'

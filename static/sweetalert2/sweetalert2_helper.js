@@ -1,8 +1,17 @@
 class SweetAlertHelper {
+
+    static Icons = {
+        success: 'success',
+        error: 'error',
+        warning: 'warning',
+        info: 'info',
+        question: 'question'
+    };
+
     static async confirmSave({
         title = gettext('Do you want to save changes?'),
         text = '',
-        icon = 'question',
+        icon = SweetAlertHelper.Icons.question,
         confirmButtonText = gettext('Yes'),
         cancelButtonText = gettext('Cancel'),
         url = null,
@@ -10,7 +19,7 @@ class SweetAlertHelper {
         params = {},
         data = {},
         timeout = 0
-    }) {
+    }={}) {
         const result = await Swal.fire({
             title,
             text,
@@ -53,11 +62,11 @@ class SweetAlertHelper {
         params = {},
         data = {},
         timeout = 0
-    }) {
+    }={}) {
         const result = await Swal.fire({
             title,
             text,
-            icon: 'warning',
+            icon: SweetAlertHelper.Icons.warning,
             showCancelButton: true,
             confirmButtonText,
             cancelButtonText,
@@ -89,14 +98,15 @@ class SweetAlertHelper {
     }
 
     static async NotiError({
-        title = 'Lỗi xử lí',
-        text = 'Đã xảy ra lỗi.'
-    }){
+        title = 'Thông báo',
+        text = 'Đã xảy ra sự cố. Vui lòng thử lại sau.'
+    } = {}) {
         await Swal.fire({
-            title: title,
-            text: text,
-            icon: "error",
+            title,
+            text,
+            icon: SweetAlertHelper.Icons.error,
             confirmButtonText: "OK"
         });
     }
+
 }

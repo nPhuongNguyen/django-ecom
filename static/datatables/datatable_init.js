@@ -190,12 +190,21 @@ class DataTableLoader {
         return dt;
         
     }
-    static render_price(data, type, row, meta) {
-        if (type !== 'display') return data; 
-        if (data == null) return '-';
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data);
-    }
 
+    static formatPriceOnInput(value) {
+        if (!value) return "";
+
+        // đổi về dạng số với dấu phẩy
+        value = value.toString().replace(".", ",");
+
+        // tách phần nguyên + thập phân
+        let parts = value.split(",");
+
+        // format phần nguyên: 100000 → 100.000
+        parts[0] = Number(parts[0]).toLocaleString("vi-VN");
+
+        return parts.join(",");
+    }
     static col_is_price(opts) {
         const {
             visible,
@@ -212,7 +221,9 @@ class DataTableLoader {
             name: 'price',
             orderable: !!orderable,
             visible: !!visible,
-            render: DataTableLoader.render_price
+            render:  function(data, type, row) {
+                return DataTableLoader.formatPriceOnInput(data) || '-';
+            }
         };
     }
 
