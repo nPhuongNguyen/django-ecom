@@ -2,50 +2,80 @@ from rest_framework import serializers
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from apps.catalogue.models.products import Product
+from .product_variants import ProductVariantListSerializer
 from apps.utils.minio import S3Minio as S3
-from apps.utils.utils_generate_unique_slug import generate_unique_slug
 class ProductListSerializer(serializers.ModelSerializer):
+    variants = ProductVariantListSerializer(many=True)
+    category = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id','name', 'slug', 'description', 'price', 'is_active', 'img', 'category']
+        fields = ['id','name', 'slug', 'description', 'price', 'is_active', 'img', 'category','variants']
+
+    def get_category(self, obj):
+        if obj.category:
+            return {
+                "id": obj.category.id,
+                "name": obj.category.name
+            }
+        return None
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'is_active', 'price', 'category', 'slug', 'img']
-        read_only_fields = ['slug']
+        fields = ['name', 'description', 'is_active', 'price', 'category', 'img']
 
     def validate(self, attrs):
-        name = attrs.get("name")
-        attrs["slug"] = generate_unique_slug(Product, name)
+        if "name" in attrs:
+            name = attrs["name"]
+            slug_base = slugify(name)
+            slug = slug_base
+
+            counter = 1
+            while Product.objects.filter(slug=slug).exclude(
+                id=self.instance.id if self.instance else None
+            ).exists():
+                slug = f"{slug_base}-{counter}"
+                counter += 1
+
+            attrs["slug"] = slug
+
         return attrs
+
 class ProductDetailSerializer(serializers.ModelSerializer):
+    variants = ProductVariantListSerializer(many=True)
     category = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'is_active', 'price', 'category', 'slug', 'img']
-    
+        fields = ['id', 'name', 'description', 'is_active', 'price', 'category', 'slug', 'img', 'variants']
     def get_category(self, obj):
-        check_category = getattr(obj, 'category', None)
-        if check_category:
+        if obj.category:
             return {
-                "id": check_category.id,
-                "name": check_category.name
+                "id": obj.category.id,
+                "name": obj.category.name
             }
         return None
-
-
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(required = False)
     class Meta:
         model = Product
-        fields = '__all__'
-        read_only_fields = ['slug']
+        fields = ['name', 'description', 'is_active', 'price', 'category', 'img']
 
     def validate(self, attrs):
-        name = attrs.get("name")
-        attrs["slug"] = generate_unique_slug(Product, name)
+        if "name" in attrs:
+            name = attrs["name"]
+            slug_base = slugify(name)
+            slug = slug_base
+
+            counter = 1
+            while Product.objects.filter(slug=slug).exclude(
+                id=self.instance.id if self.instance else None
+            ).exists():
+                slug = f"{slug_base}-{counter}"
+                counter += 1
+
+            attrs["slug"] = slug
+
         return attrs
         

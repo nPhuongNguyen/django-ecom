@@ -66,12 +66,13 @@ class BaseModelUpdated(BaseModel):
 
 class BaseModelDeleted(BaseModel):
     is_deleted = models.BooleanField(default=False, db_comment='Trạng thái đã xoá')
-    deleted_at = models.DateTimeField(null=True, db_comment='Ngày đã xoá')
+    deleted_at = models.DateTimeField(blank=True, db_comment='Ngày đã xoá')
     deleted_by = models.ForeignKey(
         'auths.Users', on_delete=models.RESTRICT, # pylint: disable=E5141
         db_column='deleted_by_id',
         db_comment='Người đã xoá',
         related_name='%(app_label)s_%(class)s_deleted_by',
+        null=True
     )
 
     def delete(self, *args, is_purge: bool = False, deleted_by_id: int = None, **kwargs):

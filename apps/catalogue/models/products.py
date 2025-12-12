@@ -17,10 +17,10 @@ class Product(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated,
 
 class ProductVariant(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     product = models.ForeignKey(Product, db_column= 'product_id', on_delete=models.RESTRICT, related_name='variants')
-    name = models.CharField(max_length=100, null=True)
-    img = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=100)
+    img = models.CharField(max_length=255, blank=True)
     sku = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     stock_qty = models.IntegerField(default=0)
 
     class Meta:

@@ -1,9 +1,9 @@
 from apps.catalogue.models.products import Product
 from apps.catalogue.serializers.products import ProductCreateSerializer, ProductDetailSerializer, ProductListSerializer, ProductUpdateSerializer
 from apps.shared.decorator.decorator import token_required, validate_exception
-from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
+from apps.shared.mixins import CreateMixin, DestroyMixin, DetailMixin, ListMixin, UpdateMixin
 class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category').prefetch_related('variants').all()
     serializer_class_list = ProductListSerializer
     search_fields = ['name']
     ordering_fields = ['name']
@@ -23,11 +23,13 @@ class ProductUpdateAPI(UpdateMixin):
     queryset = Product.objects.all()
     serializer_class_update = ProductUpdateSerializer
     serializer_class_detail = ProductDetailSerializer
+    @validate_exception()
     def post(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
 class ProductDestroyAPI(DestroyMixin):
     queryset = Product.objects.all()
+    @validate_exception()
     def post(self, request, *args, **kwargs):
         return self.destroy_many(request, *args, **kwargs) 
     
@@ -41,10 +43,9 @@ class ProductChangeStatusAPI(UpdateMixin):
         return self.change_status(request, *args, **kwargs)
     
 
-class ProductDetailAPI(UpdateMixin, DestroyMixin):
-    queryset = Product.objects.all()
+class ProductDetailAPI(DetailMixin):
+    queryset = Product.objects.select_related('category').prefetch_related('variants').all()
     serializer_class_detail = ProductDetailSerializer
-    serializer_class_update = ProductUpdateSerializer
     @validate_exception()
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.detail(request, *args, **kwargs)

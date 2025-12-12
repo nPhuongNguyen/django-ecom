@@ -195,3 +195,21 @@ class DestroyMixin(BaseMixin):
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
         )
+    
+class DetailMixin(BaseMixin):
+    def detail(self, request, *args, **kwargs):
+        serializer_detail = self.get_serializer_class_detail()
+        if not serializer_detail:
+            return ResponseBuilder.build(
+                code=ResponseCodes.SYSTEM_ERROR,
+                errors="Serializer not found."
+            )
+        instance = self.check_info()
+        if not instance:
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT
+            )
+        return ResponseBuilder.build(
+            code=ResponseCodes.SUCCESS,
+            data=serializer_detail(instance=instance).data
+        )
