@@ -15,6 +15,10 @@
     <form class="kt-form" id="frm_detail_product"
         data-url="{% url 'ProductUpdateAPI' pk='__pk__' %}"
         data-url-upload="{% url 'UploadImageAPI' %}"
+        data-url-list="{% url 'ProductListView' %}" 
+        data-url-delete="{% url 'ProductDestroyAPI' %}"
+        data-url-add="{% url 'ProductCreateView' %}"
+        data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
     >
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {% if obj_product %}
@@ -50,8 +54,9 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                                 <div class="kt-form-item">
                                     <label class="kt-form-label">Giá:</label>
-                                    <input name="price" type="text" step="0.01" min="0" class="kt-input w-full"
-                                        value="{{ obj_product.price|default:'0.00' }}">
+                                    <div class="kt-form-control">
+                                        <input id="inp_price" type="text" name="price" class="kt-input w-full" value="{{ obj_product.price|default:'0' }}" required>
+                                    </div>
                                 </div>
                                 <div class="kt-form-item">
                                     <label class="kt-form-label">Trạng thái:</label>

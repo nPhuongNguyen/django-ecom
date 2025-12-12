@@ -191,6 +191,20 @@ class DataTableLoader {
         
     }
 
+    static formatPriceOnInput(value) {
+        if (!value) return "";
+
+        // đổi về dạng số với dấu phẩy
+        value = value.toString().replace(".", ",");
+
+        // tách phần nguyên + thập phân
+        let parts = value.split(",");
+
+        // format phần nguyên: 100000 → 100.000
+        parts[0] = Number(parts[0]).toLocaleString("vi-VN");
+
+        return parts.join(",");
+    }
     static col_is_price(opts) {
         const {
             visible,
@@ -208,7 +222,7 @@ class DataTableLoader {
             orderable: !!orderable,
             visible: !!visible,
             render:  function(data, type, row) {
-                return data || '-';
+                return DataTableLoader.formatPriceOnInput(data) || '-';
             }
         };
     }

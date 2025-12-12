@@ -9,24 +9,43 @@ $(document).ready(function () {
             },
         },
     });
-    
+    const priceInput = frm$.find("#inp_price");
+    function formatPriceOnInput(value) {
+        if (!value) return "";
+
+        // đổi về dạng số với dấu phẩy
+        value = value.toString().replace(".", ",");
+
+        // tách phần nguyên + thập phân
+        let parts = value.split(",");
+
+        // format phần nguyên: 100000 → 100.000
+        parts[0] = Number(parts[0]).toLocaleString("vi-VN");
+
+        return parts.join(",");
+    }
     const validator = FormValidateLoader.init(
         frm$,
         {
             submitHandler: async function (form, event) {
                 event.preventDefault();
+                let price = priceInput.val();
+                price = price.replace(/\./g, "").replace(",", ".");
+                priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
-                const files = UppyUploader.getFiles(uppyInstance);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                const result_api_image = null;
                 let result = null;
                 if (changed) {
+                    const files = UppyUploader.getFiles(uppyInstance);
+                    let result_api_image = null;
                     if (files.length > 0) {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload');
                         const check_sw2_alret = await SweetAlertHelper.confirmSave();
                         if (check_sw2_alret.cancelled){
+                            un_formart_price = formatPriceOnInput(price)
+                            priceInput.val(un_formart_price)
                             return;
                         }
                         if(check_sw2_alret.confirmed){
@@ -74,6 +93,8 @@ $(document).ready(function () {
                 }
                 if(result){
                     if (result.cancelled){
+                        un_formart_price = formatPriceOnInput(price)
+                        priceInput.val(un_formart_price)
                         return;
                     }
                     else if (result.status_code !== 1) {
@@ -93,6 +114,6 @@ $(document).ready(function () {
                     SweetAlertHelper.NotiError();
                 }
             }
-        }
+        },
     );
 });
