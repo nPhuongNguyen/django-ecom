@@ -1,0 +1,106 @@
+{% load static i18n %}
+{% if obj_product %}
+<div id="frm_product_variant"
+    data-url-delete="{% url 'ProductVariantDestroyAPI' %}"
+    >
+    <div class="kt-card p-5 rounded-xl border bg-card mt-6">
+    <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold">Variant sản phẩm</h2>
+        <button type="button" class="kt-btn kt-btn-primary" data-kt-modal-toggle="#modal_variant">
+            Thêm mới
+        </button>
+    </div>
+    {% if obj_product.variants %}
+    {% for obj_variant in obj_product.variants.all %}
+    <div class="kt-card p-5 rounded-xl border bg-card mt-6">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-semibold mb-3">
+                Variant: {{ obj_variant.name|default_if_none:"" }}
+            </h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="kt-form-item">
+                <label class="kt-form-label">Tên:</label>
+                <input type="text" class="kt-input w-full" value="{{ obj_variant.name|default:'' }}">
+            </div>
+            <div class="kt-form-item">
+                <label class="kt-form-label">SKU:</label>
+                <input type="text" class="kt-input w-full" value="{{ obj_variant.sku|default:'' }}">
+            </div>
+        </div>
+        <div class="kt-accordion-content hidden" aria-labelledby="{{ obj_variant.id }}" id="{{ obj_variant.id }}">
+            <div class="kt-accordion-wrapper">
+                <div class="grid grid-cols-3 gap-4 mt-6">
+                    <div class="kt-form-item">
+                        <label class="kt-form-label">Giá:</label>
+                        <input type="text" class="kt-input w-full" value="{{ obj_variant.price|default:'0.00' }}">
+                    </div>
+                    <div class="kt-form-item">
+                        <label class="kt-form-label">Stock:</label>
+                        <input type="text" class="kt-input w-full" value="{{ obj_variant.stock|default:'0' }}">
+                    </div>
+                    <div class="kt-form-item">
+                        <label class="kt-form-label">Trạng thái:</label>
+                        <input name="is_active" type="checkbox" class="kt-switch toggle-active" {% if obj_variant.is_active %} checked {% endif %} />
+                    </div>
+                </div>
+                <div class="kt-form-item mt-6">
+                    <label class="kt-form-label">Hình ảnh:</label>
+                    <input type="hidden"
+                        class="check-image-product-variant"
+                        data-variant-id="{{ obj_variant.id }}"
+                        value="{{ obj_variant.img|default:'' }}">
+
+                    <div class="kt-form-control">
+                        <div class="image-product-variant"
+                            data-variant-id="{{ obj_variant.id }}"></div>
+                    </div>
+
+                    <div class="kt-form-description"></div>
+                </div>
+            </div>
+        </div>
+
+        <div data-kt-accordion="true" class="kt-accordion mt-6">
+            <div data-kt-accordion-item="true" class="kt-accordion-item">
+                <button id="{{ obj_variant.id }}" data-kt-accordion-toggle="true" aria-controls="{{ obj_variant.id }}"
+                    class="kt-accordion-toggle flex items-center gap-2 w-full px-6 py-3 rounded-lg bg-accent/50">
+
+                    <!-- Text khi đóng -->
+                    <span class="kt-accordion-title kt-accordion-indicator-on flex-1 text-sm font-medium ml-5">
+                        Xem thêm...
+                    </span>
+
+                    <!-- Text khi mở -->
+                    <span class="kt-accordion-title kt-accordion-indicator-off flex-1 text-sm font-medium ml-5">
+                        Ẩn bớt
+                    </span>
+
+                    <!-- Icon + / - -->
+                    <span aria-hidden="true" class="kt-accordion-indicator flex-shrink-0 mr-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-plus kt-accordion-indicator-on">
+                            <path d="M5 12h14"></path>
+                            <path d="M12 5v14"></path>
+                        </svg>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-minus kt-accordion-indicator-off">
+                            <path d="M5 12h14"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div class="w-full">
+            {% include 'button/extends/product_variant/form-actions-edit-delete.html' with variant_id=obj_variant.id %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+</div>
+<script src="{% static 'products/extends/product_variant.js' %}"></script>
+{% endif %}

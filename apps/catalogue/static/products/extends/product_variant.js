@@ -1,12 +1,13 @@
-$(document).ready(async function () {
-    const frm$ = $('#frm_detail_product');
-    const check_image$ = $('#check_image');
-    const check_image_val$ = check_image$.val();
-    let image$ = null
-    if(check_image$ && check_image_val$){
-        image$ = check_image$.val()
-    }
-    const uppyInstance  = UppyUploader.init('#image_product', image$, {
+$(document).ready(function () {
+    frm_model_variant$ = $('#frm_modal_variant');
+    frm_product_variant$ = $('#frm_product_variant');
+    check_image$ = $('#check_image_product_variant').val();
+    btnEdit$ = $('.btn-edit-variant');
+    btnDelete$ = $('.btn-delete-variant');
+    const modalEl = document.querySelector('#modal_variant');
+    const modal = KTModal.getInstance(modalEl);
+    
+    const uppyInstanceProductVariantInput  = UppyUploader.init('#image_product_variant_input', null, {
         uppyOptions: {
             restrictions: {
                 allowedFileTypes: ['.jpg', '.jpeg', '.png'],
@@ -15,22 +16,28 @@ $(document).ready(async function () {
             },
         },
     });
-    const selectCategory$ = $('#inp_select_category');
-    const apiURL$ = selectCategory$.data('url');
-    Select2Helper.init(selectCategory$, {
-        url: apiURL$,            
-        valueField: 'id',       
-        textField: 'name'   
-    });
-    let result = null;
-    const check_id_product$ = $('#id_product');
-    const check_val$ = check_id_product$.val();
-    let id_product$ = null;
-    if(check_id_product$ && check_val$){
-        id_product$ = check_val$
-    }
+    frm_product_variant$
+    .find('.image-product-variant')
+    .each(function () {
+        const $el = $(this);
+        const variantId = $el.data('variant-id');
 
-    const priceInput = frm$.find("#inp_price");
+        const checkImage = frm_product_variant$
+            .find(`.check-image-product-variant[data-variant-id="${variantId}"]`)
+            .val() || null;
+
+        UppyUploader.init(this, checkImage, {
+            uppyOptions: {
+                restrictions: {
+                    allowedFileTypes: ['.jpg', '.jpeg', '.png'],
+                    maxFileSize: 500 * 1024,
+                    maxNumberOfFiles: 1,
+                },
+            },
+        });
+    });
+
+    const priceInput = frm_model_variant$.find("#inp_price");
     function formatPriceOnInput(value) {
         if (!value) return "";
 
@@ -44,37 +51,29 @@ $(document).ready(async function () {
         parts[0] = Number(parts[0]).toLocaleString("vi-VN");
 
         return parts.join(",");
-    }
-    const initialPrice = priceInput.val();
-    if (initialPrice) {
-        priceInput.val(formatPriceOnInput(initialPrice));
-    }
+    };
     const validator = FormValidateLoader.init(
-        frm$,
+        frm_model_variant$,
         {
             submitHandler: async function (form, event) {
                 event.preventDefault();
                 let price = priceInput.val();
                 price = price.replace(/\./g, "").replace(",", ".");
                 priceInput.val(price);
-                const formdata = FormValidateLoader.formData(frm$);
-                console.log('formdata',formdata);
-                const files = UppyUploader.getFiles(uppyInstance);
-                const changed = UppyUploader.hasChanged(uppyInstance);
-                let result_api_image = null;
-                if (changed) {
-                    if (files.length > 0) {
+                api_upload = frm_model_variant$.data('url-upload');
+                const formdata = FormValidateLoader.formData(frm_model_variant$);
+                const changed = UppyUploader.hasChanged(uppyInstanceProductVariantInput);
+                if(changed){
+                    const files = UppyUploader.getFiles(uppyInstanceProductVariantInput);
+                    let result_api_image = null;
+                    if(files.length > 0){
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
-                        const api_upload = frm$.data('url-upload');
+                        const api_upload = frm_model_variant$.data('url-upload');
                         const check_sw2_alret = await SweetAlertHelper.confirmSave();
                         if (check_sw2_alret.cancelled){
                             un_formart_price = formatPriceOnInput(price)
                             priceInput.val(un_formart_price)
-                            return;
-                        }
-                        if(id_product$ == null){
-                            ToastHelper.showError();
                             return;
                         }
                         if(check_sw2_alret.confirmed){
@@ -95,7 +94,7 @@ $(document).ready(async function () {
                                     }else{
                                         formdata['img'] = result_api_image.data.list_img
                                         result = await CallApi.request({
-                                            url: frm$.data('url').replace('__pk__', id_product$),
+                                            url: frm_model_variant$.data('url'),
                                             method: 'POST',
                                             data: formdata
                                         })
@@ -104,8 +103,7 @@ $(document).ready(async function () {
                                     SweetAlertHelper.NotiError();
                                     return;
                                 }
-                            }
-                            finally{
+                            }finally{
                                 MyLoading.close();
                             }
                         }
@@ -115,9 +113,9 @@ $(document).ready(async function () {
                     }
                 }
                 else{
-                    result = await SweetAlertHelper.confirmSave({
-                        url: frm$.data('url').replace('__pk__', id_product$),
-                        data: formdata
+                    result = await SweetAlertHelper.confirmSave({ 
+                        url: frm_model_variant$.data('url'), 
+                        data: formdata 
                     });
                 }
                 if(result){
@@ -132,45 +130,48 @@ $(document).ready(async function () {
                     }
                     else {
                         ToastHelper.showSuccess();
-                        FormValidateLoader.savedNext(event, {
-                            url_save: frm$.data('url-list'),
-                            url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
-                        });
+                        modal.hide();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1200);
+                        return;
                     }
                 }
                 else {
                     SweetAlertHelper.NotiError();
                 }
-            },
-        },
-        frm$.find('button.btn-delete').on('click', async function(){
-            if(id_product$ == null){
+            }
+        }
+    )
+    btnEdit$.click(async function(){
+        console.log("btn edit");
+    });
+    btnDelete$.click(async function(){
+        const result = await SweetAlertHelper.confirmSave({
+            url: frm_product_variant$.data('url-delete'),
+            params: {
+                'id[]':$(this).data('id')
+            }
+        });
+        if(result.cancelled){
+            return;
+        }
+        if(result){
+            if(result.status_code !==1){
                 ToastHelper.showError();
                 return;
+            }else{
+                ToastHelper.showSuccess();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1200);
+                return;
             }
-            const result = await SweetAlertHelper.confirmDelete({
-                url: frm$.data('url-delete'),
-                params: {'id[]': id_product$}
-            });
-            if(result){
-                if(result.cancelled){
-                    return;
-                }else if(result.status_code !== 1){
-                    ToastHelper.showError();
-                }else{
-                    ToastHelper.showSuccess();
-                    await new Promise(resolve => {
-                        setTimeout(() => {
-                            window.location.href = frm$.data('url-list');
-                            resolve();
-                        }, 1500);
-                    });
-                }
-            }
-            else{
-                SweetAlertHelper.NotiError();
-            }
-        })
-    );
+        }
+        else{
+            SweetAlertHelper.NotiError();
+            return;
+        }
+    });
+
 })
