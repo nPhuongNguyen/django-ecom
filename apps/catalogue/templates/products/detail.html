@@ -15,7 +15,8 @@
     <form class="kt-form" id="frm_detail_product" data-url="{% url 'ProductUpdateAPI' pk='__pk__' %}"
         data-url-upload="{% url 'UploadImageAPI' %}" data-url-list="{% url 'ProductListView' %}"
         data-url-delete="{% url 'ProductDestroyAPI' %}" data-url-add="{% url 'ProductCreateView' %}"
-        data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}">
+        data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
+        >
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {% if obj_product %}
             <div class="lg:col-span-2">
@@ -133,110 +134,19 @@
                 </div>
             </div>
         </div>
-        <div class="kt-card p-5 rounded-xl border bg-card mt-6">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-semibold">Variant sản phẩm</h2>
-                <button type="button" class="kt-btn kt-btn-primary" data-kt-modal-toggle="#modal-variant">
-                    Thêm mới
-                </button>
-            </div>
-            {% if obj_product.variants %}
-            {% for obj_variant in obj_product.variants.all %}
-            <div class="kt-card p-5 rounded-xl border bg-card mt-6">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-lg font-semibold mb-3">
-                        Variant: {{ obj_variant.name|default_if_none:"" }}
-                    </h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="kt-form-item">
-                        <label class="kt-form-label">Tên:</label>
-                        <input type="text" class="kt-input w-full" value="{{ obj_variant.name|default:'' }}">
-                    </div>
-                    <div class="kt-form-item">
-                        <label class="kt-form-label">SKU:</label>
-                        <input type="text" class="kt-input w-full" value="{{ obj_variant.sku|default:'' }}">
-                    </div>
-                </div>
-                <div class="kt-accordion-content hidden" aria-labelledby="{{ obj_variant.id }}"
-                    id="{{ obj_variant.id }}">
-                    <div class="kt-accordion-wrapper">
-                        <div class="grid grid-cols-3 gap-4 mt-6">
-                            <div class="kt-form-item">
-                                <label class="kt-form-label">Giá:</label>
-                                <input type="text" class="kt-input w-full"
-                                    value="{{ obj_variant.price|default:'0.00' }}">
-                            </div>
-                            <div class="kt-form-item">
-                                <label class="kt-form-label">Stock:</label>
-                                <input type="text" class="kt-input w-full" value="{{ obj_variant.stock|default:'0' }}">
-                            </div>
-                            <div class="kt-form-item">
-                                <label class="kt-form-label">Trạng thái:</label>
-                                <input name="is_active" type="checkbox" class="kt-switch toggle-active" {% if obj_variant.is_active %} checked {% endif %} />
-                            </div>
-                        </div>
-                        <div class="kt-form-item mt-6">
-                            <label class="kt-form-label">Hình ảnh:</label>
-                            <input type="text" id="check_image" class="hidden" value="{{ obj_variant.img|default:'' }}">
-                            <div class="kt-form-control">
-                                <div id="image_product" name="image_product"></div>
-                            </div>
-                            <div class="kt-form-description"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div data-kt-accordion="true" class="kt-accordion mt-6">
-                    <div data-kt-accordion-item="true" class="kt-accordion-item">
-                        <button id="{{ obj_variant.id }}" data-kt-accordion-toggle="true"
-                            aria-controls="{{ obj_variant.id }}"
-                            class="kt-accordion-toggle flex items-center gap-2 w-full px-6 py-3 rounded-lg bg-accent/50">
-
-                            <!-- Text khi đóng -->
-                            <span class="kt-accordion-title kt-accordion-indicator-on flex-1 text-sm font-medium ml-5">
-                                Xem thêm...
-                            </span>
-
-                            <!-- Text khi mở -->
-                            <span class="kt-accordion-title kt-accordion-indicator-off flex-1 text-sm font-medium ml-5">
-                                Ẩn bớt
-                            </span>
-
-                            <!-- Icon + / - -->
-                            <span aria-hidden="true" class="kt-accordion-indicator flex-shrink-0 mr-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-plus kt-accordion-indicator-on">
-                                    <path d="M5 12h14"></path>
-                                    <path d="M12 5v14"></path>
-                                </svg>
-
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-minus kt-accordion-indicator-off">
-                                    <path d="M5 12h14"></path>
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-                <div class="w-full">
-                    {% include 'button/form-actions-save-delete.html' %}
-                </div>
-            </div>
-            {% endfor %}
-            {% endif %}
-        </div>
+        {% include 'products/extends/product_variants.html' with obj_product=obj_product %}
         <div class="w-full">
             {% include 'button/form-actions-with-delete.html' %}
         </div>
     </form>
-    <form action="">
-        <div class="kt-modal kt-modal-center" data-kt-modal="true" id="modal-variant">
-            <div class="kt-modal-content w-full max-w-[70%] mx-auto mt-10 border-0">
+    <form id="frm_modal_variant"
+        data-url="{% url 'ProductVariantCreateAPI' %}"
+        data-url-upload="{% url 'UploadImageAPI' %}"
+        >
+        <div class="kt-modal kt-modal-center" data-kt-modal="true" id="modal_variant">
+            <div class="kt-modal-content max-w-[70%] border-0">
                 <div class="kt-modal-header border-0 bg-blue-500 rounded-t-lg">
-                    <h3 class="kt-modal-title text-white">Modal Title</h3>
+                    <h3 class="kt-modal-title text-white">Product Variant</h3>
                     <button type="button" class="kt-modal-close text-white" aria-label="Close modal"
                         data-kt-modal-dismiss="#modal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -247,16 +157,62 @@
                         </svg>
                     </button>
                 </div>
-                <div class="kt-modal-body max-h-[70vh] overflow-auto p-4">
-                    <div class=""></div>
+                <div class="kt-modal-body max-h-[50vh]">
+                    <input type="hidden" name="product" value="{{ obj_product.id }}">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="kt-form-item">
+                            <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
+                            <div class="kt-form-control">
+                                <input id="inp_name" type="text" class="kt-input w-full" name="name" required />
+                            </div>
+                            <div class="kt-form-description"></div>
+                        </div>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label" for="inp_sku">{% trans 'SKU' %}:</label>
+                            <div class="kt-form-control">
+                                <input id="inp_sku" class="kt-input w-full resize-y" name="sku" required/>
+                            </div>
+                            <div class="kt-form-description"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="kt-form-item">
+                            <label class="kt-form-label required" for="inp_price">{% trans 'Price' %}:</label>
+                            <div class="kt-form-control">
+                                <input id="inp_price" type="text" name="price" class="kt-input w-full" required>
+                            </div>
+                        </div>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label required" for="inp_stock">{% trans 'Stock' %}:</label>
+                            <div class="kt-form-control">
+                                <input id="inp_stock" type="number" min="0" value="0" name="stock_qty" class="kt-input w-full" required>
+                            </div>
+                        </div>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label required" for="inp_is_active">{% trans 'Status' %}:</label>
+                            <div class="kt-form-control">
+                                <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active" name="is_active"
+                                    checked="" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-form-item mt-6">
+                        <label class="kt-form-label">Hình ảnh:</label>
+                        <div class="kt-form-control">
+                            <div id="image_product_variant_input"></div>
+                        </div>
+                        <div class="kt-form-description"></div>
+                    </div>
                 </div>
                 <div class="kt-modal-footer gap-2.5 justify-end border-0">
                     <div class="flex gap-4">
-                        <button class="kt-btn kt-btn-secondary" data-kt-modal-dismiss="#modal-variant">
+                        <button class="kt-btn kt-btn-secondary" data-kt-modal-dismiss="#modal-variant"
+                            type="button">
                             Cancel
                         </button>
-                        <button class="kt-btn">
-                            Submit
+                        <button class="kt-btn"
+                            type="submit">
+                            Save
                         </button>
                     </div>
                 </div>

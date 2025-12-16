@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from ..models.categories import Category
 from apps.catalogue.models.products import Product
 from .product_variants import ProductVariantListSerializer
 from apps.utils.minio import S3Minio as S3
@@ -12,13 +13,15 @@ class ProductListSerializer(serializers.ModelSerializer):
         fields = ['id','name', 'slug', 'description', 'price', 'is_active', 'img', 'category','variants']
 
     def get_category(self, obj):
-        if obj.category:
+        try:
+            category = Category.objects.get(pk=obj.category.id)
             return {
-                "id": obj.category.id,
-                "name": obj.category.name
+                "id": category.id,
+                "name": category.name
             }
-        return None
-
+        except:
+            return ''
+    
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product

@@ -1,0 +1,141 @@
+{% extends 'admin/base.html' %}
+{% load static i18n %}
+{% block head %}
+{% include 'import/jquery_import.html' %}
+{% include 'import/jquery_validation.html' %}
+{% include 'import/uppy_import.html' %}
+{% include 'import/toast_import.html' %}
+{% include 'import/spin_import.html' %}
+{% include 'import/sweetalert2_import.html' %}
+{% include 'import/select2_import.html' %}
+{% include 'import/axios_import.html' %}
+{% endblock %}
+{% block content %}
+<div class="kt-container-fixed space-y-6">
+    <form class="kt-form" id="frm_detail_product_variant"
+        data-url="{% url 'ProductVariantUpdateAPI' pk='__pk__' %}"
+        data-url-upload="{% url 'UploadImageAPI' %}"
+        data-url-list="{% url 'ProductVariantListView' %}"
+        data-url-add="{% url 'ProductVariantListView' %}"
+        data-url-detail="{% url 'ProductVariantDetailView' pk='__pk__' %}"
+        >
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {% if obj_product_variant %}
+            <div class="lg:col-span-2">
+                <div class="kt-card p-5 rounded-xl border bg-card">
+                    <h2 class="text-lg font-semibold mb-3">Thông tin variant sản phẩm</h2>
+                    <input class="hidden" id="id_product_variant" value="{{ obj_product_variant.id|default:'' }}">
+                    <!-- Tên & Slug -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Tên variant sản phẩm:</label>
+                            <input name="name" type="text" class="kt-input w-full"
+                                value="{{ obj_product_variant.name|default:'' }}">
+                        </div>
+
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">SKU:</label>
+                            <input name="sku" type="text" class="kt-input w-full"
+                                value="{{ obj_product_variant.sku|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_0"
+                        id="accordion_content_0">
+                        <div class="kt-accordion-wrapper">
+                            <!-- Giá & Trạng thái -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                                <div class="kt-form-item">
+                                    <label class="kt-form-label">Giá:</label>
+                                    <div class="kt-form-control">
+                                        <input id="inp_price" type="text" name="price" class="kt-input w-full"
+                                            value="{{ obj_product_variant.price|default:'0' }}" required>
+                                    </div>
+                                </div>
+                                <div class="kt-form-item">
+                                    <label class="kt-form-label">Trạng thái:</label>
+                                    <input name="is_active" type="checkbox" class="kt-switch toggle-active" {% if obj_product_variant.is_active %} checked {% endif %} />
+                                </div>
+
+                            </div>
+                            <!--Hình ảnh-->
+                            <div class="kt-form-item mt-6">
+                                <label class="kt-form-label">Hình ảnh:</label>
+                                <input type="text" id="check_image" class="hidden"
+                                    value="{{ obj_product_variant.img|default:'' }}">
+                                <div class="kt-form-control">
+                                    <div id="image_product_variant" name="image_product_variant"></div>
+                                </div>
+                                <div class="kt-form-description"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-kt-accordion="true" class="kt-accordion mt-6">
+                        <div data-kt-accordion-item="true" class="kt-accordion-item">
+                            <button id="accordion_toggle_0" data-kt-accordion-toggle="true"
+                                aria-controls="accordion_content_0"
+                                class="kt-accordion-toggle flex items-center gap-2 w-full px-6 py-3 rounded-lg bg-accent/50">
+
+                                <!-- Text khi đóng -->
+                                <span
+                                    class="kt-accordion-title kt-accordion-indicator-on flex-1 text-sm font-medium ml-5">
+                                    Xem thêm...
+                                </span>
+
+                                <!-- Text khi mở -->
+                                <span
+                                    class="kt-accordion-title kt-accordion-indicator-off flex-1 text-sm font-medium ml-5">
+                                    Ẩn bớt
+                                </span>
+
+                                <!-- Icon + / - -->
+                                <span aria-hidden="true" class="kt-accordion-indicator flex-shrink-0 mr-5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-plus kt-accordion-indicator-on">
+                                        <path d="M5 12h14"></path>
+                                        <path d="M12 5v14"></path>
+                                    </svg>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-minus kt-accordion-indicator-off">
+                                        <path d="M5 12h14"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div>
+                <div class="kt-card p-5 rounded-xl border bg-card space-y-6">
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3">Sản phẩm</h2>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Danh mục:</label>
+                            <select id="inp_select_product" name="product" class="kt-select w-full"
+                                data-url="{% url 'ProductListAPI' %}">
+                                {% if obj_product_variant.product %}
+                                <option value="{{ obj_product_variant.product.id }}" selected>
+                                    {{ obj_product_variant.product.name }}
+                                </option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="w-full">
+            {% include 'button/form-actions-with-delete.html' %}
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+{% block foot %}
+<script src="{% static 'product_variants/detail.js' %}"></script>
+{% endblock %}

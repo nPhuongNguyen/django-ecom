@@ -5,6 +5,8 @@ from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
 class ProductVariantListAPI(ListMixin):
     queryset = ProductVariant.objects.all()
     serializer_class_list = ProductVariantListSerializer
+    ordering_fields =['product']
+    @validate_exception()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     

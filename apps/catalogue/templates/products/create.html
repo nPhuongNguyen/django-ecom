@@ -30,15 +30,15 @@
                 data-url="{% url 'ProductCreateAPI' %}"
                 data-url-upload="{% url 'UploadImageAPI' %}"
                 >
-                <div class="w-full flex gap-5">
-                    <div class="flex-1 kt-form-item">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="kt-form-item">
                         <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
                         <div class="kt-form-control">
                             <input id="inp_name" type="text" class="kt-input w-full" name="name" required />
                         </div>
                         <div class="kt-form-description"></div>
                     </div>
-                    <div class="flex-1 kt-form-item">
+                    <div class="kt-form-item">
                         <label class="kt-form-label" for="inp_description">{% trans 'Description' %}:</label>
                         <div class="kt-form-control">
                             <textarea id="inp_description" class="kt-input w-full resize-y" name="description"
@@ -47,14 +47,14 @@
                         <div class="kt-form-description"></div>
                     </div>
                 </div>
-                <div class="w-full flex gap-5">
-                    <div class="flex-1 kt-form-item">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="kt-form-item">
                         <label class="kt-form-label required" for="inp_price">{% trans 'Price' %}:</label>
                         <div class="kt-form-control">
-                            <input id="inp_price" type="text" name="price" class="kt-input w-full" required>
+                            <input id="inp_price" type="text" name="price" class="kt-input w-full">
                         </div>
                     </div>
-                    <div class="flex-1 kt-form-item">
+                    <div class="kt-form-item">
                         <label class="kt-form-label required" for="inp_is_active">{% trans 'Status' %}:</label>
                         <div class="kt-form-control">
                             <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active" name="is_active"

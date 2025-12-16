@@ -80,22 +80,22 @@ class FormValidateLoader {
         if ($('html').attr('lang') === 'vi') {
             $.extend($.validator.messages, {
                 required: "Trường dữ liệu này là bắt buộc.",
-                remote: "Hãy sửa cho đúng.",
-                email: "Hãy nhập email.",
-                url: "Hãy nhập URL.",
-                date: "Hãy nhập ngày.",
-                dateISO: "Hãy nhập ngày (ISO).",
-                number: "Hãy nhập số.",
-                digits: "Hãy nhập chữ số.",
-                creditcard: "Hãy nhập số thẻ tín dụng.",
-                equalTo: "Hãy nhập thêm lần nữa.",
-                extension: "Phần mở rộng không đúng.",
-                maxlength: $.validator.format("Hãy nhập từ {0} kí tự trở xuống."),
-                minlength: $.validator.format("Hãy nhập từ {0} kí tự trở lên."),
-                rangelength: $.validator.format("Hãy nhập từ {0} đến {1} kí tự."),
-                range: $.validator.format("Hãy nhập từ {0} đến {1}."),
-                max: $.validator.format("Hãy nhập từ {0} trở xuống."),
-                min: $.validator.format("Hãy nhập từ {0} trở lên.")
+                remote: "Dữ liệu không hợp lệ.",
+                email: "Email không hợp lệ.",
+                url: "URL không hợp lệ.",
+                date: "Ngày không hợp lệ.",
+                dateISO: "Ngày không đúng định dạng ISO.",
+                number: "Vui lòng nhập số hợp lệ.",
+                digits: "Chỉ được nhập chữ số.",
+                creditcard: "Số thẻ tín dụng không hợp lệ.",
+                equalTo: "Giá trị nhập lại không khớp.",
+                extension: "Phần mở rộng không hợp lệ.",
+                maxlength: $.validator.format("Tối đa {0} ký tự."),
+                minlength: $.validator.format("Tối thiểu {0} ký tự."),
+                rangelength: $.validator.format("Từ {0} đến {1} ký tự."),
+                range: $.validator.format("Giá trị từ {0} đến {1}."),
+                max: $.validator.format("Giá trị ≤ {0}."),
+                min: $.validator.format("Giá trị ≥ {0}.")
             });
         }
 
