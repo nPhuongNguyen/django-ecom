@@ -8,3 +8,10 @@ urlpatterns =[
     path('product-detail/<str:slug>', views.ProductDetailView.as_view(), name='ProductDetailView'),
     path('product-create', views.ProductCreateView.as_view(), name='ProductCreateView'),
 ]
+
+#Product Variant
+
+urlpatterns +=[
+    path('product-variant-list', views.ProductVariantListView.as_view(), name='ProductVariantListView'),
+    path('product-variant-detail/<str:pk>', views.ProductVariantDetailView.as_view(), name='ProductVariantDetailView'),
+]

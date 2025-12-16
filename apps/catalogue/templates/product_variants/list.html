@@ -1,0 +1,58 @@
+{% extends 'admin/base.html' %}
+{% load static i18n %}
+{% block head %}
+{% include 'import/jquery_import.html' %}
+{% include 'import/datatable_import.html' %}
+{% include 'import/sweetalert2_import.html' %}
+{% include 'import/spin_import.html' %}
+{% include 'import/axios_import.html' %}
+{% include 'import/toast_import.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="kt-container-fixed">
+    <div class="grid w-full space-y-5">
+        <div class="kt-card">
+            <div class="kt-card-table" data-kt-datatable="true">
+                <div class="kt-table-wrapper">
+                    <table class="kt-table hover cursor-pointer" id="datatables-product_variants"
+                        data-kt-datatable-table="true" data-url="{% url 'ProductVariantListAPI' %}"
+                        data-url-change-status="{% url 'ProductVariantChangeStatusAPI' pk='__pk__' %}"
+                        data-url-delete="{% url 'ProductVariantDestroyAPI' %}"
+                        data-url-detail="{% url 'ProductVariantDetailView' pk='__pk__' %}"
+                        >
+                        <thead>
+                            <tr>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Product' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Name' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'SKU' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Stock' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Price' %}
+                                </th>
+                                <th scope="col" class="w-30" data-kt-datatable-column="label">
+                                    {% trans 'Status' %}
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block foot %}
+<script src="{% static 'product_variants/list.js' %}"></script>
+{% endblock %}

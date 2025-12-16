@@ -134,7 +134,7 @@
                 </div>
             </div>
         </div>
-        {% include 'products/extends/product_variant.html' with obj_product=obj_product %}
+        {% include 'products/extends/product_variants.html' with obj_product=obj_product %}
         <div class="w-full">
             {% include 'button/form-actions-with-delete.html' %}
         </div>
@@ -175,11 +175,17 @@
                             <div class="kt-form-description"></div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         <div class="kt-form-item">
                             <label class="kt-form-label required" for="inp_price">{% trans 'Price' %}:</label>
                             <div class="kt-form-control">
                                 <input id="inp_price" type="text" name="price" class="kt-input w-full" required>
+                            </div>
+                        </div>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label required" for="inp_stock">{% trans 'Stock' %}:</label>
+                            <div class="kt-form-control">
+                                <input id="inp_stock" type="number" min="0" value="0" name="stock_qty" class="kt-input w-full" required>
                             </div>
                         </div>
                         <div class="kt-form-item">

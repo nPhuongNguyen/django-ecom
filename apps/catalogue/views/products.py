@@ -31,7 +31,7 @@ class ProductDetailView(View):
             context['obj_product'] = product
             info_product = ProductDetailSerializer(instance = product).data
             print('obj_product',info_product)
-        except Product.DoesNotExist:
+        except:
             return render(request,'admin/notfound/notfound.html', context=context)
         return render(request, 'products/detail.html', context=context)
     
