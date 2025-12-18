@@ -1,10 +1,11 @@
 $(document).ready(function () {
     const tbl$ = $('#datatables-products');
-    const dtb = DataTableLoader.init(tbl$, {
+    const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
             url: tbl$.data('url'),
             ...DataTableLoader.ajax_base(),
         },
+        orderCellsTop: true,
         columns: [
             { 
                 data: 'name',
@@ -88,5 +89,5 @@ $(document).ready(function () {
             });
         },
     });
-    
+    DataTableLoader.init_filter_is_status(tbl$);
 });

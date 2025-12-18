@@ -6,6 +6,7 @@
 {% include 'import/sweetalert2_import.html' %}
 {% include 'import/spin_import.html' %}
 {% include 'import/axios_import.html' %}
+{% include 'import/select2_import.html' %}
 {% include 'import/toast_import.html' %}
 {% endblock %}
 
@@ -16,10 +17,8 @@
             <div class="kt-card-table" data-kt-datatable="true">
                 <div class="kt-table-wrapper">
                     <table class="kt-table hover cursor-pointer" id="datatables-products" data-kt-datatable-table="true"
-                        data-url="{% url 'ProductListAPI' %}" 
-                        data-url-list="{% url 'ProductListView' %}" 
-                        data-url-delete="{% url 'ProductDestroyAPI' %}"
-                        data-url-add="{% url 'ProductCreateView' %}"
+                        data-url="{% url 'ProductListAPI' %}" data-url-list="{% url 'ProductListView' %}"
+                        data-url-delete="{% url 'ProductDestroyAPI' %}" data-url-add="{% url 'ProductCreateView' %}"
                         data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
                         data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}">
                         <thead>
@@ -38,6 +37,15 @@
                                 </th>
                                 <th scope="col" class="w-30" data-kt-datatable-column="label">
                                     {% trans 'Status' %}
+                                </th>
+                            </tr>
+                            <tr class="dt-filter-row">
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>
+                                   {% include 'extends/filter/status.html' %}
                                 </th>
                             </tr>
                         </thead>

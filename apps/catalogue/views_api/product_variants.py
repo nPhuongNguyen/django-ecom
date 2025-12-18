@@ -6,6 +6,8 @@ class ProductVariantListAPI(ListMixin):
     queryset = ProductVariant.objects.all()
     serializer_class_list = ProductVariantListSerializer
     ordering_fields =['product']
+    search_fields = ['name']
+    filterset_fields = ['is_active']
     @validate_exception()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

@@ -1,11 +1,12 @@
 $(document).ready(function () {
     const tbl$ = $('#datatables-product_variants');
-    const dtb = DataTableLoader.init(tbl$, {
+    const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
             url: tbl$.data('url'),
             ...DataTableLoader.ajax_base(),
         },
         ordering: true,
+        orderCellsTop: true,
         order: [[0, 'asc']],
         columns: [
             {
@@ -107,5 +108,6 @@ $(document).ready(function () {
             });
         },
     });
+    DataTableLoader.init_filter_is_status(tbl$)
     
 });

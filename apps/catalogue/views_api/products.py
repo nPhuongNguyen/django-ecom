@@ -7,6 +7,7 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     serializer_class_list = ProductListSerializer
     search_fields = ['name']
     ordering_fields = ['name']
+    filterset_fields = ['is_active']
     # @token_required()
     @validate_exception()
     def get(self, request, *args, **kwargs):

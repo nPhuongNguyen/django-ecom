@@ -138,6 +138,27 @@ class DataTableLoader {
             }
         }
     }
+    static init_filter_is_status(table$) {
+        const filter$ = table$.find('thead select.dtb_filter_status');
+        if(filter$.length > 0){
+            Select2Helper.init(filter$, {
+                data:[
+                    {
+                        'id':true,
+                        'name':'Active'
+                    },
+                    {
+                        'id':false,
+                        'name':"Deactive"
+                    }
+                ]         
+            });
+            filter$.on('change', function () {
+                table$.DataTable().column(filter$).search($(this).val() || null).draw();
+            });
+        }
+        
+    }
 
     static initAddButton(table$, label = 'Thêm mới', onClick) {
         const dt_top$ = DataTableLoader.dt_top$(table$);
@@ -154,13 +175,13 @@ class DataTableLoader {
         dt_search$.addClass('min-w-64 max-w-96')
         dt_search$.find('input').addClass('kt-input sm:w-48');
         DataTableLoader._init_select_row(settings, json, options, table$, dtb);
+
     }
 
     // --- INIT ---
     static init(table$, options) {
         const selectRowOption = DataTableLoader.get_select_row(options.selectRow || 'single');
         if (selectRowOption) {
-            // selectRowOption.selector = 'td:not(:has(a))';
             selectRowOption.selector = 'td:not(:has(a)):not(:has(.toggle-active))';
         }
         options.select = selectRowOption;
