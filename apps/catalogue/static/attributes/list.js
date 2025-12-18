@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const tbl$ = $('#datatables-products');
+    const tbl$ = $('#datatables-attributes');
     const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
             url: tbl$.data('url'),
@@ -10,30 +10,12 @@ $(document).ready(function () {
             { 
                 data: 'name',
                 name: 'name',
-                allowHtml: true,
+                orderable: false,
                 render(data, type, row) {
-                    const url = tbl$.data('url-detail').replaceAll('__slug__', row['slug'] || '');
+                    const url = tbl$.data('url-detail').replaceAll('__pk__', row['id'] || '');
                     return `<a class="kt-link kt-link-underline" href="${url}">${data || '-'}</a>`;
                 }
             },
-            { 
-                data: 'slug',
-                name: 'slug',
-                orderable: false,
-                render(data, type, row) {
-                    return data || '-';
-                }
-
-            },
-            { 
-                data: 'description',
-                name: 'description',
-                orderable: false,
-                render(data, type, row) {
-                    return data || '-';
-                }
-            },
-            DataTableLoader.col_is_price(),  
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
         ontoggleActive: async (id)=>{

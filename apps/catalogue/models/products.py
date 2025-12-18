@@ -26,27 +26,27 @@ class ProductVariant(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelU
     class Meta:
         db_table = 'catalogue_product_variants'
 
-class ProductAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
+class Attribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=100)
     class Meta:
-        db_table = 'catalogue_product_attribute'
+        db_table = 'catalogue_attribute'
 
 class AttributeValue(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=50)
     class Meta:
-        db_table = 'catalogue_product_attribute_value'
+        db_table = 'catalogue_attribute_value'
 
-class M2MProductAttributeValue(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
-    product_attribute = models.ForeignKey(ProductAttribute, db_column='product_attribute_id', on_delete=models.RESTRICT)
+class M2MAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
+    attribute = models.ForeignKey(Attribute, db_column='attribute_id', on_delete=models.RESTRICT)
     attribute_value = models.ForeignKey(AttributeValue, db_column='attribute_value_id', on_delete=models.RESTRICT)
     class Meta:
-        db_table = 'catalogue_m2m_product_attribute_value'
-        unique_together = ('product_attribute_id','attribute_value_id')
+        db_table = 'catalogue_m2m_attribute'
+        unique_together = ('attribute_id','attribute_value_id')
 
-class ProductVarianAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
+class M2MProductVarianAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     product_variant = models.ForeignKey(ProductVariant, db_column='product_variant_id',on_delete=models.RESTRICT)
-    m2m_product_attribute_value = models.ForeignKey(ProductAttribute, db_column='m2m_product_attribute_value_id',on_delete=models.RESTRICT)
+    m2m_attribute = models.ForeignKey(Attribute, db_column='m2m_attribute_id',on_delete=models.RESTRICT)
 
     class Meta:
-        db_table = 'catalogue_product_variant_attribute'
-        unique_together = ('product_variant_id', 'm2m_product_attribute_value_id')
+        db_table = 'catalogue_m2m_product_variant_attribute'
+        unique_together = ('product_variant_id', 'm2m_attribute_id')

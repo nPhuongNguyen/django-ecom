@@ -45,7 +45,7 @@ $(document).ready(function () {
                 }
             },
             DataTableLoader.col_is_price(),  
-            DataTableLoader.col_is_active({ useToggle: true }),
+            DataTableLoader.col_is_status({ useToggle: true }),
         ],
         rowGroup: {
             dataSrc: 'product.name',

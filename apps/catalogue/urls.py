@@ -10,8 +10,15 @@ urlpatterns =[
 ]
 
 #Product Variant
-
 urlpatterns +=[
     path('product-variant-list', views.ProductVariantListView.as_view(), name='ProductVariantListView'),
     path('product-variant-detail/<str:pk>', views.ProductVariantDetailView.as_view(), name='ProductVariantDetailView'),
+]
+
+#Attribute
+
+urlpatterns +=[
+    path('attribute-list', views.AttributeListView.as_view(), name='AttributeListView'),
+    path('attribute-detail/<str:pk>',views.AttributeDetailView.as_view(), name='AttributeDetailView'),
+    path('attribute-create',views.AttributeCreateView.as_view(), name='AttributeCreateView'),
 ]

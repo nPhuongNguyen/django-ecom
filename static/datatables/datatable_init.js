@@ -248,7 +248,7 @@ class DataTableLoader {
         };
     }
 
-    static col_is_active(opts) {
+    static col_is_status(opts) {
         const {
             visible,
             orderable,
