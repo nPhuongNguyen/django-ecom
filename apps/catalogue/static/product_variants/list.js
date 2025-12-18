@@ -109,5 +109,16 @@ $(document).ready(function () {
         },
     });
     DataTableLoader.init_filter_is_status(tbl$)
-    
+    const filterProduct$ = tbl$.find('.dt-filter-row .dtb_filter_product');
+    if(filterProduct$.length >0){
+        Select2Helper.init(
+            filterProduct$,
+            {
+                url:filterProduct$.data('url')
+            }
+        )
+        filterProduct$.on('change', function () {
+            tbl$.DataTable().column(filterProduct$).search($(this).val() || null).draw();
+        });
+    }
 });
