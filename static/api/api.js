@@ -1,15 +1,14 @@
 class CallApi {
-    static async request(
-        {
-            url, 
-            method = 'GET', 
-            params = {}, 
-            data = {}, 
-            timeout = 0
-        }) {
+    static async request({
+        url,
+        method = 'GET',
+        headers = {},
+        params = {},
+        data = {},
+        timeout = 0
+    }={}) {
         const isFormData = data instanceof FormData;
-
-        Logger.apiRequest({ url, method, params, data, timeout });
+        const token = AuthStorage.getToken();
 
         try {
             const response = await axios({
@@ -18,12 +17,13 @@ class CallApi {
                 params,
                 data,
                 timeout: timeout > 0 ? timeout : undefined,
-                headers: isFormData
-                    ? { "Content-Type": "multipart/form-data" }
-                    : { "Content-Type": "application/json" },
+                headers: {
+                    ...headers,
+                    ...( !isFormData && { 'Content-Type': 'application/json' }),
+                    ...( token && { 'Token': token }),
+                }
             });
 
-            Logger.apiResponse({ url, method, response: response.data });
             return ApiResponse.format_response(response.data);
         } catch (error) {
             Logger.apiError({ url, method, error });

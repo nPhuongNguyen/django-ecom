@@ -22,6 +22,7 @@ class DataTableLoader {
 
     // --- AJAX CONFIG ---
     static ajax_dataSrc(json) {
+        console.log("json",json)
         json.recordsTotal = json.data.count;
         json.recordsFiltered = json.data.count;
         return json.data.result;
