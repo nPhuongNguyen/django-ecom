@@ -35,7 +35,7 @@ class ProductVariantCreateSerializer(serializers.ModelSerializer):
 class ProductVariantDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
-        fields = ['id', 'name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active']
+        fields = ['id', 'name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active', 'updated_by']
     
 class ProductVariantUpdateSerializer(serializers.ModelSerializer):
 

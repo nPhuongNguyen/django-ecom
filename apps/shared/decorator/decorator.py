@@ -47,9 +47,12 @@ def token_required():
                 data, error_format = decode_token(bearer_prefix, TOKEN_SECRET_KEY)
                 if error_format:
                     return ResponseBuilder.build(error_format)
+                request.data_decode_token = data
                 return func(self, request, *args, **kwargs)
             else:
                 format = ResponseCodes.TOKEN_REQUIRED
                 return ResponseBuilder.build(format)
         return wrapper
     return decorator
+
+

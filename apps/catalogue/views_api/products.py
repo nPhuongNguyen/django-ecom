@@ -8,7 +8,7 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     search_fields = ['name']
     ordering_fields = ['name']
     filterset_fields = ['is_active']
-    # @token_required()
+    @token_required()
     @validate_exception()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -16,6 +16,7 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
 class ProductCreateAPI(CreateMixin):
     serializer_class_create = ProductCreateSerializer
     serializer_class_detail = ProductDetailSerializer
+    @token_required()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -24,12 +25,14 @@ class ProductUpdateAPI(UpdateMixin):
     queryset = Product.objects.all()
     serializer_class_update = ProductUpdateSerializer
     serializer_class_detail = ProductDetailSerializer
+    @token_required()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
 class ProductDestroyAPI(DestroyMixin):
     queryset = Product.objects.all()
+    @token_required()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         return self.destroy_many(request, *args, **kwargs) 
@@ -39,6 +42,7 @@ class ProductChangeStatusAPI(UpdateMixin):
     queryset = Product.objects.all()
     serializer_class_update = ProductUpdateSerializer
     serializer_class_detail = ProductDetailSerializer
+    @token_required()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         return self.change_status(request, *args, **kwargs)
@@ -47,6 +51,7 @@ class ProductChangeStatusAPI(UpdateMixin):
 class ProductDetailAPI(DetailMixin):
     queryset = Product.objects.select_related('category').prefetch_related('variants').all()
     serializer_class_detail = ProductDetailSerializer
+    @token_required()
     @validate_exception()
     def get(self, request, *args, **kwargs):
         return self.detail(request, *args, **kwargs)
