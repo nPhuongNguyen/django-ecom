@@ -7,11 +7,13 @@ __all__ = [
     'DestroyMixin',
 ]
 
+from datetime import datetime
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from apps.shared.models import BaseModelCreated, BaseModelUpdated, BaseModelDeleted
 from apps.shared.response import ResponseBuilder, ResponseCodes
 from django.db import transaction
+from django.utils import timezone
 class BaseMixin(GenericAPIView):
     serializer_class_list: serializers.Serializer
     serializer_class_create: serializers.Serializer
@@ -178,10 +180,10 @@ class UpdateMixin(BaseMixin):
             instance.is_active = True
             
         instance.updated_by = updated_data.get('updated_by')
-        instance_sr = instance.save(update_fields=['is_active', 'updated_by'])
+        instance.save(update_fields=['is_active', 'updated_by'])
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
-            data=serializer_detail(instance=instance_sr).data
+            data=serializer_detail(instance=instance).data
         )
 
 
@@ -189,6 +191,7 @@ class DestroyMixin(BaseMixin):
     def get_context_deleted(self):
         user_email = self.get_request_info_user()
         return {
+            'deleted_at': timezone.now(),
             'deleted_by': user_email,
         }
     def destroy_many(self, request, *args, **kwargs):
@@ -201,13 +204,14 @@ class DestroyMixin(BaseMixin):
         try:
             with transaction.atomic(): 
                 deleted_data = self.get_context_deleted()
-                for id in list_id_by_delete:
-                    obj = self.check_info(lookup_value=id)
+                for obj_id in list_id_by_delete:
+                    obj = self.check_info(lookup_value=obj_id)
                     if not obj:
-                        raise 
+                        raise
                     obj.is_deleted = True
+                    obj.deleted_at = deleted_data.get('deleted_at')
                     obj.deleted_by = deleted_data.get('deleted_by')
-                    obj.save(update_fields=['is_deleted', 'deleted_by'])
+                    obj.save(update_fields=['is_deleted', 'deleted_by', 'deleted_at'])
         except Exception:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,

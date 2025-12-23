@@ -2,6 +2,7 @@ import json
 import uuid
 import threading
 from datetime import datetime
+from django.utils import timezone
 from apps.logging import logging_log as lg
 from apps.logging.log_request import RequestLogger
 _thread_locals = threading.local()
@@ -19,14 +20,14 @@ class RequestMiddleware:
 
     def __call__(self, request):
         _thread_locals.request_func = request.headers.get("X-Request-ID") or uuid.uuid4().hex
-        start_time = datetime.now().timestamp() * 1000
+        start_time = timezone.now()
         request_data = RequestLogger.process_request(request)
         lg.log_info(
             message="[CALL]",
             request=request_data
         )
         response = self.get_response(request)
-        duration = (datetime.now().timestamp() * 1000) - start_time
+        duration = (timezone.now()) - start_time
         try:
             body = response.content.decode("utf-8")
             if body:

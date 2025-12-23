@@ -197,8 +197,8 @@ TIME_ZONE = 'Asia/Ho_Chi_Minh'
 # Bật dịch ngôn ngữ
 USE_I18N = True
 
-# Bật timezone
-USE_TZ = True
+# Tắt timezone
+USE_TZ = False
 
 # Bật định dạng theo locale
 USE_L10N = True
