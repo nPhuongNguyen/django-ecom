@@ -3,11 +3,11 @@ import json
 import logging
 import sys
 import traceback
+from django.conf import settings
 from django.utils import timezone
 
-from apps.logging.kafka_log import PushO2mSmartlinkAPILog
+from apps.config.kafka_config import PushO2mSmartlinkAPILog
 from apps.utils import request_func
-from ecom.settings import IS_DEV
 logger = logging.getLogger("o2m-smart-link-api-logging")
 
 if not logger.handlers:
@@ -41,7 +41,7 @@ def _log(level: str, message=None, **kwargs):
         log_data.update(kwargs)
 
     json_log = json.dumps(log_data, ensure_ascii=False)
-    if IS_DEV == 0:
+    if settings.IS_DEV == 0:
         task = PushO2mSmartlinkAPILog(log_data)
         task.run()
     if exc_tb:
