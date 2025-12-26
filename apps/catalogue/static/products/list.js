@@ -1,10 +1,14 @@
 $(document).ready(function () {
     const tbl$ = $('#datatables-products');
-    const dtb = DataTableLoader.init(tbl$, {
+    const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
             url: tbl$.data('url'),
+            headers: {
+                'Token': AuthStorage.getToken(),
+            },
             ...DataTableLoader.ajax_base(),
         },
+        orderCellsTop: true,
         columns: [
             { 
                 data: 'name',
@@ -33,7 +37,7 @@ $(document).ready(function () {
                 }
             },
             DataTableLoader.col_is_price(),  
-            DataTableLoader.col_is_active({ useToggle: true }),
+            DataTableLoader.col_is_status({ useToggle: true }),
         ],
         ontoggleActive: async (id)=>{
             const result = await SweetAlertHelper.confirmSave({
@@ -88,5 +92,5 @@ $(document).ready(function () {
             });
         },
     });
-    
+    DataTableLoader.init_filter_is_status(tbl$);
 });

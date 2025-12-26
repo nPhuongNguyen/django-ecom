@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const tbl$ = $('#datatables-product_variants');
+    const tbl$ = $('#datatables-attributes');
     const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
             url: tbl$.data('url'),
@@ -8,56 +8,19 @@ $(document).ready(function () {
             },
             ...DataTableLoader.ajax_base(),
         },
-        ordering: true,
         orderCellsTop: true,
-        order: [[0, 'asc']],
         columns: [
-            {
-                data:'product.name',
-                name: 'product',
-                orderable: true,
-                render(data, type, row) {
-                    return data || '-';
-                }
-            },
             { 
                 data: 'name',
                 name: 'name',
                 orderable: false,
-                allowHtml: true,
                 render(data, type, row) {
                     const url = tbl$.data('url-detail').replaceAll('__pk__', row['id'] || '');
                     return `<a class="kt-link kt-link-underline" href="${url}">${data || '-'}</a>`;
                 }
             },
-            { 
-                data: 'sku',
-                name: 'sku',
-                orderable: false,
-                render(data, type, row) {
-                    return data || '-';
-                }
-
-            },
-            { 
-                data: 'stock_qty',
-                name: 'stock_qty',
-                orderable: false,
-                render(data, type, row) {
-                    return data || '-';
-                }
-            },
-            DataTableLoader.col_is_price(),  
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
-        rowGroup: {
-            dataSrc: 'product.name',
-            startRender: function(rows, group) {
-                return $('<tr/>')
-                    .append('<td colspan="6" class="fw-bold bg-muted">'
-                        + group + ' (' + rows.data().length + ' variants)</td>');
-            }
-        },
         ontoggleActive: async (id)=>{
             const result = await SweetAlertHelper.confirmSave({
                 url: tbl$.data('url-change-status').replaceAll('__pk__', id),
@@ -111,17 +74,5 @@ $(document).ready(function () {
             });
         },
     });
-    DataTableLoader.init_filter_is_status(tbl$)
-    const filterProduct$ = tbl$.find('.dt-filter-row .dtb_filter_product');
-    if(filterProduct$.length >0){
-        Select2Helper.init(
-            filterProduct$,
-            {
-                url:filterProduct$.data('url')
-            }
-        )
-        filterProduct$.on('change', function () {
-            tbl$.DataTable().column(filterProduct$).search($(this).val() || null).draw();
-        });
-    }
+    DataTableLoader.init_filter_is_status(tbl$);
 });

@@ -1,8 +1,6 @@
 import jwt
 from apps.catalogue.serializers.token import InfoTokenSerializer
 from apps.shared.response import ResponseCodes
-
-
 def encode_token(data: dict, secret_key: str = None)-> str:
     token = jwt.encode(data, secret_key, algorithm=["HS256"])
     return token
@@ -27,5 +25,6 @@ def normalize_token(token: str)->str|None:
     if len(parts) == 2 and parts[0].lower() == "bearer":
         token = parts[1]
     return token
+
 
 

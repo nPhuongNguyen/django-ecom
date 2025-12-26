@@ -17,6 +17,12 @@ urlpatterns = [
     path('product-variant-change-status/<str:pk>', views_api.ProductVariantChangeStatusAPI.as_view(), name='ProductVariantChangeStatusAPI'),
     path('product-variant-destroy',views_api.ProductVariantDestroyAPI.as_view(), name='ProductVariantDestroyAPI'),
 
+    #attribute
+    path('attribute-list', views_api.AttributeListAPI.as_view(), name="AttributeListAPI"),
+    path('attribute-destroy',views_api.AttributeDestroyAPI.as_view(), name='AttributeDestroyAPI'),
+    path('attribute-update/<str:pk>', views_api.AttributeUpdateAPI.as_view(), name='AttributeUpdateAPI'),
+    path('attribute-change-status/<str:pk>', views_api.AttributeChangeStatusAPI.as_view(), name='AttributeChangeStatusAPI'),
+
 
     #category
     path('category-list', views_api.CategoryListAPI.as_view(), name='CategoryListAPI'),

@@ -49,7 +49,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'is_active', 'price', 'category', 'slug', 'img', 'variants']
+        fields = ['id', 'name', 'description', 'is_active', 'price', 'category', 'slug', 'img', 'variants', 'updated_by']
     def get_category(self, obj):
         if obj.category:
             return {

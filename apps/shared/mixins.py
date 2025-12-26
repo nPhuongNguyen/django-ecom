@@ -7,11 +7,13 @@ __all__ = [
     'DestroyMixin',
 ]
 
+from datetime import datetime
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from apps.shared.models import BaseModelCreated, BaseModelUpdated, BaseModelDeleted
 from apps.shared.response import ResponseBuilder, ResponseCodes
 from django.db import transaction
+from django.utils import timezone
 class BaseMixin(GenericAPIView):
     serializer_class_list: serializers.Serializer
     serializer_class_create: serializers.Serializer
@@ -45,6 +47,11 @@ class BaseMixin(GenericAPIView):
 
     def get_request_data(self) -> dict:
         return getattr(self.request, 'data', {})
+    
+    def get_request_info_user(self) -> dict:
+        user_info = getattr(self.request, 'data_decode_token', {})
+        info_email = user_info.get('email', "")
+        return info_email
     
     def check_info(self, lookup_value=None):
         if lookup_value is None:
@@ -87,10 +94,18 @@ class ListMixin(BaseMixin):
 class CreateMixin(BaseMixin):
     def get_create_data(self):
         return self.get_request_data()
-
+    
+    def get_context_created(self):
+        user_email = self.get_request_info_user()
+        return {
+            'created_by' : user_email,
+            'updated_by': user_email,
+        }
+       
     def create(self, request, *args, **kwargs):
         serializer_create = self.get_serializer_class_create()
         serializer_detail = self.get_serializer_class_detail()
+
 
         if not serializer_create or not serializer_detail:
             return ResponseBuilder.build(
@@ -98,14 +113,15 @@ class CreateMixin(BaseMixin):
                 errors="Serializer not found."
             )
 
-        serializer = serializer_create(data=self.get_create_data())
+        serializer = serializer_create(
+            data=self.get_create_data())
         if not serializer.is_valid():
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
 
-        instance = serializer.save()
+        instance = serializer.save(**self.get_context_created())
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
             data=serializer_detail(instance=instance).data
@@ -114,6 +130,12 @@ class CreateMixin(BaseMixin):
 class UpdateMixin(BaseMixin):
     def get_update_data(self):
         return self.get_request_data()
+    
+    def get_context_updated(self):
+        user_email = self.get_request_info_user()
+        return {
+            'updated_by': user_email,
+        }
 
     def update(self, request, *args, **kwargs):
         serializer_update = self.get_serializer_class_update()
@@ -137,17 +159,17 @@ class UpdateMixin(BaseMixin):
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
-        instance_sr = serializer.save()
+        instance_sr = serializer.save(**self.get_context_updated())
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
             data=serializer_detail(instance=instance_sr).data
         )
     
     def change_status(self, request, *args, **kwargs):
-        serializer_update = self.get_serializer_class_update()
         serializer_detail = self.get_serializer_class_detail()
 
         instance = self.check_info()
+        updated_data = self.get_context_updated()
         if not instance:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT
@@ -157,22 +179,21 @@ class UpdateMixin(BaseMixin):
         else:
             instance.is_active = True
             
-        serializer = serializer_update(
-            instance=instance, data=self.get_update_data(), partial=True
-        )
-        if not serializer.is_valid():
-            return ResponseBuilder.build(
-                code=ResponseCodes.INVALID_INPUT,
-                errors=serializer.errors
-            )
-        instance_sr = serializer.save()
+        instance.updated_by = updated_data.get('updated_by')
+        instance.save(update_fields=['is_active', 'updated_by'])
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
-            data=serializer_detail(instance=instance_sr).data
+            data=serializer_detail(instance=instance).data
         )
 
 
 class DestroyMixin(BaseMixin):
+    def get_context_deleted(self):
+        user_email = self.get_request_info_user()
+        return {
+            'deleted_at': timezone.now(),
+            'deleted_by': user_email,
+        }
     def destroy_many(self, request, *args, **kwargs):
         query_param = self.query_params()
         list_id_by_delete = query_param.getlist('id[]')
@@ -182,12 +203,15 @@ class DestroyMixin(BaseMixin):
             )
         try:
             with transaction.atomic(): 
-                for id in list_id_by_delete:
-                    obj = self.check_info(lookup_value=id)
+                deleted_data = self.get_context_deleted()
+                for obj_id in list_id_by_delete:
+                    obj = self.check_info(lookup_value=obj_id)
                     if not obj:
-                        raise 
+                        raise
                     obj.is_deleted = True
-                    obj.save(update_fields=['is_deleted'])
+                    obj.deleted_at = deleted_data.get('deleted_at')
+                    obj.deleted_by = deleted_data.get('deleted_by')
+                    obj.save(update_fields=['is_deleted', 'deleted_by', 'deleted_at'])
         except Exception:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,

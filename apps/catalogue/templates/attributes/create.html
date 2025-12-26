@@ -1,0 +1,52 @@
+{% extends 'admin/base.html' %}
+{% load static i18n %}
+{% block head %}
+{% include 'import/jquery_import.html' %}
+{% include 'import/jquery_validation.html' %}
+{% include 'import/uppy_import.html' %}
+{% include 'import/toast_import.html' %}
+{% include 'import/spin_import.html' %}
+{% include 'import/sweetalert2_import.html' %}
+{% include 'import/select2_import.html' %}
+{% include 'import/axios_import.html' %}
+{% endblock %}
+{% block content %}
+<div class="kt-container-fixed space-y-6">
+    <form class="kt-form" id="frm_detail_attribute"
+    data-url="{% url 'AttributeUpdateAPI' pk='__pk__' %}"
+    data-url-list="{% url 'AttributeListView' %}"
+    data-url-detail="{% url 'AttributeDetailView' pk='__pk__' %}"
+    >
+        <div class="grid grid-cols-1 gap-6">
+            {% if obj_attribute %}
+            <div>
+                <div class="kt-card p-5 rounded-xl border bg-card">
+                    <h2 class="text-lg font-semibold mb-3">Thông tin Attribute</h2>
+                    <input class="hidden" id="id_product" value="{{ obj_attribute.id|default:'' }}">
+                    <!-- Tên & Slug -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Tên Attribute:</label>
+                            <input name="name" type="text" class="kt-input w-full"
+                                value="{{ obj_attribute.name|default:'' }}">
+                        </div>
+
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Trạng thái:</label>
+                            <input name="is_active" type="checkbox" class="kt-switch toggle-active" {% if obj_attribute.is_active %} checked {% endif %} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="w-full">
+            {% include 'button/form-actions-with-delete.html' %}
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+{% block foot %}
+<script src="{% static 'attributes/detail.js' %}"></script>
+{% endblock %}

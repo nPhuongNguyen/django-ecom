@@ -43,26 +43,50 @@ class Select2Helper {
         if (!$el.length) return null;
 
         const {
-            url,
+            url = null,
+            data = null,
             valueField = 'id',
             textField = 'name',
             extraData = {},
             placeholder = "Chọn..."
         } = config;
 
-        const ajaxConfig = Select2Helper.buildAjaxConfig(
-            url,
-            extraData,
-            valueField,
-            textField
-        );
-
-        return $el.select2({
+        const baseConfig = {
             placeholder,
             allowClear: true,
             minimumInputLength: 0,
             theme: 'tailwindcss-3',
-            ajax: ajaxConfig
-        });
+            width: '100%'
+        };
+
+        // ===== 1. STATIC DATA =====
+        if (Array.isArray(data)) {
+            return $el.select2({
+                ...baseConfig,
+                data: data.map(item => ({
+                    id: item[valueField],
+                    text: item[textField],
+                    rawItem: item
+                }))
+            });
+        }
+
+        // ===== 2. AJAX =====
+        if (url) {
+            const ajaxConfig = Select2Helper.buildAjaxConfig(
+                url,
+                extraData,
+                valueField,
+                textField
+            );
+
+            return $el.select2({
+                ...baseConfig,
+                ajax: ajaxConfig
+            });
+        }
+
+        return null;
     }
+
 }

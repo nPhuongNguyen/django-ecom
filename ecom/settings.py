@@ -23,7 +23,7 @@ PREFIX_URL = os.environ.get("PREFIX_URL")
 API_VERSION = os.environ.get("API_VERSION")
 
 #
-IS_DEV = os.environ.get('IS_DEV', 0)
+IS_DEV = int(os.environ.get('IS_DEV', 0))
 
 #Database
 MYSQL_DATABASE_NAME = os.environ.get("DB_NAME")
@@ -35,6 +35,29 @@ MYSQL_DATABASE_PORT = os.environ.get("DB_PORT")
 #kafka
 LIST_BROKERS = os.environ.get('LIST_BROKERS').split(',')
 KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
+KAFKA_GROUP_ID = os.environ.get('KAFKA_GROUP_ID')
+
+#redis
+REDIS_HOST = os.getenv("REDIS_HOST")
+REDIS_PORT = os.getenv("REDIS_PORT")
+REDIS_DB = os.getenv("REDIS_DB")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+
+def redis_url(host, port, db, password=None):
+    if password:
+        return f"redis://:{password}@{host}:{port}/{db}"
+    return f"redis://{host}:{port}/{db}"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": redis_url(REDIS_HOST, REDIS_PORT, REDIS_DB, REDIS_PASSWORD),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
+        },
+    }
+}
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -174,8 +197,8 @@ TIME_ZONE = 'Asia/Ho_Chi_Minh'
 # Bật dịch ngôn ngữ
 USE_I18N = True
 
-# Bật timezone
-USE_TZ = True
+# Tắt timezone
+USE_TZ = False
 
 # Bật định dạng theo locale
 USE_L10N = True
