@@ -3,6 +3,9 @@ $(document).ready(function () {
     const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
             url: tbl$.data('url'),
+            headers: {
+                'Token': AuthStorage.getToken(),
+            },
             ...DataTableLoader.ajax_base(),
         },
         ordering: true,

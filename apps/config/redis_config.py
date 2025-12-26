@@ -33,3 +33,13 @@ class RedisService:
                 message=f"[REDIS][DELETE] key={key} error={e}"
             )
             return False
+
+    @staticmethod
+    def hset_user(user_id, data_dict):
+        try:
+            client = cache.client.get_client()
+            client.hset(f"user:{user_id}", mapping=data_dict)
+            return True
+        except Exception as e:
+            lg.log_error(message=f"[REDIS-ERROR] HSET: {e}")
+            return False

@@ -1,8 +1,6 @@
 import jwt
 from apps.catalogue.serializers.token import InfoTokenSerializer
 from apps.shared.response import ResponseCodes
-
-
 def encode_token(data: dict, secret_key: str = None)-> str:
     token = jwt.encode(data, secret_key, algorithm=["HS256"])
     return token
