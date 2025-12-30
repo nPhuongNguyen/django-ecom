@@ -6,7 +6,8 @@ from ..models.products import Attribute
 from ...shared.decorator.views import mask_view
 
 MASK_VIEW_CONFIG ={
-    "accordion": "product",
+    "accordion": "ecommerce",
+    "accordion_child": "attribute"
 }
 
 class AttributeListView(View):

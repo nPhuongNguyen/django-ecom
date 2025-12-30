@@ -19,9 +19,18 @@ urlpatterns = [
 
     #attribute
     path('attribute-list', views_api.AttributeListAPI.as_view(), name="AttributeListAPI"),
+    path('attribute-create', views_api.AttributeCreateAPI.as_view(), name='AttributeCreateAPI'),
     path('attribute-destroy',views_api.AttributeDestroyAPI.as_view(), name='AttributeDestroyAPI'),
     path('attribute-update/<str:pk>', views_api.AttributeUpdateAPI.as_view(), name='AttributeUpdateAPI'),
     path('attribute-change-status/<str:pk>', views_api.AttributeChangeStatusAPI.as_view(), name='AttributeChangeStatusAPI'),
+
+    #attribute value
+    path('attribute-value-create', views_api.AttributeValueCreateAPI.as_view(), name='AttributeValueCreateAPI'),
+    path('attribute-value-list', views_api.AttributeValueListAPI.as_view(),name='AttributeValueListAPI'),
+
+    #m2m attribute
+
+    path('m2m-attribute-create', views_api.M2MAttributeCreateAPI.as_view(),name='M2MAttributeCreateAPI'),
 
 
     #category
