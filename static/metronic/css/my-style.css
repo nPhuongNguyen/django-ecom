@@ -14,3 +14,8 @@
     overflow-y: auto !important;
     overflow-x: hidden !important;
 }
+
+.required::after {
+  content: " *";
+  color: red;
+}
