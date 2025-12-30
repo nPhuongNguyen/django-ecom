@@ -13,6 +13,7 @@ urlpatterns =[
 urlpatterns +=[
     path('product-variant-list', views.ProductVariantListView.as_view(), name='ProductVariantListView'),
     path('product-variant-detail/<str:pk>', views.ProductVariantDetailView.as_view(), name='ProductVariantDetailView'),
+    path('product-variant-create', views.ProductVariantCreateView.as_view(), name='ProductVariantCreateView'),
 ]
 
 #Attribute

@@ -6,7 +6,9 @@ from ..serializers.products import ProductDetailSerializer
 from apps.shared.decorator.views import mask_view
 
 MASK_VIEW_CONFIG ={
-    "accordion": "product",
+    "accordion": "ecommerce",
+    "accordion_child": "product",
+    "menu_item_show": "product"
 }
 
 class ProductListView(View):
