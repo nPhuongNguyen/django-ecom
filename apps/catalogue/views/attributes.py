@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.views import View
 
-from ..models.products import Attribute
+from ..models.products import Attribute, M2MAttribute
 
 from ...shared.decorator.views import mask_view
 
 MASK_VIEW_CONFIG ={
-    "accordion": "product",
+    "accordion": "ecommerce",
+    "accordion_child": "attribute"
 }
 
 class AttributeListView(View):
@@ -27,8 +28,10 @@ class AttributeDetailView(View):
     def get(self, request, *args, context, **kwargs):
         pk = kwargs.get('pk')
         try:
-            attribute = Attribute.objects.get(pk=pk, is_deleted=False)
+            attribute = Attribute.objects.get(pk=pk)
+            attribute_value = M2MAttribute.objects.filter(attribute_id = attribute)
             context['obj_attribute'] = attribute
+            context['obj_attribute_value'] = attribute_value
         except:
             return render(request,'admin/notfound/notfound.html', context=context)
         return render(request,'attributes/detail.html', context=context)

@@ -35,7 +35,7 @@ MYSQL_DATABASE_PORT = os.environ.get("DB_PORT")
 #kafka
 LIST_BROKERS = os.environ.get('LIST_BROKERS').split(',')
 KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
-KAFKA_GROUP_ID = os.environ.get('KAFKA_GROUP_ID')
+KAFKA_GROUP_LOG = os.environ.get('KAFKA_GROUP_LOG')
 
 #redis
 REDIS_HOST = os.getenv("REDIS_HOST")

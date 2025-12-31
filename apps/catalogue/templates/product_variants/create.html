@@ -12,13 +12,13 @@
 {% endblock %}
 {% block content %}
 <div class="kt-container-fixed space-y-6">
-    <form class="kt-form" id="frm_create_product" data-url-add="{% url 'ProductCreateView' %}"
-        data-url-list="{% url 'ProductListView' %}" data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
-        data-url="{% url 'ProductCreateAPI' %}" data-url-upload="{% url 'UploadImageAPI' %}">
+    <form class="kt-form" id="frm_create_product_variant" data-url-add="{% url 'ProductVariantCreateView' %}"
+        data-url-list="{% url 'ProductVariantListView' %}" data-url-detail="{% url 'ProductVariantDetailView' pk='__pk__' %}"
+        data-url="{% url 'ProductVariantCreateAPI' %}" data-url-upload="{% url 'UploadImageAPI' %}">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2">
                 <div class="kt-card p-5 rounded-xl border bg-card">
-                    <h2 class="text-lg font-semibold mb-3">Thêm sản phẩm</h2>
+                    <h2 class="text-lg font-semibold mb-3">Thêm sản phẩm variant</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="kt-form-item">
                             <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
@@ -28,15 +28,14 @@
                             <div class="kt-form-description"></div>
                         </div>
                         <div class="kt-form-item">
-                            <label class="kt-form-label" for="inp_description">{% trans 'Description' %}:</label>
+                            <label class="kt-form-label required" for="inp_sku">{% trans 'SKU' %}:</label>
                             <div class="kt-form-control">
-                                <textarea id="inp_description" class="kt-input w-full resize-y" name="description"
-                                    rows="3"></textarea>
+                                <input id="inp_sku" type="text" class="kt-input w-full" name="sku" required />
                             </div>
                             <div class="kt-form-description"></div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         <div class="kt-form-item">
                             <label class="kt-form-label" for="inp_price">{% trans 'Price' %}:</label>
                             <div class="kt-form-control">
@@ -44,20 +43,26 @@
                             </div>
                         </div>
                         <div class="kt-form-item">
+                            <label class="kt-form-label" for="inp_stock">{% trans 'Stock' %}:</label>
+                            <div class="kt-form-control">
+                                <input id="inp_stock" type="number" min="0" value="0" name="stock_qty" class="kt-input w-full">
+                            </div>
+                        </div>
+                        <div class="kt-form-item">
                             <label class="kt-form-label" for="inp_is_active">{% trans 'Status' %}:</label>
                             <div class="kt-form-control">
-                                <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active"
-                                    name="is_active" checked="" />
+                                <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active" name="is_active"
+                                    checked="" />
                             </div>
                         </div>
                     </div>
                     <div class="kt-form-item mt-6">
                         <div class="flex-1 kt-form-item">
-                            <label class="kt-form-label" for="image_product">
+                            <label class="kt-form-label" for="image_product_variant">
                                 {% trans 'Image' %}:
                             </label>
                             <div class="kt-form-control">
-                                <div id="image_product" name="image_product"></div>
+                                <div id="image_product_variant" name="image_product_variant"></div>
                             </div>
                             <div class="kt-form-description"></div>
                         </div>
@@ -67,11 +72,11 @@
             <div class="lg:col-span-1">
                 <div class="kt-card p-5 rounded-xl border bg-card space-y-6">
                     <div>
-                        <h2 class="text-lg font-semibold mb-3">Category</h2>
+                        <h2 class="text-lg font-semibold mb-3 required ">Product</h2>
                         <div class="kt-form-item">
                             <label class="kt-form-label">Danh mục:</label>
-                            <select id="inp_select_category" name="category" class="kt-select w-full"
-                                data-url="{% url 'CategoryListAPI' %}">
+                            <select id="inp_select_product" name="product" class="kt-select w-full"
+                                data-url="{% url 'ProductListAPI' %}" required>
                             </select>
                         </div>
                     </div>
@@ -83,9 +88,7 @@
         </div>
     </form>
 </div>
-
 {% endblock %}
-
 {% block foot %}
-<script src="{% static 'products/create.js' %}"></script>
+<script src="{% static 'product_variants/create.js' %}"></script>
 {% endblock %}

@@ -1,8 +1,23 @@
 <div class="kt-card p-5 rounded-xl border bg-card">
     <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold">Attribute Value</h2>
+        <h2 class="text-lg font-semibold">List Attribute Value</h2>
         <button type="button" class="kt-btn kt-btn-primary" data-kt-modal-toggle="#modal_attribute_value">
-            Thêm mới
+            Chỉnh sửa
         </button>
     </div>
+
+    {% if obj_attribute_value %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {% for v in attribute_value %}
+        <div class="px-3 py-2 rounded-lg border text-center">
+            {{ v.name }}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <p class="text-sm text-muted-foreground italic">
+        Chưa có attribute value nào!
+    </p>
+    {% endif %}
 </div>

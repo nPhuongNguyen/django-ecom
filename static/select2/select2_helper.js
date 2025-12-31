@@ -4,6 +4,9 @@ class Select2Helper {
             url,
             dataType: 'json',
             delay: 250,
+            headers: {
+                'Token': AuthStorage.getToken(),
+            },
             data:  (params) => 
                 Select2Helper.buildData(params, extraData),
             processResults: (response) =>
@@ -48,7 +51,8 @@ class Select2Helper {
             valueField = 'id',
             textField = 'name',
             extraData = {},
-            placeholder = "Chọn..."
+            placeholder = "Chọn...",
+            multiple = false
         } = config;
 
         const baseConfig = {
@@ -56,7 +60,8 @@ class Select2Helper {
             allowClear: true,
             minimumInputLength: 0,
             theme: 'tailwindcss-3',
-            width: '100%'
+            width: '100%',
+            multiple 
         };
 
         // ===== 1. STATIC DATA =====

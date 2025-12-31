@@ -50,13 +50,12 @@ class PushO2mSmartlinkAPILog:
         self.prefix_url = settings.PREFIX_URL
 
     def run(self):
-        _uuid = uuid.uuid4().hex
         try:
             value = self.message.to_dict() if hasattr(self.message, "to_dict") else self.message
             with self.producer_pool.get_producer() as producer:
                 producer.send(
                     self.topic_name,
-                    key=f"{self.prefix_url}-{_uuid}",
+                    key=self.prefix_url,
                     value=value
                 ) 
                 producer.flush()
@@ -69,7 +68,7 @@ class KafkaConsumerWorker:
         self.consumer = KafkaConsumer(
             settings.KAFKA_TOPIC,
             bootstrap_servers=settings.LIST_BROKERS,
-            group_id= settings.KAFKA_GROUP_ID,
+            group_id= settings.KAFKA_GROUP_LOG,
             value_deserializer=lambda v: json.loads(v.decode('utf-8')),
             key_deserializer=lambda k: k.decode('utf-8') if k else None,
             auto_offset_reset='earliest',

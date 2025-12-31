@@ -24,7 +24,6 @@ class ProductVariantCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
         fields = ['name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active']
-        read_only = ['sku']
 
     def validate_sku(self, value):
         product = self.initial_data.get('product')
