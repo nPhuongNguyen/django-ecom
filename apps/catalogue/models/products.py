@@ -33,6 +33,7 @@ class Attribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdate
 
 class AttributeValue(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=50)
+   
     class Meta:
         db_table = 'catalogue_attribute_value'
 

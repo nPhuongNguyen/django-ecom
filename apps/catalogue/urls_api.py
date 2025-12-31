@@ -30,7 +30,7 @@ urlpatterns = [
 
     #m2m attribute
 
-    path('m2m-attribute-create', views_api.M2MAttributeCreateAPI.as_view(),name='M2MAttributeCreateAPI'),
+    path('m2m-attribute-update', views_api.M2MAttributeUpdateAPI.as_view(),name='M2MAttributeUpdateAPI'),
 
 
     #category
