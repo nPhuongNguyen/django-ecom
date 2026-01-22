@@ -16,12 +16,11 @@
         <div class="kt-card">
             <div class="kt-card-table" data-kt-datatable="true">
                 <div class="kt-table-wrapper">
-                    <table class="kt-table hover cursor-pointer" id="datatables-attributes" data-kt-datatable-table="true"
-                        data-url="{% url 'AttributeListAPI' %}"
-                        data-url-delete="{% url 'AttributeDestroyAPI' %}"
+                    <table class="kt-table hover cursor-pointer" id="datatables-attributes"
+                        data-kt-datatable-table="true" data-url="{% url 'AttributeListAPI' %}"
+                        data-url-add="{% url 'AttributeCreateView' %}" data-url-delete="{% url 'AttributeDestroyAPI' %}"
                         data-url-detail="{% url 'AttributeDetailView' pk='__pk__' %}"
-                        data-url-change-status="{% url 'AttributeChangeStatusAPI' pk='__pk__' %}"
-                        >
+                        data-url-change-status="{% url 'AttributeChangeStatusAPI' pk='__pk__' %}">
                         <thead>
                             <tr>
                                 <th scope="col" class="w-30" data-kt-datatable-column="label">
@@ -34,7 +33,7 @@
                             <tr class="dt-filter-row">
                                 <th></th>
                                 <th>
-                                   {% include 'extends/filter/status.html' %}
+                                    {% include 'extends/filter/status.html' %}
                                 </th>
                             </tr>
                         </thead>

@@ -44,7 +44,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         return attrs
 
 class ProductDetailSerializer(serializers.ModelSerializer):
-    variants = ProductVariantListSerializer(many=True)
+    variants = ProductVariantInProductSerializer(many=True)
     category = serializers.SerializerMethodField()
     class Meta:
         model = Product
