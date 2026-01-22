@@ -1,11 +1,13 @@
 from rest_framework import serializers
 
+from .attribute_value import AttributeValueListSerializer
+
 from ..models.products import Attribute, M2MAttribute
 class AttributeListSerializer(serializers.ModelSerializer):
-
+    attribute_values = AttributeValueListSerializer(many=True)
     class Meta:
         model = Attribute
-        fields = ['id', 'name', 'is_active', 'values']
+        fields = ['id', 'name', 'is_active', 'attribute_values']
 
 
 class AttributeCreateSerializer(serializers.ModelSerializer):

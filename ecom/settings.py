@@ -86,7 +86,6 @@ INSTALLED_APPS = [
     'apps.auths',
     'rest_framework',
     'storages',
-    'vnpay',
 
     'django_filters',
     'apps.shared',
