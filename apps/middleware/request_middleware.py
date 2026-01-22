@@ -9,10 +9,15 @@ _thread_locals = threading.local()
 
 
 def set_request_func(func_name):
-    _thread_locals.request_func = f"{func_name}-{_thread_locals.request_func}"
+    current = getattr(_thread_locals, "request_func", "")
+    _thread_locals.request_func = f"{current}-{func_name}" if current else func_name
 
 def get_request_func():
     return getattr(_thread_locals, "request_func", None)
+
+def clear_request_func():
+    if hasattr(_thread_locals, "request_func"):
+        del _thread_locals.request_func
 
 class RequestMiddleware:
     def __init__(self, get_response):
@@ -26,27 +31,31 @@ class RequestMiddleware:
             message="[CALL]",
             request=request_data
         )
-        response = self.get_response(request)
-        duration = (timezone.now()) - start_time
         try:
-            body = response.content.decode("utf-8")
-            if body:
-                try:
-                    body = json.loads(body)
-                except Exception:
-                    pass
-            else:
-                body = None
-        except Exception as e:
-            body = f"Cannot read response body: {e}"
+            response = self.get_response(request)
+            duration = (timezone.now()) - start_time
+            duration_ms = duration.total_seconds() * 1000
+            try:
+                body = response.content.decode("utf-8")
+                if body:
+                    try:
+                        body = json.loads(body)
+                    except Exception:
+                        pass
+                else:
+                    body = None
+            except Exception as e:
+                body = f"Cannot read response body: {e}"
 
-        response_data = {
-            "status": response.status_code,
-            "headers": dict(response.items()),
-            "body": body,
-        }
-        lg.log_info(
-            message=f"[RESPONSE] | Duration: {duration:.2f} ms",
-            response=response_data,
-        )
-        return response
+            response_data = {
+                "status": response.status_code,
+                "headers": dict(response.items()),
+                "body": body,
+            }
+            lg.log_info(
+                message=f"[RESPONSE] | Duration: {duration_ms:.2f} ms",
+                response=response_data,
+            )
+            return response
+        finally:
+            clear_request_func()

@@ -1,32 +1,44 @@
 import time
 from apps.logging import logging_log as lg
-import apps.utils as utils
+
+
 class QueryLogger:
     def __init__(self):
         self.queries = []
 
     def __call__(self, execute, sql, params, many, context):
-        start = time.monotonic()
+        # start = time.monotonic()
+        start = time.perf_counter()
+
         try:
             result = execute(sql, params, many, context)
-        except Exception as e:
-            status = "ERROR"
-            lg.log_error(
-                message=f"[SQL {status}] {sql} | params={params} | error={str(e)}"
-            )
-            raise
-        else:
-            status = "OK"
             return result
+        except Exception as e:
+            # duration_ms = (time.monotonic() - start) * 1000
+            duration_ms = (time.perf_counter() - start) * 1000
+            lg.log_error(
+                message="[SQL][ERROR]",
+                sql=sql,
+                params=params,
+                many=many,
+                duration_ms=round(duration_ms, 3),
+                error=str(e),
+            )
         finally:
-            duration = time.monotonic() - start
-            self.queries.append({
+            # Sử dụng per_couter thay vì monotonic để đo thời gian chính xác hơn
+            # duration_ms = (time.monotonic() - start) * 1000
+            duration_ms = (time.perf_counter() - start) * 1000
+
+            log_data = {
                 "sql": sql,
                 "params": params,
-                "duration": duration,
-                "status": status
-            })
+                "many": many,
+                "duration": f"{round(duration_ms, 3)} ms",
+            }
+
             lg.log_info(
-                message=f"[SQL {status}] {sql} | params={params} | duration={duration:.6f}s"
+                message="[SQL][EXECUTED]",
+                **log_data
             )
-            
+
+            self.queries.append(log_data)

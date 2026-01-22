@@ -8,9 +8,7 @@ __all__ = [
     'BaseModelDeleted',
 ]
 
-from django.conf import settings
 from django.db import models
-from django.utils import timezone
 from .model_manager import BaseManager
 
 

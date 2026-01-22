@@ -40,11 +40,11 @@ class BaseEntryQuerySet(models.query.QuerySet):
         return f'{db_table}:{self.hashed_key(txt=filter_str + argument_data)}'
 
     def filter(
-            self,
-            *args,
-            is_deleted: bool = False,
-            has_cached: bool = False, force_cache: bool = False,
-            **kwargs,
+        self,
+        *args,
+        is_deleted: bool = False,
+        has_cached: bool = False, force_cache: bool = False,
+        **kwargs,
     ):
         cache_key = None
         result = None
@@ -65,11 +65,11 @@ class BaseEntryQuerySet(models.query.QuerySet):
         return result
 
     def get(
-            self,
-            *args,
-            is_deleted: bool = None,
-            has_cached: bool = False, force_cache: bool = False,
-            **kwargs,
+        self,
+        *args,
+        is_deleted: bool = None,
+        has_cached: bool = False, force_cache: bool = False,
+        **kwargs,
     ):
         """
         Function call from objects with advance option
