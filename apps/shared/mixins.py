@@ -304,7 +304,7 @@ class DestroyMixin(BaseMixin):
         query_param = self.query_params()
         list_id_by_delete = query_param.getlist('id[]')
         input_data = {
-            "ids": list_id_by_delete
+            "id[]": list_id_by_delete
         }
         lg.log_info(
             message="[DESTROY_MANY][CALL]",
@@ -323,13 +323,13 @@ class DestroyMixin(BaseMixin):
                 deleted_data = self.get_context_deleted()
                 deleted_ids = []
                 for obj_id in list_id_by_delete:
+                    obj = self.check_info(lookup_value=obj_id)
                     if not obj:
                         lg.log_error(
                             message="[DESTROY_MANY][OBJECT_NOT_FOUND]",
                             input={"id": obj_id}
                         )
                         raise ValueError(f"Object not found: {obj_id}")
-                    obj = self.check_info(lookup_value=obj_id)
                     obj.is_deleted = True
                     obj.deleted_at = deleted_data.get('deleted_at')
                     obj.deleted_by = deleted_data.get('deleted_by')
@@ -343,6 +343,7 @@ class DestroyMixin(BaseMixin):
             )
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
+                errors=str(err)
             )
         lg.log_info(
             message="[DESTROY_MANY][SUCCESS]",
