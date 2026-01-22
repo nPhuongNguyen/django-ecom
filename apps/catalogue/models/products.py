@@ -28,6 +28,11 @@ class ProductVariant(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelU
 
 class Attribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=100)
+    values = models.ManyToManyField(
+        'AttributeValue',
+        through='M2MAttribute',
+        related_name='attributes'
+    )
     class Meta:
         db_table = 'catalogue_attribute'
 

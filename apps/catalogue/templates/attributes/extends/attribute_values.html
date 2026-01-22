@@ -6,9 +6,9 @@
         </button>
     </div>
 
-    {% if obj_attribute_value %}
+    {% if obj_attribute_values %}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {% for v in attribute_value %}
+        {% for v in obj_attribute_values %}
         <div class="px-3 py-2 rounded-lg border text-center">
             {{ v.name }}
         </div>
