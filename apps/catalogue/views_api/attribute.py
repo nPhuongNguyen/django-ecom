@@ -7,13 +7,13 @@ from ...shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
 
 
 class AttributeListAPI(ListMixin):
-    queryset = Attribute.objects.prefetch_related('values')
+    queryset = Attribute.objects.prefetch_related('attribute_values').all()
     serializer_class_list = AttributeListSerializer
     search_fields = ['name']
     filterset_fields =['is_active']
     ordering_fields = ['name']
     def get(self, request, *arg, **kwargs):
-        return self.list(self, request, *arg, **kwargs)
+        return self.list(request, *arg, **kwargs)
     
 class AttributeCreateAPI(CreateMixin):
     serializer_class_create = AttributeCreateSerializer

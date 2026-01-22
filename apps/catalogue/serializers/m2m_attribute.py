@@ -1,9 +1,5 @@
 from rest_framework import serializers
 
-from .attribute_value import AttributeValueListSerializer
-
-from .attribute import AttributeListSerializer
-
 from ..models.products import M2MAttribute
 class M2MAtrributeCreateSerializer(serializers.ModelSerializer):
 

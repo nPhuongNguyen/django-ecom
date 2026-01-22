@@ -2,6 +2,13 @@ from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 from apps.catalogue.models.products import Product, ProductVariant
 
+class ProductVariantInProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductVariant
+        fields = [
+            'id', 'name', 'img', 'sku',
+            'price', 'stock_qty', 'is_active'
+        ]
 
 class ProductVariantListSerializer(serializers.ModelSerializer): 
     product = serializers.SerializerMethodField()

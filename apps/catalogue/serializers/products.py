@@ -3,10 +3,9 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from ..models.categories import Category
 from apps.catalogue.models.products import Product
-from .product_variants import ProductVariantListSerializer
-from apps.utils.minio import S3Minio as S3
+from .product_variants import ProductVariantInProductSerializer, ProductVariantListSerializer
 class ProductListSerializer(serializers.ModelSerializer):
-    variants = ProductVariantListSerializer(many=True)
+    variants = ProductVariantInProductSerializer(many=True)
     category = serializers.SerializerMethodField()
     class Meta:
         model = Product
