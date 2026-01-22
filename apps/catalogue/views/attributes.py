@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 
-from ..models.products import Attribute, M2MAttribute
+from ..models.products import Attribute
 
 from ...shared.decorator.views import mask_view
 
@@ -29,9 +29,9 @@ class AttributeDetailView(View):
         pk = kwargs.get('pk')
         try:
             attribute = Attribute.objects.get(pk=pk)
-            attribute_value = M2MAttribute.objects.filter(attribute_id = attribute)
+            attribute_values = attribute.values.all()
             context['obj_attribute'] = attribute
-            context['obj_attribute_value'] = attribute_value
+            context['obj_attribute_values'] = attribute_values
         except:
             return render(request,'admin/notfound/notfound.html', context=context)
         return render(request,'attributes/detail.html', context=context)

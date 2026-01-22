@@ -3,7 +3,7 @@ from apps.catalogue.serializers.products import ProductCreateSerializer, Product
 from apps.shared.decorator.decorator import token_required, validate_exception
 from apps.shared.mixins import CreateMixin, DestroyMixin, DetailMixin, ListMixin, UpdateMixin
 class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
-    queryset = Product.objects.select_related('category').prefetch_related('variants').all()
+    queryset = Product.objects.all()
     serializer_class_list = ProductListSerializer
     search_fields = ['name']
     ordering_fields = ['name']

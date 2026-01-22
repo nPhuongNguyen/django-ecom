@@ -4,10 +4,9 @@ from .attribute_value import AttributeValueListSerializer
 
 from ..models.products import Attribute, M2MAttribute
 class AttributeListSerializer(serializers.ModelSerializer):
-    attribute_values = AttributeValueListSerializer(many=True)
     class Meta:
         model = Attribute
-        fields = ['id', 'name', 'is_active', 'attribute_values']
+        fields = ['id', 'name', 'is_active']
 
 
 class AttributeCreateSerializer(serializers.ModelSerializer):
