@@ -57,7 +57,12 @@ class BaseMixin(GenericAPIView):
         if lookup_value is None:
             lookup_value = self.kwargs.get('pk')
         obj = self.get_queryset().filter(pk=lookup_value).first()
-        return obj 
+        return obj
+    
+    def perform_create(self, serializer, **kwargs):
+        if kwargs:
+            return serializer.save(**kwargs)
+        return serializer.save()
 
 
     def query_params(self):
@@ -169,8 +174,9 @@ class CreateMixin(BaseMixin):
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
-
-        instance = serializer.save(**self.get_context_created())
+        
+        # instance = serializer.save(**self.get_context_created())
+        instance = self.perform_create(serializer, **self.get_context_created())
         output_data = serializer_detail(instance=instance).data
         lg.log_info(
             message="[CREATE][SUCCESS]",
