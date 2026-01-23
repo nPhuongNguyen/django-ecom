@@ -12,6 +12,9 @@ class AttributeValueCreateAPI(CreateMixin):
 class AttributeValueListAPI(ListMixin):
     queryset = AttributeValue.objects.all()
     serializer_class_list = AttributeValueListSerializer
+    search_fields = ['name']
+    filterset_fields =['is_active']
+    ordering_fields = ['name']
     @validate_exception()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

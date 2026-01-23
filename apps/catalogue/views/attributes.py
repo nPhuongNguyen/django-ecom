@@ -44,3 +44,12 @@ class AttributeCreateView(View):
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
         return render(request,'attributes/create.html', context=context)
+    
+class AttributeValueListView(View):
+    MASK_VIEW_CONFIG_UPDATE = {
+        **MASK_VIEW_CONFIG,
+        "space_code": "attribute-value-list"
+    }
+    @mask_view(**MASK_VIEW_CONFIG_UPDATE)
+    def get(self, request, *args, context, **kwargs):
+        return render(request,'attribute_values/list.html', context=context)

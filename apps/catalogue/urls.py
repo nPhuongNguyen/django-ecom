@@ -17,9 +17,15 @@ urlpatterns +=[
 ]
 
 #Attribute
-
 urlpatterns +=[
     path('attribute-list', views.AttributeListView.as_view(), name='AttributeListView'),
     path('attribute-detail/<str:pk>',views.AttributeDetailView.as_view(), name='AttributeDetailView'),
     path('attribute-create',views.AttributeCreateView.as_view(), name='AttributeCreateView'),
+]
+
+#Attribute Value
+urlpatterns +=[
+    path('attribute-value-list', views.AttributeValueListView.as_view(), name='AttributeValueListView'),
+    # path('attribute-value-detail/<str:pk>',views.AttributeValueDetailView.as_view(), name='AttributeValueDetailView'),
+    # path('attribute-value-create',views.AttributeValueCreateView.as_view(), name='AttributeValueCreateView'),
 ]
