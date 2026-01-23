@@ -5,15 +5,18 @@
         <h3 class="kt-card-title mb-0">
             {% trans "Product Variants" %}
         </h3>
+        <button type="button" class="kt-btn kt-btn-primary" data-kt-modal-toggle="#modal_product_variant">
+            {% trans "Add Product Variant" %}
+        </button>
     </div>
     <div class="kt-card-table" data-kt-datatable="true">
         <div class="kt-table-wrapper">
             <table class="kt-table hover cursor-pointer" id="datatables-product_variants" data-kt-datatable-table="true"
-                data-url="{% url 'ProductVariantListAPI' %}"
+                data-url="{% url 'ProductVariantListAPI' %}?product={{ obj_product.pk }}"
                 data-url-change-status="{% url 'ProductVariantChangeStatusAPI' pk='__pk__' %}"
                 data-url-delete="{% url 'ProductVariantDestroyAPI' %}"
                 data-url-detail="{% url 'ProductVariantDetailView' pk='__pk__' %}"
-                data-url-add="{% url 'ProductVariantCreateView' %}">
+            >
                 <thead>
                     <tr>
                         <th scope="col" class="w-30" data-kt-datatable-column="label">
@@ -46,6 +49,5 @@
         </div>
     </div>
 </div>
-
 <script src="{% static 'products/extends/product_variant.js' %}"></script>
 {% endif %}
