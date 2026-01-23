@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
 from ..models.products import M2MAttribute
+
+class M2MAtrributeInputSerializer(serializers.Serializer):
+    attribute = serializers.IntegerField()
+    list_attribute_value = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=False
+    )
 class M2MAtrributeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:

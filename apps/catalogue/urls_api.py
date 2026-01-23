@@ -29,7 +29,6 @@ urlpatterns = [
     path('attribute-value-list', views_api.AttributeValueListAPI.as_view(),name='AttributeValueListAPI'),
 
     #m2m attribute
-
     path('m2m-attribute-update', views_api.M2MAttributeUpdateAPI.as_view(),name='M2MAttributeUpdateAPI'),
 
 

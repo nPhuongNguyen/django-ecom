@@ -69,8 +69,8 @@
                             <div>
                                 <h2 class="text-lg font-semibold mb-3 ">Attribute Value</h2>
                                 <div class="kt-form-item">
-                                    <label class="kt-form-label">Danh mục:</label>
-                                    <select id="inp_select_attribute_value" name="attribute_value"
+                                    <label class="kt-form-label">Select attribute value:</label>
+                                    <select id="inp_select_attribute_value" name="list_attribute_value"
                                         class="kt-select w-full" multiple data-url="{% url 'AttributeValueListAPI' %}">
                                         {% if obj_attribute_values %}
                                         {% for v in obj_attribute_values %}
@@ -98,7 +98,6 @@
         </div>
     </div>
 </form>
-
 {% endblock %}
 {% block foot %}
 <script src="{% static 'attributes/detail.js' %}"></script>

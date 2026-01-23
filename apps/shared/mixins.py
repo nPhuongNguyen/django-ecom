@@ -63,7 +63,11 @@ class BaseMixin(GenericAPIView):
         if kwargs:
             return serializer.save(**kwargs)
         return serializer.save()
-
+    
+    def perform_update(self, instance, **kwargs):
+        if kwargs:
+            return instance.save(**kwargs)
+        return instance.save()
 
     def query_params(self):
         return getattr(self.request, 'query_params', {})
@@ -246,7 +250,7 @@ class UpdateMixin(BaseMixin):
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
-        instance_sr = serializer.save(**self.get_context_updated())
+        instance_sr = self.perform_update(instance,**self.get_context_updated())
         output_data = serializer_detail(instance=instance_sr).data
         lg.log_info(
             message="[UPDATE][SUCCESS]",
@@ -284,9 +288,8 @@ class UpdateMixin(BaseMixin):
                 code=ResponseCodes.INVALID_INPUT
             )
         instance.is_active = not instance.is_active
-            
         instance.updated_by = updated_data.get('updated_by')
-        instance.save(update_fields=['is_active', 'updated_by'])
+        self.perform_update(instance, update_fields=['is_active', 'updated_by'])
         output_data = serializer_detail(instance=instance).data
         lg.log_info(
             message="[CHANGE_STATUS][SUCCESS]",

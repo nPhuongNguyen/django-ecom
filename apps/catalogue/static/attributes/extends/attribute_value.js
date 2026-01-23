@@ -16,17 +16,15 @@ $(document).ready(function () {
                     if (result.cancelled){
                         return;
                     }
-                    else if (result.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
-                    else {
+                    else if (result.status_code === 1) {
                         ToastHelper.showSuccess();
                         modal.hide();
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1200);
-                        return;
+                        form.reset();
+                        window.location.reload();
+                    }
+                    else {
+                        ToastHelper.showError();
+                        validator.showErrors(result.errors);
                     }
                 }
                 else {
