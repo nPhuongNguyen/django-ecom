@@ -1,0 +1,63 @@
+{% load static i18n %}
+{% include 'import/jquery_validation.html' %}
+<div>
+    <form id="frm_modal_attribute_value" data-url="{% url 'AttributeValueCreateAPI' %}">
+        <div class="kt-modal kt-modal-center" data-kt-modal="true" id="modal_attribute_value">
+            <div class="kt-modal-content max-w-[70%] border-0">
+                <div class="kt-modal-header border-0 bg-blue-500 rounded-t-lg">
+                    <h3 class="kt-modal-title text-white">Attribute Value</h3>
+                    <button type="button" class="kt-modal-close text-white" aria-label="Close modal"
+                        data-kt-modal-dismiss="#modal_attribute_value">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-x" aria-hidden="true">
+                            <path d="M18 6 6 18"></path>
+                            <path d="m6 6 12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="kt-modal-body max-h-[50vh]">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="kt-form-item">
+                            <label class="kt-form-label required" for="inp_name">{% trans 'Name' %}:</label>
+                            <div class="kt-form-control">
+                                <input id="inp_name" type="text" class="kt-input w-full" name="name" required />
+                            </div>
+                            <div class="kt-form-description"></div>
+                        </div>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label" for="inp_is_active">{% trans 'Status' %}:</label>
+                            <div class="kt-form-control">
+                                <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active"
+                                    name="is_active" checked="" />
+                            </div>
+                        </div>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label required" for="inp_select_attribute">{% trans 'Attribute' %}:</label>
+                            <div class="kt-form-control">
+                                <div class="kt-form-item">
+                                    <label class="kt-form-label">Select attribute:</label>
+                                    <select id="inp_select_attribute" name="attribute" class="kt-select w-full"
+                                        data-url="{% url 'AttributeListAPI' %}" required>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-modal-footer gap-2.5 justify-end border-0">
+                    <div class="flex gap-4">
+                        <button class="kt-btn kt-btn-secondary" data-kt-modal-dismiss="#modal-variant" type="button">
+                            Cancel
+                        </button>
+                        <button class="kt-btn" type="submit">
+                            Save
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

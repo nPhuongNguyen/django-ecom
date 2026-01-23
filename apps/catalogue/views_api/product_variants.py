@@ -8,8 +8,8 @@ class ProductVariantListAPI(ListMixin):
     ordering_fields =['product']
     search_fields = ['name']
     filterset_fields = ['is_active', 'product']
-    @token_required()
     @validate_exception()
+    @token_required()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
@@ -17,8 +17,8 @@ class ProductVariantCreateAPI(CreateMixin):
     queryset = ProductVariant.objects.all()
     serializer_class_create = ProductVariantCreateSerializer
     serializer_class_detail = ProductVariantDetailSerializer
-    @token_required()
     @validate_exception()
+    @token_required()
     def post(self, request, *args, **kwargs):
         return self.create(request, args, kwargs)
     
@@ -33,8 +33,8 @@ class ProductVariantChangeStatusAPI(UpdateMixin):
     queryset = ProductVariant.objects.all()
     serializer_class_update = ProductVariantUpdateSerializer
     serializer_class_detail = ProductVariantDetailSerializer
-    @token_required()
     @validate_exception()
+    @token_required()
     def post(self, request, *args, **kwargs):
         return self.change_status(request, *args, **kwargs)
     
@@ -42,8 +42,8 @@ class ProductVariantUpdateAPI(UpdateMixin):
     queryset = ProductVariant.objects.all()
     serializer_class_update = ProductVariantUpdateSerializer
     serializer_class_detail = ProductVariantDetailSerializer
-    @token_required()
     @validate_exception()
+    @token_required()
     def post(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
     

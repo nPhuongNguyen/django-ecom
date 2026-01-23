@@ -8,7 +8,7 @@ class AttributeValueListSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'is_active']
 
 class AttributeValueCreateSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = AttributeValue
         fields = ['name', 'is_active']

@@ -8,16 +8,16 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     search_fields = ['name']
     ordering_fields = ['name']
     filterset_fields = ['is_active']
-    @token_required()
     @validate_exception()
+    @token_required()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
 class ProductCreateAPI(CreateMixin):
     serializer_class_create = ProductCreateSerializer
     serializer_class_detail = ProductDetailSerializer
-    @token_required()
     @validate_exception()
+    @token_required()
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
     
@@ -25,15 +25,15 @@ class ProductUpdateAPI(UpdateMixin):
     queryset = Product.objects.all()
     serializer_class_update = ProductUpdateSerializer
     serializer_class_detail = ProductDetailSerializer
-    @token_required()
     @validate_exception()
+    @token_required()
     def post(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
 class ProductDestroyAPI(DestroyMixin):
     queryset = Product.objects.all()
-    @token_required()
     @validate_exception()
+    @token_required()
     def post(self, request, *args, **kwargs):
         return self.destroy_many(request, *args, **kwargs) 
     
@@ -42,8 +42,8 @@ class ProductChangeStatusAPI(UpdateMixin):
     queryset = Product.objects.all()
     serializer_class_update = ProductUpdateSerializer
     serializer_class_detail = ProductDetailSerializer
-    @token_required()
     @validate_exception()
+    @token_required()
     def post(self, request, *args, **kwargs):
         return self.change_status(request, *args, **kwargs)
     
