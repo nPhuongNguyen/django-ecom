@@ -16,8 +16,7 @@ class AttributeValueCreateAPI(CreateMixin):
         if attribute:
             M2MAttribute.objects.create(
                 attribute_id=attribute,
-                attribute_value_id=result.id
-                
+                attribute_value_id=result.id   
             )
         return result
         
