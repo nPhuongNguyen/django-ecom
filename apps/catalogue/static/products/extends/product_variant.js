@@ -73,7 +73,8 @@ $(document).ready(function () {
         selectRowRender: (select_info$) => {
             const btnDestroy$ = $(`<button class="kt-btn kt-btn-destructive">Delete selected</button>`);
             select_info$.append(btnDestroy$);
-            btnDestroy$.on('click', async function () {
+            btnDestroy$.on('click', async function (event) {
+                event.preventDefault()
                 const id_selecteds$ = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
                 if (id_selecteds$.length === 0) return;
                 const check_confirmed = await SweetAlertHelper.confirmDelete({});
