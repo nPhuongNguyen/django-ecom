@@ -31,25 +31,31 @@ class SweetAlertHelper {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#6c757d'
         });
-        if (!result.isConfirmed) return { cancelled: true };
-        if (url) {
-            try {
-                MyLoading.show();
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const res = await CallApi.request(
-                    {
-                        url, 
-                        method, 
-                        params, 
-                        data, 
-                        timeout
-                    });
-                return res;
-            } finally {
-                MyLoading.close();
-            }
+        if (!result.isConfirmed) {
+                return Sweetalert2Response.format_response({
+                confirmed: false,
+                data: null
+            });
         }
-        return { confirmed: true };
+        if (url) {
+            const result_api = await CallApi.request(
+                {
+                    url, 
+                    method, 
+                    params, 
+                    data, 
+                    timeout
+                }
+            );
+            return Sweetalert2Response.format_response({
+                confirmed: true,
+                data: result_api
+            });
+        }
+        return Sweetalert2Response.format_response({
+            confirmed: true,
+            data: null
+        });
     }
 
     static async confirmDelete({
@@ -75,26 +81,31 @@ class SweetAlertHelper {
             cancelButtonColor: '#3085d6'
         });
 
-        if (!result.isConfirmed) return { cancelled: true };
+        if (!result.isConfirmed) {
+                return Sweetalert2Response.format_response({
+                confirmed: false,
+                data: null
+            });
+        }
 
         if (url) {
-            MyLoading.show();
-            try {
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const res = await CallApi.request(
-                    {
-                        url, 
-                        method, 
-                        params, 
-                        data, 
-                        timeout
-                    });
-                return res;
-            } finally {
-                MyLoading.close();
-            }
+            const result_api = await CallApi.request(
+                {
+                    url, 
+                    method, 
+                    params, 
+                    data, 
+                    timeout
+                });
+            return Sweetalert2Response.format_response({
+                confirmed: true,
+                data: result_api
+            });
         }
-        return { confirmed: true };
+        return Sweetalert2Response.format_response({
+            confirmed: true,
+            data: null
+        });
     }
 
     static async NotiError({

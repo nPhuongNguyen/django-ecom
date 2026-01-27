@@ -23,8 +23,13 @@ class CallApi {
                     ...( token && { 'Token': token }),
                 }
             });
-
-            return ApiResponse.format_response(response.data);
+            const res = response.data;
+            return ApiResponse.format_response(
+                status_code=res.status_code,
+                message=res.message,
+                data=res.data,  
+                errors=res.errors
+            );
         } catch (error) {
             Logger.apiError({ url, method, error });
             return null;

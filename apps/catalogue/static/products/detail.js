@@ -61,10 +61,9 @@ $(document).ready(async function () {
                 console.log('formdata',formdata);
                 const files = UppyUploader.getFiles(uppyInstance);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                let result_api_image = null;
                 if (changed) {
                     const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                    if (check_sw2_alret.cancelled){
+                    if (!check_sw2_alret.confirmed){
                         un_formart_price = formatPriceOnInput(price)
                         priceInput.val(un_formart_price)
                         return;
@@ -77,71 +76,50 @@ $(document).ready(async function () {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload');
-                        if(check_sw2_alret.confirmed){
-                            try{
-                                MyLoading.show();
-                                await new Promise(resolve => setTimeout(resolve, 1500));
-                                result_api_image = await CallApi.request({
-                                    url: api_upload,
-                                    method: 'POST',
-                                    data: formDataImage
-                                })
-                                if(result_api_image){
-                                    if(result_api_image.status_code !== 1){
-                                        SweetAlertHelper.NotiError({
-                                            text: result_api_image.message
-                                        });
-                                        return;
-                                    }else{
-                                        formdata['img'] = result_api_image.data.list_img
-                                    }
-                                }else{
-                                    SweetAlertHelper.NotiError();
-                                    return;
-                                }
+                        const result_api_image = await CallApi.request({
+                            url: api_upload,
+                            method: 'POST',
+                            data: formDataImage
+                        })
+                        if(result_api_image){
+                            if(result_api_image.status_code !== 1){
+                                SweetAlertHelper.NotiError({
+                                    text: result_api_image.message
+                                });
+                                return;
+                            }else{
+                                formdata['img'] = result_api_image.data.list_img
                             }
-                            finally{
-                                MyLoading.close();
-                            }
+                        }else{
+                            SweetAlertHelper.NotiError();
+                            return;
                         }
                     }
                     else{
                         formdata['img'] = "";
                     }
-                    result = await CallApi.request({
-                        url: frm$.data('url').replace('__pk__', id_product$),
-                        method: 'POST',
-                        data: formdata
-                    })
                 }
-                else{
-                    result = await SweetAlertHelper.confirmSave({
-                        url: frm$.data('url').replace('__pk__', id_product$),
-                        data: formdata
-                    });
+                const result = await SweetAlertHelper.confirmSave({
+                    url: frm$.data('url').replace('__pk__', id_product$),
+                    data: formdata
+                });
+                if (!result.confirmed || !result.data) {
+                    un_formart_price = formatPriceOnInput(price)
+                    priceInput.val(un_formart_price)
+                    return;
                 }
-                if(result){
-                    if (result.cancelled){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
-                        return;
-                    }
-                    else if (result.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
-                    else {
-                        ToastHelper.showSuccess();
-                        FormValidateLoader.savedNext(event, {
-                            url_save: frm$.data('url-list'),
-                            url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
-                        });
-                    }
+                const res = result.data;
+                if (res.status_code !== 1) {
+                    ToastHelper.showError();
+                    validator.showErrors(res.errors);
+                    return;
                 }
-                else {
-                    SweetAlertHelper.NotiError();
-                }
+                ToastHelper.showSuccess();
+                FormValidateLoader.savedNext(event, {
+                    url_save: frm$.data('url-list'),
+                    url_add_another: frm$.data('url-add'),
+                    url_continue_editing: frm$.data('url-detail').replace('__slug__', res.data.slug),
+                });
             },
         },
         frm$.find('button.btn-delete').on('click', async function(){
@@ -153,24 +131,13 @@ $(document).ready(async function () {
                 url: frm$.data('url-delete'),
                 params: {'id[]': id_product$}
             });
-            if(result){
-                if(result.cancelled){
-                    return;
-                }else if(result.status_code !== 1){
-                    ToastHelper.showError();
-                }else{
-                    ToastHelper.showSuccess();
-                    await new Promise(resolve => {
-                        setTimeout(() => {
-                            window.location.href = frm$.data('url-list');
-                            resolve();
-                        }, 1500);
-                    });
-                }
+            if (!result.confirmed) return;
+            if (result.status_code !== 1){
+                ToastHelper.showError();
+                return;
             }
-            else{
-                SweetAlertHelper.NotiError();
-            }
+            ToastHelper.showSuccess();
+            window.location.href = frm$.data('url-list');
         })
     );
 })

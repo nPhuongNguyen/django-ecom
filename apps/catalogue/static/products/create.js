@@ -65,11 +65,6 @@ $(document).ready(function () {
                                         return;
                                     }else{
                                         formdata['img'] = result_api_image.data.list_img
-                                        result = await CallApi.request({
-                                            url: frm$.data('url'),
-                                            method: 'POST',
-                                            data: formdata
-                                        })
                                     }
                                 }else{
                                     SweetAlertHelper.NotiError();
@@ -85,34 +80,27 @@ $(document).ready(function () {
                         formdata['img'] = "";
                     }
                 }
-                else{
-                    result = await SweetAlertHelper.confirmSave({ 
-                        url: frm$.data('url'), 
-                        data: formdata 
-                    });
+                result = await SweetAlertHelper.confirmSave({ 
+                    url: frm$.data('url'), 
+                    data: formdata 
+                });
+                if (!result.confirmed || !result.data) {
+                    un_formart_price = formatPriceOnInput(price)
+                    priceInput.val(un_formart_price)
+                    return;
                 }
-                if(result){
-                    if (result.cancelled){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
-                        return;
-                    }
-                    else if (result.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
-                    else {
-                        ToastHelper.showSuccess();
-                        FormValidateLoader.savedNext(event, {
-                            url_save: frm$.data('url-list'),
-                            url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
-                        });
-                    }
+                const res = result.data;
+                if (res.status_code !== 1) {
+                    ToastHelper.showError();
+                    validator.showErrors(res.errors);
+                    return;
                 }
-                else {
-                    SweetAlertHelper.NotiError();
-                }
+                ToastHelper.showSuccess();
+                FormValidateLoader.savedNext(event, {
+                    url_save: frm$.data('url-list'),
+                    url_add_another: frm$.data('url-add'),
+                    url_continue_editing: frm$.data('url-detail').replace('__slug__', res.data.slug),
+                });
             }
         },
     );

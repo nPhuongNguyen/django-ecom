@@ -13,31 +13,23 @@ $(document).ready(async function () {
                 event.preventDefault();
                 const formdata = FormValidateLoader.formData(frm$);
                
-                result = await SweetAlertHelper.confirmSave({
+                const result = await SweetAlertHelper.confirmSave({
                     url: frm$.data('url').replace('__pk__', id_attribute$),
                     data: formdata
                 });
-                
-                if(result){
-                    if (result.cancelled){
-                        return;
-                    }
-                    else if (result.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
-                    else {
-                        ToastHelper.showSuccess();
-                        FormValidateLoader.savedNext(event, {
-                            url_save: frm$.data('url-list'),
-                            url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__pk__', result.data.id),
-                        });
-                    }
+                if (!result.confirmed || !result.data) return;
+                const res = result.data;
+                if (res.status_code !== 1){
+                    ToastHelper.showError();
+                    validator.showErrors(result.errors || {});
+                    return;
                 }
-                else {
-                    SweetAlertHelper.NotiError();
-                }
+                ToastHelper.showSuccess();
+                FormValidateLoader.savedNext(event, {
+                    url_save: frm$.data('url-list'),
+                    url_add_another: frm$.data('url-add'),
+                    url_continue_editing: frm$.data('url-detail').replace('__pk__', res.data.id),
+                });
             },
         },
         frm$.find('button.btn-delete').on('click', async function(){
@@ -49,24 +41,12 @@ $(document).ready(async function () {
                 url: frm$.data('url-delete'),
                 params: {'id[]': id_attribute$}
             });
-            if(result){
-                if(result.cancelled){
-                    return;
-                }else if(result.status_code !== 1){
-                    ToastHelper.showError();
-                }else{
-                    ToastHelper.showSuccess();
-                    await new Promise(resolve => {
-                        setTimeout(() => {
-                            window.location.href = frm$.data('url-list');
-                            resolve();
-                        }, 1500);
-                    });
-                }
+            if (!result.confirmed) return;
+            if (result.data.status_code !== 1){
+                ToastHelper.showError();
+                return;
             }
-            else{
-                SweetAlertHelper.NotiError();
-            }
+            window.location.href = frm$.data('url-list');
         })
     );
 })

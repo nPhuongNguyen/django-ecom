@@ -70,25 +70,19 @@ $(document).ready(function () {
                 const id_selecteds = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
                 if (id_selecteds.length === 0) return;
 
-                const res = await SweetAlertHelper.confirmDelete({
+                const result = await SweetAlertHelper.confirmDelete({
                     url: tbl$.data('url-delete'),
                     method: 'POST',
                     params: { 'id[]': id_selecteds },
                 });
-                if(res){
-                    if (res.cancelled){
-                        console.log("User cancelled");
-                    }
-                    else if(res.status_code !==1){
-                        ToastHelper.showError();
-                    }
-                    else{
-                        ToastHelper.showSuccess();
-                        tbl$.DataTable().ajax.reload();
-                    }
-                }else{
+                if (!result.confirmed || !result.data) return;
+                const res = result.data;
+                if (res.status_code !== 1){
                     ToastHelper.showError();
+                    return;
                 }
+                ToastHelper.showSuccess();
+                tbl$.DataTable().ajax.reload();
             });
         },
     });

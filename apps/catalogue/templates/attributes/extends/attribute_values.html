@@ -7,14 +7,17 @@
     </div>
 
     {% if obj_attribute_values %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="flex flex-wrap gap-2">
         {% for v in obj_attribute_values %}
-        <div class="px-3 py-2 rounded-lg border text-center">
+        <span class="
+            px-3 py-1 text-sm rounded-full
+            bg-gray-100 text-gray-700
+            border border-gray-300
+        ">
             {{ v.name }}
-        </div>
+        </span>
         {% endfor %}
     </div>
-
     {% else %}
     <p class="text-sm text-muted-foreground italic">
         Chưa có attribute value nào!

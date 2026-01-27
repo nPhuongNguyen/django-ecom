@@ -9,30 +9,24 @@ $(document).ready(function () {
             submitHandler: async function (form, event) {
                 event.preventDefault();
                 const formdata = FormValidateLoader.formData(frm$);
-                result = await SweetAlertHelper.confirmSave({ 
+                const result = await SweetAlertHelper.confirmSave({ 
                     url: frm$.data('url'), 
                     data: formdata 
                 });
-                if(result){
-                    if (result.cancelled){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
-                        return;
-                    }
-                    else if (result.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
-                    else {
-                        ToastHelper.showSuccess();
-                        modal.hide();
-                        form.reset();
-                        tbl$.DataTable().ajax.reload();
-                    }
+                if (!result.confirmed){
+                    un_formart_price = formatPriceOnInput(price)
+                    priceInput.val(un_formart_price)
+                    return;
                 }
-                else {
-                    SweetAlertHelper.NotiError();
+                if (result.data.status_code !== 1) {
+                    ToastHelper.showError();
+                    validator.showErrors(result.errors);
+                    return;
                 }
+                ToastHelper.showSuccess();
+                modal.hide();
+                form.reset();
+                tbl$.DataTable().ajax.reload();
             }
         }
     )

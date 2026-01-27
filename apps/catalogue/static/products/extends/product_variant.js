@@ -47,22 +47,14 @@ $(document).ready(function () {
                 url: tbl$.data('url-change-status').replaceAll('__pk__', id),
                 method: 'POST',
             });
-            try{
-                if (result){
-                    if (result.cancelled){
-                        console.log("User cancelled");
-                    }
-                    else if (result.status_code !==1){
-                        ToastHelper.showError();
-                    }
-                    else{
-                        ToastHelper.showSuccess();
-                    }
-                }
+            if (!result.confirmed || !result.data) return;
+            const res = result.data;
+            if (res.status_code !== 1){
+                ToastHelper.showError();
+                return;
             }
-            finally{
-                tbl$.DataTable().ajax.reload();
-            } 
+            ToastHelper.showSuccess();
+            tbl$.DataTable().ajax.reload();
         },
         selectRow: 'multi',
         selectRowRender: (select_info$) => {
@@ -73,25 +65,19 @@ $(document).ready(function () {
                 const id_selecteds = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
                 if (id_selecteds.length === 0) return;
 
-                const res = await SweetAlertHelper.confirmDelete({
+                const result = await SweetAlertHelper.confirmDelete({
                     url: tbl$.data('url-delete'),
                     method: 'POST',
                     params: { 'id[]': id_selecteds },
                 });
-                if(res){
-                    if (res.cancelled){
-                        console.log("User cancelled");
-                    }
-                    else if(res.status_code !==1){
-                        ToastHelper.showError();
-                    }
-                    else{
-                        ToastHelper.showSuccess();
-                        tbl$.DataTable().ajax.reload();
-                    }
-                }else{
+                if (!result.confirmed || !result.data) return;
+                const res = result.data;
+                if (res.status_code !== 1) {
                     ToastHelper.showError();
+                    return;
                 }
+                ToastHelper.showSuccess();
+                tbl$.DataTable().ajax.reload();
             });
         },
     });
@@ -124,7 +110,6 @@ $(document).ready(function () {
     }
     const modalEl = document.querySelector('#modal_product_variant');
     const modal = KTModal.getInstance(modalEl);
-
     const validator = FormValidateLoader.init(
         frm$,
         {
@@ -135,83 +120,63 @@ $(document).ready(function () {
                 priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                let result = null;
                 if (changed) {
                     const files = UppyUploader.getFiles(uppyInstance);
-                    let result_api_image = null;
                     if (files.length > 0) {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload');
                         const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                        if (check_sw2_alret.cancelled){
+                        if (!check_sw2_alret.confirmed){
                             un_formart_price = formatPriceOnInput(price)
                             priceInput.val(un_formart_price)
                             return;
                         }
-                        if(check_sw2_alret.confirmed){
-                            try{
-                                MyLoading.show();
-                                await new Promise(resolve => setTimeout(resolve, 1500));
-                                result_api_image = await CallApi.request({
-                                    url: api_upload,
-                                    method: 'POST',
-                                    data: formDataImage
-                                })
-                                if(result_api_image){
-                                    if(result_api_image.status_code !== 1){
-                                        SweetAlertHelper.NotiError({
-                                            text: result_api_image.message
-                                        });
-                                        return;
-                                    }else{
-                                        formdata['img'] = result_api_image.data.list_img
-                                        result = await CallApi.request({
-                                            url: frm$.data('url'),
-                                            method: 'POST',
-                                            data: formdata
-                                        })
-                                    }
-                                }else{
-                                    SweetAlertHelper.NotiError();
-                                    return;
-                                }
+                        const result_api_image = await CallApi.request({
+                            url: api_upload,
+                            method: 'POST',
+                            data: formDataImage
+                        })
+                        if(result_api_image){
+                            if(result_api_image.status_code !== 1){
+                                SweetAlertHelper.NotiError({
+                                    text: result_api_image.message
+                                });
+                                return;
+                            }else{
+                                formdata['img'] = result_api_image.data.list_img
                             }
-                            finally{
-                                MyLoading.close();
-                            }
+                        }else{
+                            SweetAlertHelper.NotiError();
+                            return;
                         }
                     }
                     else{
                         formdata['img'] = "";
                     }
                 }
-                else{
-                    result = await SweetAlertHelper.confirmSave({ 
-                        url: frm$.data('url'), 
-                        data: formdata 
-                    });
-                }
-                if(result){
-                    if (result.cancelled){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
+                const result = await SweetAlertHelper.confirmSave({ 
+                    url: frm$.data('url'), 
+                    data: formdata 
+                });
+                try{
+                    if (!result.confirmed || !result.data) {
                         return;
                     }
-                    else if (result.status_code !== 1) {
+                    const res = result.data;
+                    if (res.status_code !== 1) {
                         ToastHelper.showError();
-                        validator.showErrors(result.errors);
+                        validator.showErrors(res.errors);
+                        return;
                     }
-                    else {
-                        ToastHelper.showSuccess();
-                        modal.hide();
-                        form.reset();
-                        tbl$.DataTable().ajax.reload();
-                    }
+                }finally{
+                    un_formart_price = formatPriceOnInput(price)
+                    priceInput.val(un_formart_price)
                 }
-                else {
-                    SweetAlertHelper.NotiError();
-                }
+                ToastHelper.showSuccess();
+                modal.hide();
+                form.reset();
+                tbl$.DataTable().ajax.reload();
             }
         },
     )
