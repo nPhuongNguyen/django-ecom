@@ -1,8 +1,8 @@
 $(document).ready(function () {
-    const tbl$ = $('#datatables-product_variants');
+    const tbl$ = $('#datatables-product-variants');
     const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
-            url: tbl$.data('url'),
+            url: tbl$.data('url-variant'),
             headers: {
                 'Token': AuthStorage.getToken(),
             },
@@ -18,7 +18,7 @@ $(document).ready(function () {
                 orderable: false,
                 allowHtml: true,
                 render(data, type, row) {
-                    const url = tbl$.data('url-detail').replaceAll('__pk__', row['id'] || '');
+                    const url = tbl$.data('url-detail-variant').replaceAll('__pk__', row['id'] || '');
                     return `<a class="kt-link kt-link-underline" href="${url}">${data || '-'}</a>`;
                 }
             },
@@ -43,41 +43,57 @@ $(document).ready(function () {
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
         ontoggleActive: async (id)=>{
-            const result = await SweetAlertHelper.confirmSave({
-                url: tbl$.data('url-change-status').replaceAll('__pk__', id),
-                method: 'POST',
-            });
-            if (!result.confirmed || !result.data) return;
-            const res = result.data;
-            if (res.status_code !== 1){
-                ToastHelper.showError();
-                return;
+            try{
+                const check_confirmed = await SweetAlertHelper.confirmSave({});
+                if (!check_confirmed) return;
+                MyLoading.show();
+                const result_ai = await CallApi.request({
+                    url: tbl$.data('url-change-status-variant').replaceAll('__pk__', id),
+                    method: 'POST',
+                });
+                try {
+                    if (result_ai == null){
+                        ToastHelper.showError();
+                        return;
+                    }
+                    if (result_ai.status_code !== 1){
+                        ToastHelper.showError();
+                        return;
+                    }
+                    ToastHelper.showSuccess();
+                }
+                finally{
+                    MyLoading.close();
+                }
+            }finally{
+                tbl$.DataTable().ajax.reload();
             }
-            ToastHelper.showSuccess();
-            tbl$.DataTable().ajax.reload();
         },
         selectRow: 'multi',
         selectRowRender: (select_info$) => {
             const btnDestroy$ = $(`<button class="kt-btn kt-btn-destructive">Delete selected</button>`);
             select_info$.append(btnDestroy$);
-
             btnDestroy$.on('click', async function () {
-                const id_selecteds = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
-                if (id_selecteds.length === 0) return;
-
-                const result = await SweetAlertHelper.confirmDelete({
-                    url: tbl$.data('url-delete'),
+                const id_selecteds$ = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
+                if (id_selecteds$.length === 0) return;
+                const check_confirmed = await SweetAlertHelper.confirmDelete({});
+                if (!check_confirmed) return;
+                const result_api = await CallApi.request({
+                    url: tbl$.data('url-delete-variant'),
                     method: 'POST',
-                    params: { 'id[]': id_selecteds },
+                    params: {'id[]': id_selecteds$}
                 });
-                if (!result.confirmed || !result.data) return;
-                const res = result.data;
-                if (res.status_code !== 1) {
-                    ToastHelper.showError();
+                if (result_api){
+                    if (result_api.status_code !==1){
+                        ToastHelper.showError();
+                        return;
+                    }
+                    ToastHelper.showSuccess();
+                    tbl$.DataTable().ajax.reload();
+                }else{
+                    SweetAlertHelper.NotiError();
                     return;
                 }
-                ToastHelper.showSuccess();
-                tbl$.DataTable().ajax.reload();
             });
         },
     });
@@ -126,19 +142,14 @@ $(document).ready(function () {
                     priceInput.val(un_formart_price)
                     return;
                 }
+                MyLoading.show()
                 try{
                     if (changed) {
                         const files = UppyUploader.getFiles(uppyInstance);
                         if (files.length > 0) {
                             const formDataImage = new FormData();
                             files.forEach(file => formDataImage.append('list_image', file.data));
-                            const api_upload = frm$.data('url-upload');
-                            const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                            if (!check_sw2_alret){
-                                un_formart_price = formatPriceOnInput(price)
-                                priceInput.val(un_formart_price)
-                                return;
-                            }
+                            const api_upload = frm$.data('url-upload-variant');
                             const result_api_image = await CallApi.request({
                                 url: api_upload,
                                 method: 'POST',
@@ -164,7 +175,7 @@ $(document).ready(function () {
                     }
                     try{
                         const result_api = await CallApi.request({
-                            url: frm$.data('url'),
+                            url: frm$.data('url-create-variant'),
                             method: 'POST',
                             data: formdata
                         })

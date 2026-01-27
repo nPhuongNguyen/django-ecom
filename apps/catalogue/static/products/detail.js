@@ -66,6 +66,10 @@ $(document).ready(async function () {
                 }
                 MyLoading.show();
                 try{
+                    if (id_product$ === null){
+                        ToastHelper.showError();
+                        return;
+                    }
                     if (changed) {
                         const files = UppyUploader.getFiles(uppyInstance);
                         if (files.length > 0) {
@@ -96,7 +100,7 @@ $(document).ready(async function () {
                         }
                     }
                     const result_api = await CallApi.request({
-                        url: frm$.data('url'),
+                        url: frm$.data('url').replace('__pk__', id_product$),
                         method: 'POST',
                         data: formdata
                     })
@@ -126,7 +130,7 @@ $(document).ready(async function () {
             },
         },
         frm$.find('button.btn-delete').on('click', async function(){
-            if(id_product$ == null){
+            if(id_product$ === null){
                 ToastHelper.showError();
                 return;
             }

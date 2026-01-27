@@ -250,7 +250,7 @@ class UpdateMixin(BaseMixin):
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
-        instance_sr = self.perform_update(instance,**self.get_context_updated())
+        instance_sr = self.perform_update(serializer, **self.get_context_updated())
         output_data = serializer_detail(instance=instance_sr).data
         lg.log_info(
             message="[UPDATE][SUCCESS]",

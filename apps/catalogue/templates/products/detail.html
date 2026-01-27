@@ -134,12 +134,13 @@
                 </div>
             </div>
         </div>
-        {% include 'products/extends/product_variants.html' with obj_product=obj_product %}
+
         <div class="w-full">
             {% include 'button/form-actions-with-delete.html' %}
         </div>
     </form>
 </div>
+    {% include 'products/extends/product_variants.html' with obj_product=obj_product %}
 <div>
     <form id="frm_modal_variant" data-url="{% url 'ProductVariantCreateAPI' %}"
         data-url-upload="{% url 'UploadImageAPI' %}">

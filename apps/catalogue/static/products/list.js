@@ -40,28 +40,31 @@ $(document).ready(function () {
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
         ontoggleActive: async (id)=>{
-            const check_confirmed = await SweetAlertHelper.confirmSave({});
-            if (!check_confirmed) return;
-            const result_ai = await CallApi.request({
-                url: tbl$.data('url-change-status').replaceAll('__pk__', id),
-                method: 'POST',
-            });
-            MyLoading.show();
-            try {
-                if (result_ai == null){
-                    ToastHelper.showError();
-                    return;
+            try{
+                const check_confirmed = await SweetAlertHelper.confirmSave({});
+                if (!check_confirmed) return;
+                MyLoading.show();
+                try {
+                    const result_ai = await CallApi.request({
+                        url: tbl$.data('url-change-status').replaceAll('__pk__', id),
+                        method: 'POST',
+                    });
+                    if (result_ai == null){
+                        ToastHelper.showError();
+                        return;
+                    }
+                    if (result_ai.status_code !== 1){
+                        ToastHelper.showError();
+                        return;
+                    }
+                    ToastHelper.showSuccess();
                 }
-                if (result_ai.status_code !== 1){
-                    ToastHelper.showError();
-                    return;
+                finally{
+                    MyLoading.close();
                 }
-                ToastHelper.showSuccess();
-            }
-            finally{
-                MyLoading.close();
+            }finally{
                 tbl$.DataTable().ajax.reload();
-            }
+            } 
         },
         selectRow: 'multi',
         selectRowRender: (select_info$) => {
@@ -71,10 +74,10 @@ $(document).ready(function () {
             btnDestroy$.on('click', async function () {
                 const id_selecteds = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
                 if (id_selecteds.length === 0) return;
-                MyLoading.show();
+                const check_confirmed = await SweetAlertHelper.confirmDelete({});
+                if (!check_confirmed) return;
+                    MyLoading.show();
                 try{
-                    const check_confirmed = await SweetAlertHelper.confirmDelete({});
-                    if (!check_confirmed) return;
                     const result = await CallApi.request({
                         url: tbl$.data('url-delete'),
                         method: 'POST',
