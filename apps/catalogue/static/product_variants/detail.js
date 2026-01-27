@@ -95,7 +95,6 @@ $(document).ready(async function () {
                                 SweetAlertHelper.NotiError();
                                 return;
                             }
-                            
                         }
                     }
                     else{

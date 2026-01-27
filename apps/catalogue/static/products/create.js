@@ -34,53 +34,36 @@ $(document).ready(function () {
                 priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                let result = null;
                 if (changed) {
                     const files = UppyUploader.getFiles(uppyInstance);
-                    let result_api_image = null;
                     if (files.length > 0) {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload');
-                        const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                        if (check_sw2_alret.cancelled){
-                            un_formart_price = formatPriceOnInput(price)
-                            priceInput.val(un_formart_price)
+                        const result_api_image = await CallApi.request({
+                            url: api_upload,
+                            method: 'POST',
+                            data: formDataImage
+                        })
+                        if(result_api_image){
+                            if(result_api_image.status_code !== 1){
+                                SweetAlertHelper.NotiError({
+                                    text: result_api_image.message
+                                });
+                                return;
+                            }else{
+                                formdata['img'] = result_api_image.data.list_img
+                            }
+                        }else{
+                            SweetAlertHelper.NotiError();
                             return;
-                        }
-                        if(check_sw2_alret.confirmed){
-                            try{
-                                MyLoading.show();
-                                await new Promise(resolve => setTimeout(resolve, 1500));
-                                result_api_image = await CallApi.request({
-                                    url: api_upload,
-                                    method: 'POST',
-                                    data: formDataImage
-                                })
-                                if(result_api_image){
-                                    if(result_api_image.status_code !== 1){
-                                        SweetAlertHelper.NotiError({
-                                            text: result_api_image.message
-                                        });
-                                        return;
-                                    }else{
-                                        formdata['img'] = result_api_image.data.list_img
-                                    }
-                                }else{
-                                    SweetAlertHelper.NotiError();
-                                    return;
-                                }
-                            }
-                            finally{
-                                MyLoading.close();
-                            }
                         }
                     }
                     else{
                         formdata['img'] = "";
                     }
                 }
-                result = await SweetAlertHelper.confirmSave({ 
+                const result = await SweetAlertHelper.confirmSave({ 
                     url: frm$.data('url'), 
                     data: formdata 
                 });

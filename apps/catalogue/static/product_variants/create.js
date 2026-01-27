@@ -52,13 +52,7 @@ $(document).ready(function () {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload');
-                        const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                        if (!check_sw2_alret.confirmed){
-                            un_formart_price = formatPriceOnInput(price)
-                            priceInput.val(un_formart_price)
-                            return;
-                        }
-                        const result_api_image = await CallApi.request({
+                         const result_api_image = await CallApi.request({
                             url: api_upload,
                             method: 'POST',
                             data: formDataImage
@@ -75,7 +69,7 @@ $(document).ready(function () {
                         }else{
                             SweetAlertHelper.NotiError();
                             return;
-                        }
+                        } 
                     }
                     else{
                         formdata['img'] = "";
