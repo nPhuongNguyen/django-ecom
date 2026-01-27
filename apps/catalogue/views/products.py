@@ -29,10 +29,8 @@ class ProductDetailView(View):
     def get(self, request, *args, context, **kwargs):
         slug = kwargs.get('slug')
         try:
-            product = Product.objects.get(slug=slug, is_deleted = False)
+            product = Product.objects.get(slug=slug)
             context['obj_product'] = product
-            info_product = ProductDetailSerializer(instance = product).data
-            print('obj_product',info_product)
         except:
             return render(request,'admin/notfound/notfound.html', context=context)
         return render(request, 'products/detail.html', context=context)

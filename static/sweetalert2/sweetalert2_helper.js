@@ -14,11 +14,6 @@ class SweetAlertHelper {
         icon = SweetAlertHelper.Icons.question,
         confirmButtonText = gettext('Yes'),
         cancelButtonText = gettext('Cancel'),
-        url = null,
-        method = 'POST',
-        params = {},
-        data = {},
-        timeout = 0
     }={}) {
         const result = await Swal.fire({
             title,
@@ -31,25 +26,7 @@ class SweetAlertHelper {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#6c757d'
         });
-        if (!result.isConfirmed) return { cancelled: true };
-        if (url) {
-            try {
-                MyLoading.show();
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const res = await CallApi.request(
-                    {
-                        url, 
-                        method, 
-                        params, 
-                        data, 
-                        timeout
-                    });
-                return res;
-            } finally {
-                MyLoading.close();
-            }
-        }
-        return { confirmed: true };
+        return result.isConfirmed;
     }
 
     static async confirmDelete({
@@ -57,11 +34,6 @@ class SweetAlertHelper {
         text = gettext('This action cannot be undone.'),
         confirmButtonText = gettext('Delete'),
         cancelButtonText = gettext('Cancel'),
-        url = "",
-        method = 'POST',
-        params = {},
-        data = {},
-        timeout = 0
     }={}) {
         const result = await Swal.fire({
             title,
@@ -75,26 +47,7 @@ class SweetAlertHelper {
             cancelButtonColor: '#3085d6'
         });
 
-        if (!result.isConfirmed) return { cancelled: true };
-
-        if (url) {
-            MyLoading.show();
-            try {
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const res = await CallApi.request(
-                    {
-                        url, 
-                        method, 
-                        params, 
-                        data, 
-                        timeout
-                    });
-                return res;
-            } finally {
-                MyLoading.close();
-            }
-        }
-        return { confirmed: true };
+        return result.isConfirmed;
     }
 
     static async NotiError({

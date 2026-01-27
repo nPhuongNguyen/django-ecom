@@ -11,11 +11,13 @@
     </div>
     <div class="kt-card-table" data-kt-datatable="true">
         <div class="kt-table-wrapper">
-            <table class="kt-table hover cursor-pointer" id="datatables-product_variants" data-kt-datatable-table="true"
-                data-url="{% url 'ProductVariantListAPI' %}?product={{ obj_product.pk }}"
-                data-url-change-status="{% url 'ProductVariantChangeStatusAPI' pk='__pk__' %}"
-                data-url-delete="{% url 'ProductVariantDestroyAPI' %}"
-                data-url-detail="{% url 'ProductVariantDetailView' pk='__pk__' %}"
+            <table class="kt-table hover cursor-pointer" id="datatables-product-variants" data-kt-datatable-table="true"
+                data-url-variant="{% url 'ProductVariantListAPI' %}?product={{ obj_product.pk }}"
+                data-url-change-status-variant="{% url 'ProductVariantChangeStatusAPI' pk='__pk__' %}"
+                data-url-delete-variant="{% url 'ProductVariantDestroyAPI' %}"
+                data-url-detail-variant="{% url 'ProductVariantDetailView' pk='__pk__' %}"
+                data-url-create-variant="{% url 'ProductVariantCreateAPI' %}"
+                data-url-upload-variant="{% url 'UploadImageAPI' %}"
             >
                 <thead>
                     <tr>

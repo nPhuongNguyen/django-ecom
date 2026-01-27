@@ -22,7 +22,6 @@ $(document).ready(async function () {
         valueField: 'id',       
         textField: 'name'   
     });
-    let result = null;
     const check_id_product$ = $('#id_product');
     const check_val$ = check_id_product$.val();
     let id_product$ = null;
@@ -58,118 +57,106 @@ $(document).ready(async function () {
                 price = price.replace(/\./g, "").replace(",", ".");
                 priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
-                console.log('formdata',formdata);
-                const files = UppyUploader.getFiles(uppyInstance);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                let result_api_image = null;
-                if (changed) {
-                    const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                    if (check_sw2_alret.cancelled){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
-                        return;
-                    }
-                    if(id_product$ == null){
+                const check_confirmed = await SweetAlertHelper.confirmSave({});
+                if (!check_confirmed) {
+                    un_formart_price = formatPriceOnInput(price)
+                    priceInput.val(un_formart_price)
+                    return;
+                }
+                MyLoading.show();
+                try{
+                    if (id_product$ === null){
                         ToastHelper.showError();
                         return;
                     }
-                    if (files.length > 0) {
-                        const formDataImage = new FormData();
-                        files.forEach(file => formDataImage.append('list_image', file.data));
-                        const api_upload = frm$.data('url-upload');
-                        if(check_sw2_alret.confirmed){
-                            try{
-                                MyLoading.show();
-                                await new Promise(resolve => setTimeout(resolve, 1500));
-                                result_api_image = await CallApi.request({
-                                    url: api_upload,
-                                    method: 'POST',
-                                    data: formDataImage
-                                })
-                                if(result_api_image){
-                                    if(result_api_image.status_code !== 1){
-                                        SweetAlertHelper.NotiError({
-                                            text: result_api_image.message
-                                        });
-                                        return;
-                                    }else{
-                                        formdata['img'] = result_api_image.data.list_img
-                                    }
-                                }else{
-                                    SweetAlertHelper.NotiError();
+                    if (changed) {
+                        const files = UppyUploader.getFiles(uppyInstance);
+                        if (files.length > 0) {
+                            const formDataImage = new FormData();
+                            files.forEach(file => formDataImage.append('list_image', file.data));
+                            const api_upload = frm$.data('url-upload');
+                            const result_api_image = await CallApi.request({
+                                url: api_upload,
+                                method: 'POST',
+                                data: formDataImage
+                            })
+                            if(result_api_image){
+                                if(result_api_image.status_code !== 1){
+                                    SweetAlertHelper.NotiError({
+                                        text: result_api_image.message
+                                    });
                                     return;
+                                }else{
+                                    formdata['img'] = result_api_image.data.list_img
                                 }
-                            }
-                            finally{
-                                MyLoading.close();
+                            }else{
+                                SweetAlertHelper.NotiError();
+                                return;
                             }
                         }
+                        else{
+                            formdata['img'] = "";
+                        }
                     }
-                    else{
-                        formdata['img'] = "";
-                    }
-                    result = await CallApi.request({
+                    const result_api = await CallApi.request({
                         url: frm$.data('url').replace('__pk__', id_product$),
                         method: 'POST',
                         data: formdata
                     })
-                }
-                else{
-                    result = await SweetAlertHelper.confirmSave({
-                        url: frm$.data('url').replace('__pk__', id_product$),
-                        data: formdata
-                    });
-                }
-                if(result){
-                    if (result.cancelled){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
+                    if (result_api == null) {
+                        ToastHelper.showError();
                         return;
                     }
-                    else if (result.status_code !== 1) {
+                    if (result_api.status_code !== 1) {
                         ToastHelper.showError();
-                        validator.showErrors(result.errors);
+                        validator.showErrors(result_api.errors);
+                        return;
                     }
-                    else {
-                        ToastHelper.showSuccess();
-                        FormValidateLoader.savedNext(event, {
-                            url_save: frm$.data('url-list'),
-                            url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__slug__', result.data.slug),
-                        });
+                    if (result_api.status_code !== 1) {
+                        ToastHelper.showError();
+                        validator.showErrors(result_api.errors);
+                        return;
                     }
-                }
-                else {
-                    SweetAlertHelper.NotiError();
+                    ToastHelper.showSuccess();
+                    FormValidateLoader.savedNext(event, {
+                        url_save: frm$.data('url-list'),
+                        url_add_another: frm$.data('url-add'),
+                        url_continue_editing: frm$.data('url-detail').replace('__slug__', result_api.data.slug),
+                    });
+                }finally {
+                    MyLoading.close();
                 }
             },
         },
         frm$.find('button.btn-delete').on('click', async function(){
-            if(id_product$ == null){
+            if(id_product$ === null){
                 ToastHelper.showError();
                 return;
             }
-            const result = await SweetAlertHelper.confirmDelete({
-                url: frm$.data('url-delete'),
-                params: {'id[]': id_product$}
-            });
-            if(result){
-                if(result.cancelled){
-                    return;
-                }else if(result.status_code !== 1){
-                    ToastHelper.showError();
-                }else{
-                    ToastHelper.showSuccess();
-                    await new Promise(resolve => {
-                        setTimeout(() => {
-                            window.location.href = frm$.data('url-list');
-                            resolve();
-                        }, 1500);
-                    });
-                }
+            const confirmed =  await SweetAlertHelper.confirmDelete({});
+            if (!confirmed){
+                return;
             }
-            else{
-                SweetAlertHelper.NotiError();
+            MyLoading.show();
+            try{
+                const result_api = await CallApi.request({
+                    url: frm$.data('url-delete'),
+                    method: 'POST',
+                    params: {'id[]': id_product$}
+                });
+                if (result_api == null){
+                    ToastHelper.showError();
+                    return;
+                }
+                if (result_api.status_code !== 1){
+                    ToastHelper.showError();
+                    return;
+                }
+                ToastHelper.showSuccess();
+                window.location.href = frm$.data('url-list');
+            }finally {
+                MyLoading.close();
             }
         })
     );

@@ -60,90 +60,68 @@ $(document).ready(async function () {
                 price = price.replace(/\./g, "").replace(",", ".");
                 priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
-                console.log('formdata',formdata);
                 const files = UppyUploader.getFiles(uppyInstance);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                let result_api_image = null;
                 if(id_product_variant$ == null){
                     ToastHelper.showError();
                     return;
                 }
                 if (changed) {
                     const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                    if (check_sw2_alret.cancelled){
-                            un_formart_price = formatPriceOnInput(price)
-                            priceInput.val(un_formart_price)
-                            return;
-                        }
+                    if (!check_sw2_alret.confirmed){
+                        un_formart_price = formatPriceOnInput(price)
+                        priceInput.val(un_formart_price)
+                        return;
+                    }
                     if (files.length > 0) {
                         const formDataImage = new FormData();
                         files.forEach(file => formDataImage.append('list_image', file.data));
                         const api_upload = frm$.data('url-upload'); 
-                        if(check_sw2_alret.confirmed){
-                            try{
-                                MyLoading.show();
-                                await new Promise(resolve => setTimeout(resolve, 1500));
-                                result_api_image = await CallApi.request({
-                                    url: api_upload,
-                                    method: 'POST',
-                                    data: formDataImage
-                                })
-                                if(result_api_image){
-                                    if(result_api_image.status_code !== 1){
-                                        SweetAlertHelper.NotiError({
-                                            text: result_api_image.message
-                                        });
-                                        return;
-                                    }else{
-                                        formdata['img'] = result_api_image.data.list_img
-                                    }
-                                }else{
-                                    SweetAlertHelper.NotiError();
+                            const result_api_image = await CallApi.request({
+                                url: api_upload,
+                                method: 'POST',
+                                data: formDataImage
+                            })
+                            if(result_api_image){
+                                if(result_api_image.status_code !== 1){
+                                    SweetAlertHelper.NotiError({
+                                        text: result_api_image.message
+                                    });
                                     return;
+                                }else{
+                                    formdata['img'] = result_api_image.data.list_img
                                 }
-                            }
-                            finally{
-                                MyLoading.close();
+                            }else{
+                                SweetAlertHelper.NotiError();
+                                return;
                             }
                         }
                     }
                     else{
                         formdata['img'] = "";
                     }
-                    result = await CallApi.request({
-                        url: frm$.data('url').replace('__pk__', id_product_variant$),
-                        method: 'POST',
-                        data: formdata
-                    })
-                }else{
-                    result = await SweetAlertHelper.confirmSave({
-                        url: frm$.data('url').replace('__pk__', id_product_variant$),
-                        data: formdata
-                    });
-                }
-                if(result){
-                    if (result.cancelled){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
+                result = await CallApi.request({
+                    url: frm$.data('url').replace('__pk__', id_product_variant$),
+                    method: 'POST',
+                    data: formdata
+                })
+                if (result) {
+                    const res = result.data;
+                    if (result.status_code !== 1){
+                        ToastHelper.showError();
+                        validator.showErrors(res.errors);
                         return;
                     }
-                    else if (result.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
-                    else {
-                        ToastHelper.showSuccess();
-                        FormValidateLoader.savedNext(event, {
-                            url_save: frm$.data('url-list'),
-                            url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__pk__', result.data.id),
-                        });
-                    }
+                    ToastHelper.showSuccess();
+                    FormValidateLoader.savedNext(event, {
+                        url_save: frm$.data('url-list'),
+                        url_add_another: frm$.data('url-add'),
+                        url_continue_editing: frm$.data('url-detail').replace('__pk__', res.data.id),
+                    });
                 }
                 else {
                     SweetAlertHelper.NotiError();
                 }
-
             }
         }
     )

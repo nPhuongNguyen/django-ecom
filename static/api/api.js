@@ -5,7 +5,7 @@ class CallApi {
         headers = {},
         params = {},
         data = {},
-        timeout = 0
+        timeout = 60000 // 60 seconds
     }={}) {
         const isFormData = data instanceof FormData;
         const token = AuthStorage.getToken();
@@ -23,8 +23,13 @@ class CallApi {
                     ...( token && { 'Token': token }),
                 }
             });
-
-            return ApiResponse.format_response(response.data);
+            const res = response.data;
+            return ApiResponse.format_response({
+                status_code: res.status_code,
+                message: res.message,
+                data: res.data,
+                errors: res.errors
+            });
         } catch (error) {
             Logger.apiError({ url, method, error });
             return null;

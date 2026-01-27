@@ -8,28 +8,20 @@ $(document).ready(function () {
             submitHandler: async function (form, event) {
                 event.preventDefault();
                 const formdata = FormValidateLoader.formData(frm$);
-                result = await SweetAlertHelper.confirmSave({ 
+                const result = await SweetAlertHelper.confirmSave({ 
                     url: frm$.data('url'), 
                     data: formdata 
                 });
-                if(result){
-                    if (result.cancelled){
-                        return;
-                    }
-                    else if (result.status_code === 1) {
-                        ToastHelper.showSuccess();
-                        modal.hide();
-                        form.reset();
-                        window.location.reload();
-                    }
-                    else {
-                        ToastHelper.showError();
-                        validator.showErrors(result.errors);
-                    }
+                if (!result.confirmed || !result.data) return;
+                if (result.data.status_code !== 1) {
+                    ToastHelper.showError();
+                    validator.showErrors(result.errors);
+                    return;
                 }
-                else {
-                    SweetAlertHelper.NotiError();
-                }
+                ToastHelper.showSuccess();
+                modal.hide();
+                form.reset();
+                window.location.reload();
             }
         }
     )
