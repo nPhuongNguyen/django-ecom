@@ -34,56 +34,62 @@ $(document).ready(function () {
                 priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                if (changed) {
-                    const files = UppyUploader.getFiles(uppyInstance);
-                    if (files.length > 0) {
-                        const formDataImage = new FormData();
-                        files.forEach(file => formDataImage.append('list_image', file.data));
-                        const api_upload = frm$.data('url-upload');
-                        const result_api_image = await CallApi.request({
-                            url: api_upload,
-                            method: 'POST',
-                            data: formDataImage
-                        })
-                        if(result_api_image){
-                            if(result_api_image.status_code !== 1){
-                                SweetAlertHelper.NotiError({
-                                    text: result_api_image.message
-                                });
-                                return;
-                            }else{
-                                formdata['img'] = result_api_image.data.list_img
-                            }
-                        }else{
-                            SweetAlertHelper.NotiError();
-                            return;
-                        }
-                    }
-                    else{
-                        formdata['img'] = "";
-                    }
-                }
-                const result = await SweetAlertHelper.confirmSave({ 
-                    url: frm$.data('url'), 
-                    data: formdata 
-                });
-                if (!result.confirmed || !result.data) {
+                const check_confirmed = await SweetAlertHelper.confirmSave({});
+                if (!check_confirmed) {
                     un_formart_price = formatPriceOnInput(price)
                     priceInput.val(un_formart_price)
                     return;
                 }
-                const res = result.data;
-                if (res.status_code !== 1) {
-                    ToastHelper.showError();
-                    validator.showErrors(res.errors);
-                    return;
+                MyLoading.show();
+                try {
+                    if (changed) {
+                        const files = UppyUploader.getFiles(uppyInstance);
+                        if (files.length > 0) {
+                            const formDataImage = new FormData();
+                            files.forEach(file => formDataImage.append('list_image', file.data));
+                            const api_upload = frm$.data('url-upload');
+                            const result_api_image = await CallApi.request({
+                                url: api_upload,
+                                method: 'POST',
+                                data: formDataImage
+                            })
+                            if(result_api_image){
+                                if(result_api_image.status_code !== 1){
+                                    SweetAlertHelper.NotiError({
+                                        text: result_api_image.message
+                                    });
+                                    return;
+                                }else{
+                                    formdata['img'] = result_api_image.data.list_img
+                                }
+                            }else{
+                                SweetAlertHelper.NotiError();
+                                return;
+                            }
+                        }
+                        else{
+                            formdata['img'] = "";
+                        }
+                    }
+                    const result_api = await CallApi.request({
+                        url: frm$.data('url'),
+                        method: 'POST',
+                        data: formdata
+                    })
+                    if (result_api.status_code !== 1) {
+                        ToastHelper.showError();
+                        validator.showErrors(result_api.errors);
+                        return;
+                    }
+                    ToastHelper.showSuccess();
+                    FormValidateLoader.savedNext(event, {
+                        url_save: frm$.data('url-list'),
+                        url_add_another: frm$.data('url-add'),
+                        url_continue_editing: frm$.data('url-detail').replace('__slug__', result_api.data.slug),
+                    });
+                }finally {
+                    MyLoading.close();
                 }
-                ToastHelper.showSuccess();
-                FormValidateLoader.savedNext(event, {
-                    url_save: frm$.data('url-list'),
-                    url_add_another: frm$.data('url-add'),
-                    url_continue_editing: frm$.data('url-detail').replace('__slug__', res.data.slug),
-                });
             }
         },
     );

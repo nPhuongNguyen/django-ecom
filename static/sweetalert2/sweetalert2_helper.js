@@ -14,11 +14,6 @@ class SweetAlertHelper {
         icon = SweetAlertHelper.Icons.question,
         confirmButtonText = gettext('Yes'),
         cancelButtonText = gettext('Cancel'),
-        url = null,
-        method = 'POST',
-        params = {},
-        data = {},
-        timeout = 0
     }={}) {
         const result = await Swal.fire({
             title,
@@ -31,31 +26,7 @@ class SweetAlertHelper {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#6c757d'
         });
-        if (!result.isConfirmed) {
-                return Sweetalert2Response.format_response({
-                confirmed: false,
-                data: null
-            });
-        }
-        if (url) {
-            const result_api = await CallApi.request(
-                {
-                    url, 
-                    method, 
-                    params, 
-                    data, 
-                    timeout
-                }
-            );
-            return Sweetalert2Response.format_response({
-                confirmed: true,
-                data: result_api
-            });
-        }
-        return Sweetalert2Response.format_response({
-            confirmed: true,
-            data: null
-        });
+        return result.isConfirmed;
     }
 
     static async confirmDelete({
@@ -63,11 +34,6 @@ class SweetAlertHelper {
         text = gettext('This action cannot be undone.'),
         confirmButtonText = gettext('Delete'),
         cancelButtonText = gettext('Cancel'),
-        url = "",
-        method = 'POST',
-        params = {},
-        data = {},
-        timeout = 0
     }={}) {
         const result = await Swal.fire({
             title,
@@ -81,31 +47,7 @@ class SweetAlertHelper {
             cancelButtonColor: '#3085d6'
         });
 
-        if (!result.isConfirmed) {
-                return Sweetalert2Response.format_response({
-                confirmed: false,
-                data: null
-            });
-        }
-
-        if (url) {
-            const result_api = await CallApi.request(
-                {
-                    url, 
-                    method, 
-                    params, 
-                    data, 
-                    timeout
-                });
-            return Sweetalert2Response.format_response({
-                confirmed: true,
-                data: result_api
-            });
-        }
-        return Sweetalert2Response.format_response({
-            confirmed: true,
-            data: null
-        });
+        return result.isConfirmed;
     }
 
     static async NotiError({

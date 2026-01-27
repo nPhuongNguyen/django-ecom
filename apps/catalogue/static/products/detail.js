@@ -22,7 +22,6 @@ $(document).ready(async function () {
         valueField: 'id',       
         textField: 'name'   
     });
-    let result = null;
     const check_id_product$ = $('#id_product');
     const check_val$ = check_id_product$.val();
     let id_product$ = null;
@@ -58,68 +57,72 @@ $(document).ready(async function () {
                 price = price.replace(/\./g, "").replace(",", ".");
                 priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
-                console.log('formdata',formdata);
-                const files = UppyUploader.getFiles(uppyInstance);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                if (changed) {
-                    const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                    if (!check_sw2_alret.confirmed){
-                        un_formart_price = formatPriceOnInput(price)
-                        priceInput.val(un_formart_price)
-                        return;
-                    }
-                    if(id_product$ == null){
-                        ToastHelper.showError();
-                        return;
-                    }
-                    if (files.length > 0) {
-                        const formDataImage = new FormData();
-                        files.forEach(file => formDataImage.append('list_image', file.data));
-                        const api_upload = frm$.data('url-upload');
-                        const result_api_image = await CallApi.request({
-                            url: api_upload,
-                            method: 'POST',
-                            data: formDataImage
-                        })
-                        if(result_api_image){
-                            if(result_api_image.status_code !== 1){
-                                SweetAlertHelper.NotiError({
-                                    text: result_api_image.message
-                                });
-                                return;
-                            }else{
-                                formdata['img'] = result_api_image.data.list_img
-                            }
-                        }else{
-                            SweetAlertHelper.NotiError();
-                            return;
-                        }
-                    }
-                    else{
-                        formdata['img'] = "";
-                    }
-                }
-                const result = await SweetAlertHelper.confirmSave({
-                    url: frm$.data('url').replace('__pk__', id_product$),
-                    data: formdata
-                });
-                if (!result.confirmed || !result.data) {
+                const check_confirmed = await SweetAlertHelper.confirmSave({});
+                if (!check_confirmed) {
                     un_formart_price = formatPriceOnInput(price)
                     priceInput.val(un_formart_price)
                     return;
                 }
-                const res = result.data;
-                if (res.status_code !== 1) {
-                    ToastHelper.showError();
-                    validator.showErrors(res.errors);
-                    return;
+                MyLoading.show();
+                try{
+                    if (changed) {
+                        const files = UppyUploader.getFiles(uppyInstance);
+                        if (files.length > 0) {
+                            const formDataImage = new FormData();
+                            files.forEach(file => formDataImage.append('list_image', file.data));
+                            const api_upload = frm$.data('url-upload');
+                            const result_api_image = await CallApi.request({
+                                url: api_upload,
+                                method: 'POST',
+                                data: formDataImage
+                            })
+                            if(result_api_image){
+                                if(result_api_image.status_code !== 1){
+                                    SweetAlertHelper.NotiError({
+                                        text: result_api_image.message
+                                    });
+                                    return;
+                                }else{
+                                    formdata['img'] = result_api_image.data.list_img
+                                }
+                            }else{
+                                SweetAlertHelper.NotiError();
+                                return;
+                            }
+                        }
+                        else{
+                            formdata['img'] = "";
+                        }
+                    }
+                    const result_api = await CallApi.request({
+                        url: frm$.data('url'),
+                        method: 'POST',
+                        data: formdata
+                    })
+                    if (result_api == null) {
+                        ToastHelper.showError();
+                        return;
+                    }
+                    if (result_api.status_code !== 1) {
+                        ToastHelper.showError();
+                        validator.showErrors(result_api.errors);
+                        return;
+                    }
+                    if (result_api.status_code !== 1) {
+                        ToastHelper.showError();
+                        validator.showErrors(result_api.errors);
+                        return;
+                    }
+                    ToastHelper.showSuccess();
+                    FormValidateLoader.savedNext(event, {
+                        url_save: frm$.data('url-list'),
+                        url_add_another: frm$.data('url-add'),
+                        url_continue_editing: frm$.data('url-detail').replace('__slug__', result_api.data.slug),
+                    });
+                }finally {
+                    MyLoading.close();
                 }
-                ToastHelper.showSuccess();
-                FormValidateLoader.savedNext(event, {
-                    url_save: frm$.data('url-list'),
-                    url_add_another: frm$.data('url-add'),
-                    url_continue_editing: frm$.data('url-detail').replace('__slug__', res.data.slug),
-                });
             },
         },
         frm$.find('button.btn-delete').on('click', async function(){
@@ -127,17 +130,30 @@ $(document).ready(async function () {
                 ToastHelper.showError();
                 return;
             }
-            const result = await SweetAlertHelper.confirmDelete({
-                url: frm$.data('url-delete'),
-                params: {'id[]': id_product$}
-            });
-            if (!result.confirmed) return;
-            if (result.status_code !== 1){
-                ToastHelper.showError();
+            const confirmed =  await SweetAlertHelper.confirmDelete({});
+            if (!confirmed){
                 return;
             }
-            ToastHelper.showSuccess();
-            window.location.href = frm$.data('url-list');
+            MyLoading.show();
+            try{
+                const result_api = await CallApi.request({
+                    url: frm$.data('url-delete'),
+                    method: 'POST',
+                    params: {'id[]': id_product$}
+                });
+                if (result_api == null){
+                    ToastHelper.showError();
+                    return;
+                }
+                if (result_api.status_code !== 1){
+                    ToastHelper.showError();
+                    return;
+                }
+                ToastHelper.showSuccess();
+                window.location.href = frm$.data('url-list');
+            }finally {
+                MyLoading.close();
+            }
         })
     );
 })

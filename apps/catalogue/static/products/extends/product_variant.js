@@ -120,63 +120,70 @@ $(document).ready(function () {
                 priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
                 const changed = UppyUploader.hasChanged(uppyInstance);
-                if (changed) {
-                    const files = UppyUploader.getFiles(uppyInstance);
-                    if (files.length > 0) {
-                        const formDataImage = new FormData();
-                        files.forEach(file => formDataImage.append('list_image', file.data));
-                        const api_upload = frm$.data('url-upload');
-                        const check_sw2_alret = await SweetAlertHelper.confirmSave();
-                        if (!check_sw2_alret.confirmed){
-                            un_formart_price = formatPriceOnInput(price)
-                            priceInput.val(un_formart_price)
-                            return;
-                        }
-                        const result_api_image = await CallApi.request({
-                            url: api_upload,
-                            method: 'POST',
-                            data: formDataImage
-                        })
-                        if(result_api_image){
-                            if(result_api_image.status_code !== 1){
-                                SweetAlertHelper.NotiError({
-                                    text: result_api_image.message
-                                });
-                                return;
-                            }else{
-                                formdata['img'] = result_api_image.data.list_img
-                            }
-                        }else{
-                            SweetAlertHelper.NotiError();
-                            return;
-                        }
-                    }
-                    else{
-                        formdata['img'] = "";
-                    }
-                }
-                const result = await SweetAlertHelper.confirmSave({ 
-                    url: frm$.data('url'), 
-                    data: formdata 
-                });
-                try{
-                    if (!result.confirmed || !result.data) {
-                        return;
-                    }
-                    const res = result.data;
-                    if (res.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(res.errors);
-                        return;
-                    }
-                }finally{
+                const check_confirmed = await SweetAlertHelper.confirmSave({});
+                if (!check_confirmed) {
                     un_formart_price = formatPriceOnInput(price)
                     priceInput.val(un_formart_price)
+                    return;
                 }
-                ToastHelper.showSuccess();
-                modal.hide();
-                form.reset();
-                tbl$.DataTable().ajax.reload();
+                try{
+                    if (changed) {
+                        const files = UppyUploader.getFiles(uppyInstance);
+                        if (files.length > 0) {
+                            const formDataImage = new FormData();
+                            files.forEach(file => formDataImage.append('list_image', file.data));
+                            const api_upload = frm$.data('url-upload');
+                            const check_sw2_alret = await SweetAlertHelper.confirmSave();
+                            if (!check_sw2_alret){
+                                un_formart_price = formatPriceOnInput(price)
+                                priceInput.val(un_formart_price)
+                                return;
+                            }
+                            const result_api_image = await CallApi.request({
+                                url: api_upload,
+                                method: 'POST',
+                                data: formDataImage
+                            })
+                            if(result_api_image){
+                                if(result_api_image.status_code !== 1){
+                                    SweetAlertHelper.NotiError({
+                                        text: result_api_image.message
+                                    });
+                                    return;
+                                }else{
+                                    formdata['img'] = result_api_image.data.list_img
+                                }
+                            }else{
+                                SweetAlertHelper.NotiError();
+                                return;
+                            }
+                        }
+                        else{
+                            formdata['img'] = "";
+                        }
+                    }
+                    try{
+                        const result_api = await CallApi.request({
+                            url: frm$.data('url'),
+                            method: 'POST',
+                            data: formdata
+                        })
+                        if (result_api.status_code !== 1) {
+                            ToastHelper.showError();
+                            validator.showErrors(result_api.errors);
+                            return;
+                        }
+                    }finally{
+                        un_formart_price = formatPriceOnInput(price)
+                        priceInput.val(un_formart_price)
+                    }
+                    ToastHelper.showSuccess();
+                    modal.hide();
+                    form.reset();
+                    tbl$.DataTable().ajax.reload();
+                }finally{
+                    MyLoading.close();
+                }
             }
         },
     )

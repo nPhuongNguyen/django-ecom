@@ -8,4 +8,4 @@ class CategoryListAPI(CreateMixin, ListMixin, DestroyMixin):
     ordering_fields = ['name']
 
     def get(self, request, *arg, **kwargs):
-        return self.list(self, request, *arg, **kwargs)
+        return self.list(request, *arg, **kwargs)
