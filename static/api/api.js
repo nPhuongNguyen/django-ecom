@@ -8,7 +8,7 @@ class CallApi {
         timeout = 60000 // 60 seconds
     }={}) {
         const isFormData = data instanceof FormData;
-        const token = AuthStorage.getToken();
+        const token = AuthStorage.getToken("Token");
 
         try {
             const response = await axios({

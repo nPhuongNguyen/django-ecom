@@ -21,10 +21,12 @@ from django.views.i18n import JavaScriptCatalog
 urlpatterns = [
     path('api/auths/', include('apps.auths.urls_api')),
     path('api/catalogue/', include('apps.catalogue.urls_api')),
+    path('api/accounts/', include('apps.accounts.urls_api')),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ]
 
 #View
 urlpatterns +=[
-    path('catalogue/',include('apps.catalogue.urls'))
+    path('catalogue/',include('apps.catalogue.urls')),
+    path('accounts/', include('apps.accounts.urls')),
 ]

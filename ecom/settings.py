@@ -86,7 +86,7 @@ INSTALLED_APPS = [
     'apps.auths',
     'rest_framework',
     'storages',
-
+    'apps.accounts',
     'django_filters',
     'apps.shared',
 ]

@@ -24,6 +24,10 @@ class ResponseCodes:
     TOKEN_EXPIRED = ResponseCode(1001, "Token hết hạn")
     TOKEN_INVALID_TOKEN = ResponseCode(1002, "Token không hợp lệ")
     TOKEN_APP_ERROR = ResponseCode(10403, "unauthorized")
+
+    #Phiên đăng nhập
+    LOGIN_FAILD_INPUT = ResponseCode(400, "Tài khoản hoặc mật khẩu không đúng.")
+    LOGIN_FAILD_IS_ACTIVE = ResponseCode(400, "Tài khoản của bạn đã bị khóa.")
     
 
 class ResponseBuilder:

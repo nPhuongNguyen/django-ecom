@@ -4,7 +4,7 @@ $(document).ready(function () {
         ajax: {
             url: tbl$.data('url'),
             headers: {
-                'Token': AuthStorage.getToken(),
+                'Token': AuthStorage.getToken("Token"),
             },
             ...DataTableLoader.ajax_base(),
         },
@@ -83,7 +83,7 @@ $(document).ready(function () {
                         method: 'POST',
                         params: { 'id[]': id_selecteds },
                     });
-                    if (result == null){
+                    if (result === null){
                         ToastHelper.showError();
                         return;
                     }
