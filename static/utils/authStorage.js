@@ -1,19 +1,18 @@
-const TOKEN_KEY = 'access_token'
 class AuthStorage{
-    static getToken() {
-        // return localStorage.getItem(TOKEN_KEY)
-        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBodW9uZzA5MDl0dEBnbWFpbC5jb20ifQ.UAVPbncqo0vCklQNXyi5jv8BNVjDggbDZgk6poa667c'
-    }
-    setToken(token) {
-        localStorage.setItem(TOKEN_KEY, token)
+    static getToken(token_name) {
+        return localStorage.getItem(token_name)
     }
 
-    removeToken() {
-        localStorage.removeItem(TOKEN_KEY)
+    static setToken(token_name, token_data) {
+        localStorage.setItem(token_name, token_data)
     }
 
-    hasToken() {
-        return !!localStorage.getItem(TOKEN_KEY)
+    static removeToken(token_name) {
+        localStorage.removeItem(token_name)
+    }
+
+    static hasToken(token_name) {
+        return !!localStorage.getItem(token_name)
     }
 }
 

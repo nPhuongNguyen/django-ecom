@@ -5,7 +5,7 @@ class Select2Helper {
             dataType: 'json',
             delay: 250,
             headers: {
-                'Token': AuthStorage.getToken(),
+                'Token': AuthStorage.getToken("Token"),
             },
             data:  (params) => 
                 Select2Helper.buildData(params, extraData),

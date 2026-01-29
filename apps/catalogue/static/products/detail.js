@@ -113,11 +113,6 @@ $(document).ready(async function () {
                         validator.showErrors(result_api.errors);
                         return;
                     }
-                    if (result_api.status_code !== 1) {
-                        ToastHelper.showError();
-                        validator.showErrors(result_api.errors);
-                        return;
-                    }
                     ToastHelper.showSuccess();
                     FormValidateLoader.savedNext(event, {
                         url_save: frm$.data('url-list'),

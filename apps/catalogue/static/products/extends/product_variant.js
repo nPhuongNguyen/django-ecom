@@ -4,7 +4,7 @@ $(document).ready(function () {
         ajax: {
             url: tbl$.data('url-variant'),
             headers: {
-                'Token': AuthStorage.getToken(),
+                'Token': AuthStorage.getToken("Token"),
             },
             ...DataTableLoader.ajax_base(),
         },
@@ -74,26 +74,31 @@ $(document).ready(function () {
             const btnDestroy$ = $(`<button class="kt-btn kt-btn-destructive">Delete selected</button>`);
             select_info$.append(btnDestroy$);
             btnDestroy$.on('click', async function (event) {
-                event.preventDefault()
+                event.preventDefault() // Mục đích là nhận event sumbit từ con thay vì cha
                 const id_selecteds$ = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
                 if (id_selecteds$.length === 0) return;
                 const check_confirmed = await SweetAlertHelper.confirmDelete({});
                 if (!check_confirmed) return;
-                const result_api = await CallApi.request({
-                    url: tbl$.data('url-delete-variant'),
-                    method: 'POST',
-                    params: {'id[]': id_selecteds$}
-                });
-                if (result_api){
-                    if (result_api.status_code !==1){
-                        ToastHelper.showError();
+                MyLoading.show()
+                try{
+                    const result_api = await CallApi.request({
+                        url: tbl$.data('url-delete-variant'),
+                        method: 'POST',
+                        params: {'id[]': id_selecteds$}
+                    });
+                    if (result_api){
+                        if (result_api.status_code !==1){
+                            ToastHelper.showError();
+                            return;
+                        }
+                        ToastHelper.showSuccess();
+                        tbl$.DataTable().ajax.reload();
+                    }else{
+                        SweetAlertHelper.NotiError();
                         return;
                     }
-                    ToastHelper.showSuccess();
-                    tbl$.DataTable().ajax.reload();
-                }else{
-                    SweetAlertHelper.NotiError();
-                    return;
+                }finally{
+                    MyLoading.close()
                 }
             });
         },

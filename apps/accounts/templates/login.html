@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html class="h-full">
+{% load static %}
+
+<head>
+    {% include 'admin/partials/head.html' %}
+    {% include 'import/jquery_import.html' %}
+    {% include 'import/jquery_validation.html' %}
+    {% include 'import/sweetalert2_import.html' %}
+    {% include 'import/toast_import.html' %}
+    {% include 'import/spin_import.html' %}
+    {% include 'import/axios_import.html' %}
+</head>
+
+<body class="antialiased flex h-full text-base text-foreground bg-background">
+    <div class="flex items-center justify-center grow bg-center bg-no-repeat px-4 sm:px-6">
+        <div class="kt-card max-w-[370px] w-full">
+            <form class="kt-card-content flex flex-col gap-5 p-10" id="sign_in_form"
+                data-url="{% url 'LoginAPI' %}"
+            >
+                <div class="text-center mb-2.5">
+                    <h3 class="text-lg font-medium text-mono leading-none mb-2.5">
+                        Sign in
+                    </h3>
+                    <div class="flex items-center justify-center font-medium">
+                        <span class="text-sm text-secondary-foreground me-1.5">
+                            Need an account?
+                        </span>
+                        <a class="text-sm link" href="#">
+                            Sign up
+                        </a>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <a class="kt-btn kt-btn-outline justify-center" href="">
+                        <img class="size-3.5 shrink-0" src="" alt="">
+                        Use Google
+                    </a>
+                    <a class="kt-btn kt-btn-outline justify-center" href="">
+                        <img class="size-3.5 shrink-0" src="" alt="">
+                        Use Apple
+                    </a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="border-t border-border w-full"></span>
+                    <span class="text-xs text-muted-foreground font-medium uppercase">Or</span>
+                    <span class="border-t border-border w-full"></span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="" class="kt-form-label font-normal text-mono required">Email</label>
+                    <input type="text" class="kt-input" placeholder="email@gmail.com" name="user_email" required>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex items-center justify-between gap-1">
+                        <label for="" class="kt-form-label font-normal text-mono required">Password</label>
+                        <a class="text-sm kt-link shrink-0" href="#">
+                            Forgot Password?
+                        </a>
+                    </div>
+                    <div class="relative max-w-72" data-kt-toggle-password="true">
+                        <input type="password" id="user_password" name="user_password" class="kt-input pe-10" placeholder="Password" required />
+                        <button
+                            type="button"
+                            id ="eye"
+                            onmousedown="event.preventDefault()"
+                            class="kt-btn kt-btn-icon kt-btn-ghost size-6 absolute end-2 top-1/2 -translate-y-1/2 hidden"
+                            data-kt-toggle-password-trigger="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-eye kt-toggle-password-active:hidden"
+                                aria-hidden="true">
+                                <path
+                                    d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0">
+                                </path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-eye-off hidden kt-toggle-password-active:block" aria-hidden="true">
+                                <path
+                                    d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49">
+                                </path>
+                                <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>
+                                <path
+                                    d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143">
+                                </path>
+                                <path d="m2 2 20 20"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <label for="" class="kt-label">
+                    <input class="kt-checkbox kt-checkbox-sm" name="remember_me" type="checkbox" value="1">
+                    <span class="kt-checkbox-label">Remember me?</span>
+                </label>
+                <button class="kt-btn kt-btn-primary flex justify-center grow" type="sumbit">
+                    Sign in
+                </button>
+            </form>
+        </div>
+    </div>
+    {% include 'admin/partials/script.html' %}
+</body>
+<script src="{% static 'login.js' %}"></script>
+
+</html>
