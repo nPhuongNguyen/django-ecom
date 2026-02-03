@@ -1,45 +1,59 @@
-from django.core.cache import cache
+from django.core.cache import caches
 from apps.logging import logging_log as lg
 class RedisService:
     @staticmethod
-    def set(key, value, timeout=3600):
+    def get_cache(alias="default"):
         try:
-            cache.set(key, value, timeout=timeout)
+            return caches[alias]
+        except Exception:
+            lg.log_error("[REDIS] Cache alias")
+            return None
+    @staticmethod
+    def set(key, value, timeout=3600,  alias="default"):
+        cache = RedisService.get_cache(alias)
+        if not cache:
+            return False
+        try:
+            cache.set(key, value, timeout)
             return True
         except Exception as e:
-            lg.log_error(
-                message=f"[REDIS-ERROR] Set key {key}: {e}"
-            )
-            return False 
+            lg.log_error("[REDIS][SET]")
+            return False
+        
     @staticmethod
-    def get(key):
-        if not key:
+    def get(key, alias="default"):
+        cache = RedisService.get_cache(alias)
+        if not cache:
             return None
         try:
             return cache.get(key)
-        except Exception as e:
-            lg.log_error(
-                message=f"[REDIS-ERROR] Get key {key}: {e}"
-            )
+        except Exception:
+            lg.log_error("[REDIS][GET]")
             return None
         
     @staticmethod
-    def delete(key):
+    def delete(key, alias="default"):
+        cache = RedisService.get_cache(alias)
+        if not cache:
+            return False
         try:
             cache.delete(key)
             return True
-        except Exception as e:
+        except Exception:
             lg.log_error(
-                message=f"[REDIS][DELETE] key={key} error={e}"
+                message="[REDIS][DELETE]"
             )
             return False
 
     @staticmethod
-    def hset_user(user_id, data_dict):
+    def hset_user(user_id, data_dict, alias="default"):
         try:
+            cache = RedisService.get_cache(alias)
+            if not cache:
+                return False
             client = cache.client.get_client()
             client.hset(f"user:{user_id}", mapping=data_dict)
             return True
-        except Exception as e:
-            lg.log_error(message=f"[REDIS-ERROR] HSET: {e}")
+        except Exception:
+            lg.log_error(message="[REDIS-ERROR] HSET")
             return False

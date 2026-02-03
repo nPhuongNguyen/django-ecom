@@ -24,9 +24,9 @@
                     </h3>
                     <div class="flex items-center justify-center font-medium">
                         <span class="text-sm text-secondary-foreground me-1.5">
-                            Need an account?
+                            Don't have an account?
                         </span>
-                        <a class="text-sm link" href="#">
+                        <a class="kt-link" href="{% url 'RegisterView' %}">
                             Sign up
                         </a>
                     </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="flex flex-col gap-1">
                     <label for="" class="kt-form-label font-normal text-mono required">Email</label>
-                    <input type="text" class="kt-input" placeholder="email@gmail.com" name="user_email" required>
+                    <input type="text" class="kt-input" placeholder="email@gmail.com" id="user_email" name="user_email" required>
                 </div>
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between gap-1">

@@ -1,9 +1,19 @@
 $(document).ready(function () {
     const frm_login$ = $('#sign_in_form');
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    const email$ = $('#user_email');
     const validator = FormValidateLoader.init(
         frm_login$,
         {
             submitHandler:async function (form, event) {
+                if (!isValidEmail(email$.val())) {
+                    validator.showErrors({
+                        "user_email": "Please enter a valid email address."
+                    });
+                    return;
+                }
                 MyLoading.show()
                 try{
                     const formdata = FormValidateLoader.formData(frm_login$);
@@ -15,6 +25,7 @@ $(document).ready(function () {
                     if (result_api){
                         if (result_api.status_code !== 1){
                             ToastHelper.showError();
+                            validator.showErrors(result_api.errors || {});
                             return;
                         }
                         const check_token = AuthStorage.hasToken("Token")

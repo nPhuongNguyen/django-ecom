@@ -43,6 +43,12 @@ REDIS_PORT = os.getenv("REDIS_PORT")
 REDIS_DB = os.getenv("REDIS_DB")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 
+#redis auth
+REDIS_AUTH_HOST = os.getenv("REDIS_AUTH_HOST")
+REDIS_AUTH_PORT = os.getenv("REDIS_AUTH_PORT")
+REDIS_AUTH_DB = os.getenv("REDIS_AUTH_DB")
+REDIS_AUTH_PASSWORD = os.getenv("REDIS_AUTH_PASSWORD")
+
 def redis_url(host, port, db, password=None):
     if password:
         return f"redis://:{password}@{host}:{port}/{db}"
@@ -56,8 +62,46 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
         },
+        "KEY_PREFIX": "ecom_cache"
+    },
+    "auth" :{
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": redis_url(REDIS_AUTH_HOST, REDIS_AUTH_PORT, REDIS_AUTH_DB, REDIS_AUTH_PASSWORD),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
+        },
+        "KEY_PREFIX": "ecom_auth_cache"
     }
 }
+
+#Send mail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS") == 'True'
+
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+
+# RabbitMQ broker
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+
+# Result backend
+# CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_RESULT_BACKEND = None
+CELERY_TASK_IGNORE_RESULT = True  # Ép Celery không lưu kết quả, tránh đụng tới DB
+CELERY_RESULT_EXTENDED = False     # Tắt mở rộng kết quả
+
+CELERY_ACCEPT_CONTENT = [
+    os.environ.get("CELERY_ACCEPT_CONTENT")
+]
+CELERY_TASK_SERIALIZER = os.environ.get("CELERY_TASK_SERIALIZER")
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,6 +133,7 @@ INSTALLED_APPS = [
     'apps.accounts',
     'django_filters',
     'apps.shared',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [

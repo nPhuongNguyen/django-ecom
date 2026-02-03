@@ -11,15 +11,15 @@ from ...auths.models.users import Users
 from ..serializers.login import LoginInputSerializer
 
 from ...shared.decorator.decorator import validate_exception, validate_serializer
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import check_password
 
 class LoginAPI(APIView):
     @validate_exception()
     @validate_serializer(serializer_class=LoginInputSerializer)
     def post(self, request, *args, **kwargs):
         data_input = request.validated_data
-        email_input = data_input.get('user_email')
-        password_input = data_input.get('user_password')
+        email_input = data_input.get('email')
+        password_input = data_input.get('password')
         remember_me_input = data_input.get('remember_me')
         user_db = Users.objects.filter(email=email_input).first()
         if not user_db:
