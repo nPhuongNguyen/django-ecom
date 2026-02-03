@@ -78,12 +78,13 @@ class RegisterConfirmAPI(APIView):
         cached_data = RedisService.get(key=f"register:{confirmation_code}:{check_user.id}", alias="auth")
         if not cached_data:
             return ResponseBuilder.build(
-                code=ResponseCodes.OTP_INVALID
+                code=ResponseCodes.OTP_INVALID,
+                errors={"confirmation_code": ["Mã OTP không hợp lệ."]}
             )
         #Update user is_active = True
         Users.objects.filter(email=email).update(is_active=True)
         #Delete cache OTP
-        RedisService.delete(key=f"register:{confirmation_code}:{email}", alias="auth")
+        RedisService.delete(key=f"register:{confirmation_code}:{check_user.id}", alias="auth")
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS
         )

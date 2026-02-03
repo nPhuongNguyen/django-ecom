@@ -37,7 +37,6 @@ $(document).ready(function () {
         frm_register$,
         {
             submitHandler:async function (form, event) {
-                modal_confirm$.show();
                 if (!check_input()) return;
                 MyLoading.show()
                 try{
@@ -70,12 +69,21 @@ $(document).ready(function () {
         confirm_form$,
         {
             submitHandler:async function (form, event) {
+                event.preventDefault();
                 const formdata = FormValidateLoader.formData(confirm_form$);
                 const result_api = await CallApi.request({
                     url: confirm_form$.data('url'),
                     method: 'POST',
                     data: formdata
                 })
+                if (result_api){
+                    if (result_api.status_code === 1){
+                        modal_confirm$.hide();
+                    }
+                    else{
+                        confirm_validator.showErrors(result_api.errors)
+                    }
+                }
             }
         }
     )
