@@ -62,6 +62,7 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
         },
+        "KEY_PREFIX": "ecom_cache"
     },
     "auth" :{
         "BACKEND": "django_redis.cache.RedisCache",
@@ -70,6 +71,7 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
         },
+        "KEY_PREFIX": "ecom_auth_cache"
     }
 }
 

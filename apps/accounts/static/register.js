@@ -3,6 +3,8 @@ $(document).ready(function () {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
     const frm_register$ = $('#sign_up_form');
+    const modalEl = document.querySelector('#modal-confirm');
+    const modal_confirm$ = KTModal.getInstance(modalEl);
     const email$ = $('#user_email');
     const password$ = $('#user_password');
     const confirm_password$ = $('#confirm_user_password');
@@ -23,11 +25,19 @@ $(document).ready(function () {
         }
         return checker;
     }
-   
+
+    function showConfirmModal({ title, message, email}) {
+        $('#confirm_modal_title').text(title);
+        $('#confirm_modal_message').text(message);
+        $('#user_email_confirm').val(email);
+        modal_confirm$.show();
+    }
+        
     const validator = FormValidateLoader.init(
         frm_register$,
         {
             submitHandler:async function (form, event) {
+                modal_confirm$.show();
                 if (!check_input()) return;
                 MyLoading.show()
                 try{
@@ -39,15 +49,33 @@ $(document).ready(function () {
                     })
                     if (result_api){
                         if (result_api.status_code === 1){
-                            ToastHelper.showSuccess();
+                            showConfirmModal({
+                                title: 'Mã xác nhận đã được gửi',
+                                message: 'Vui lòng kiểm tra email của bạn để lấy mã xác nhận.',
+                                email: formdata.email || ''
+                            });
                         }else{
                             validator.showErrors(result_api.errors)
                         }
                     }
-                    
                 }finally{
                     MyLoading.close()
                 }
+            }
+        }
+    )
+
+    const confirm_form$ = $('#confirm_form');
+    const confirm_validator = FormValidateLoader.init(
+        confirm_form$,
+        {
+            submitHandler:async function (form, event) {
+                const formdata = FormValidateLoader.formData(confirm_form$);
+                const result_api = await CallApi.request({
+                    url: confirm_form$.data('url'),
+                    method: 'POST',
+                    data: formdata
+                })
             }
         }
     )

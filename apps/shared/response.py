@@ -32,8 +32,14 @@ class ResponseCodes:
     #Phiên đăng kí
     REGISTER_EMAIL_EXISTS = ResponseCode(400, "Email đã tồn tại.")
     REGISTER_PASSWORD_MISMATCH = ResponseCode(400, "Mật khẩu không khớp.")
-    
 
+    #Xác thực OTP
+    OTP_INVALID = ResponseCode(400, "Mã OTP không hợp lệ.")
+    SUCCESS_VERIFY_OTP = ResponseCode(1, "Xác thực OTP thành công.")
+    SUCCESS_RESEND_OTP = ResponseCode(1, "Gửi lại mã OTP thành công.")
+    SUCCESS_OTP_EXPIRED = ResponseCode(400, "Mã OTP đã hết hạn, vui lòng yêu cầu mã mới.")
+    SUCCESS_OTP_EXITS = ResponseCode(400, "Mã OTP đã được gửi, vui lòng kiểm tra email.")
+    
 class ResponseBuilder:
     @staticmethod
     def build(code: ResponseCode, data: Any = None, errors: Any = None):
