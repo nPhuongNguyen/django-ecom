@@ -28,6 +28,10 @@ class ResponseCodes:
     #Phiên đăng nhập
     LOGIN_FAILD_INPUT = ResponseCode(400, "Tài khoản hoặc mật khẩu không đúng.")
     LOGIN_FAILD_IS_ACTIVE = ResponseCode(400, "Tài khoản của bạn đã bị khóa.")
+
+    #Phiên đăng kí
+    REGISTER_EMAIL_EXISTS = ResponseCode(400, "Email đã tồn tại.")
+    REGISTER_PASSWORD_MISMATCH = ResponseCode(400, "Mật khẩu không khớp.")
     
 
 class ResponseBuilder:
