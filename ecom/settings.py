@@ -91,6 +91,8 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 # Result backend
 # CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
 CELERY_RESULT_BACKEND = None
+CELERY_TASK_IGNORE_RESULT = True  # Ép Celery không lưu kết quả, tránh đụng tới DB
+CELERY_RESULT_EXTENDED = False     # Tắt mở rộng kết quả
 
 CELERY_ACCEPT_CONTENT = [
     os.environ.get("CELERY_ACCEPT_CONTENT")
