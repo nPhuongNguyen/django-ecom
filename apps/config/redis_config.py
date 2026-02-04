@@ -57,3 +57,15 @@ class RedisService:
         except Exception:
             lg.log_error(message="[REDIS-ERROR] HSET")
             return False
+    @staticmethod
+    def ping(alias="default") -> bool:
+        try:
+            cache = RedisService.get_cache(alias)
+            if not cache:
+                return False
+
+            client = cache.client.get_client()
+            return client.ping() is True
+        except Exception:
+            lg.log_error(message=f"[REDIS][PING]")
+            return False

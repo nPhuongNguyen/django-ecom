@@ -30,3 +30,8 @@ urlpatterns +=[
     path('catalogue/',include('apps.catalogue.urls')),
     path('accounts/', include('apps.accounts.urls')),
 ]
+
+#Health Check
+urlpatterns += [
+    path('api/shared/', include('apps.shared.urls')),
+]

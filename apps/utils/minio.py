@@ -59,3 +59,12 @@ class S3Minio:
         except Exception as e:
             print(f"Upload error: {e}")
             return None
+
+    @staticmethod
+    def ping() -> bool:
+        try:
+            client = S3Minio.get_minio_client()
+            client.bucket_exists(MINIO_BUCKET_NAME)
+            return True
+        except Exception:
+            return False

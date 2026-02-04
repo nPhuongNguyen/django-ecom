@@ -6,15 +6,14 @@ import jwt
 from apps.catalogue.serializers.token import InfoTokenSerializer
 from apps.shared.response import ResponseCodes
 from apps.logging import logging_log as lg
-def encode_token(data: dict, secret_key: str)-> str:
+def encode_token(jti: str, secret_key: str)-> str:
     encode_token = None
     try:
         now = timezone.now()
         payload = {
-            **data,
             "iat": int(now.timestamp()),
             "exp": int((now + timedelta(hours=2)).timestamp()),
-            "jti": str(uuid.uuid4())
+            "jti": jti
         }
         encode_token = jwt.encode(payload, secret_key, algorithm="HS256")
     except Exception:

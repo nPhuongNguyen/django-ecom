@@ -3,7 +3,7 @@ import json
 import uuid
 
 from django.conf import settings
-from kafka import KafkaProducer, KafkaConsumer
+from kafka import KafkaAdminClient, KafkaProducer, KafkaConsumer
 class KafkaProducerPool:
     _instance = None
     def __new__(cls):
@@ -85,3 +85,20 @@ class KafkaConsumerWorker:
                     print(f"[CONSOLE-ERROR] KafkaConsumerWorker: {e}")
         finally:
             self.consumer.close()
+
+
+class KafkaService:
+    def __init__(self):
+        self.bootstrap_servers = settings.LIST_BROKERS
+        self.request_timeout_ms = 2000
+    def ping(self) -> bool:
+        try:
+            admin = KafkaAdminClient(
+                bootstrap_servers=self.bootstrap_servers,
+                request_timeout_ms=self.request_timeout_ms
+            )
+            admin.describe_cluster()
+            admin.close()
+            return True
+        except Exception:
+            return False
