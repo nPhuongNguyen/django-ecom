@@ -25,14 +25,7 @@ $(document).ready(function () {
         }
         return checker;
     }
-
-    function showConfirmModal({ title, message, email}) {
-        $('#confirm_modal_title').text(title);
-        $('#confirm_modal_message').text(message);
-        $('#user_email_confirm').val(email);
-        modal_confirm$.show();
-    }
-        
+ 
     const validator = FormValidateLoader.init(
         frm_register$,
         {
@@ -48,11 +41,7 @@ $(document).ready(function () {
                     })
                     if (result_api){
                         if (result_api.status_code === 1){
-                            showConfirmModal({
-                                title: 'Mã xác nhận đã được gửi',
-                                message: 'Vui lòng kiểm tra email của bạn để lấy mã xác nhận.',
-                                email: formdata.email || ''
-                            });
+                           window.location.href = frm_register$.data('verify-url').replace('__email__', formdata.email);
                         }else{
                             validator.showErrors(result_api.errors)
                         }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html class="h-full">
+{% load static %}
+
+<head>
+    {% include 'admin/partials/head.html' %}
+    {% include 'import/jquery_import.html' %}
+    {% include 'import/jquery_validation.html' %}
+    {% include 'import/sweetalert2_import.html' %}
+    {% include 'import/toast_import.html' %}
+    {% include 'import/spin_import.html' %}
+    {% include 'import/axios_import.html' %}
+</head>
+
+<body class="antialiased flex h-full text-base text-foreground bg-background">
+
+    <div class="flex items-center justify-center grow bg-center bg-no-repeat px-4 sm:px-6">
+        <div class="kt-card max-w-[370px] w-full">
+            <form
+                class="kt-card-content flex flex-col gap-5 p-10"
+                id="verify_otp_form"
+            >
+                <!-- Header -->
+                <div class="text-center mb-2.5">
+                    <h3 class="text-lg font-medium text-mono leading-none mb-2.5">
+                        Verify OTP
+                    </h3>
+                    <span class="text-sm text-secondary-foreground">
+                        Please enter the OTP sent to your email.
+                    </span>
+                </div>
+
+                <!-- OTP -->
+                <div class="flex flex-col gap-1">
+                    <label class="kt-form-label font-normal text-mono required">
+                        OTP
+                    </label>
+                    <input
+                        type="text"
+                        class="kt-input"
+                        placeholder="Enter OTP"
+                        id="otp_code"
+                        name="otp_code"
+                        required
+                    >
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-between">
+                    <a class="text-sm kt-link shrink-0" href="#" id="resend_otp_link">
+                        Resend OTP
+                    </a>
+                    <button type="submit" class="kt-btn kt-btn-primary">
+                        Verify
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+
+</body>
+
+
+{% include 'admin/partials/script.html' %}
+<script src="{% static 'verify-otp.js' %}"></script>
+
+</html>
