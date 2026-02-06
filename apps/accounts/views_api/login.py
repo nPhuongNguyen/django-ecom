@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
 
+from ...auths.models.roles import RolePermissions
+
 from ...config.redis_config import RedisService
 from ecom.settings import TOKEN_SECRET_KEY
 
@@ -7,7 +9,7 @@ from ...utils.utils_token import encode_token
 
 from ...shared.response import ResponseBuilder, ResponseCodes
 
-from ...auths.models.users import Users
+from ...auths.models.users import UserRoles, Users
 
 from ..serializers.login import LoginInputSerializer
 
@@ -45,14 +47,41 @@ class LoginAPI(APIView):
                     "email": "Email chưa được kích hoạt."
                 }
             )
+        
+        #Lấy permissions và roles của user
+        list_role = UserRoles.objects.filter(user_id=user_db.id, is_active=True).values_list('role_id', flat=True)
+        permission_codes = (
+            RolePermissions.objects
+            .filter(
+                role_id__in=list_role,
+                is_active=True,
+                permission__is_active=True,
+                role__is_active=True,
+            )
+            .values_list('permission__code', flat=True)
+            .distinct() # User có thể có nhiều role, nên cần distinct để tránh trùng lặp permission
+        )
+        role_codes = (
+            UserRoles.objects
+            .filter(
+                user_id=user_db.id,
+                is_active=True,
+                role__is_active=True
+            )
+            .values_list('role__code', flat=True)
+        )
+
         key_redis_user_login = str(uuid.uuid4())
+        value_redis_user_login = {
+            "id": str(user_db.id),
+            "email": user_db.email,
+            "is_super": str(user_db.is_super),
+            "list_permission": list(permission_codes),
+            "list_role_code": list(role_codes)
+        }
         RedisService.set(
             key=key_redis_user_login,
-            value={
-                "id": str(user_db.id),
-                "email": user_db.email,
-                "is_super": str(user_db.is_super),
-            },
+            value=value_redis_user_login,
             alias="auth"
         )
         _encode_token = encode_token(key_redis_user_login, TOKEN_SECRET_KEY)

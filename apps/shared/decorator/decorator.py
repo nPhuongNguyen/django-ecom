@@ -12,9 +12,6 @@ def validate_serializer(serializer_class: type[serializers.Serializer]):
         def wrapper(self, request, *args, **kwargs):
             lg.log_info(
                 message="[VALIDATE_SERIALIZER][CALL]",
-                view=self.__class__.__name__,
-                func=func.__name__,
-                serializer=serializer_class.__name__,
                 input=request.data
             )
 
@@ -22,11 +19,7 @@ def validate_serializer(serializer_class: type[serializers.Serializer]):
                 serializer = serializer_class(data=request.data)
             except Exception as e:
                 lg.log_error(
-                    message="[VALIDATE_SERIALIZER][INIT_FAILED]",
-                    view=self.__class__.__name__,
-                    func=func.__name__,
-                    serializer=serializer_class.__name__,
-                    error=str(e)
+                    message="[VALIDATE_SERIALIZER][INIT_FAILED]"
                 )
                 return ResponseBuilder.build(
                     ResponseCodes.INVALID_INPUT,
@@ -36,9 +29,6 @@ def validate_serializer(serializer_class: type[serializers.Serializer]):
             if not serializer.is_valid():
                 lg.log_error(
                     message="[VALIDATE_SERIALIZER][INVALID]",
-                    view=self.__class__.__name__,
-                    func=func.__name__,
-                    serializer=serializer_class.__name__,
                     errors=serializer.errors
                 )
                 return ResponseBuilder.build(
@@ -47,10 +37,7 @@ def validate_serializer(serializer_class: type[serializers.Serializer]):
                 )
 
             lg.log_info(
-                message="[VALIDATE_SERIALIZER][SUCCESS]",
-                view=self.__class__.__name__,
-                func=func.__name__,
-                serializer=serializer_class.__name__,
+                message="[VALIDATE_SERIALIZER][SUCCESS]"
             )
 
             request.validated_data = serializer.validated_data
@@ -67,11 +54,7 @@ def validate_exception():
                 return func(self, request, *args, **kwargs)
             except Exception as e:
                 lg.log_error(
-                    message="[EXCEPTION][UNHANDLED]",
-                    view=self.__class__.__name__,
-                    func=func.__name__,
-                    error=str(e),
-                    input=getattr(request, "data", None),
+                    message="[EXCEPTION][UNHANDLED]"
                 )
                 return ResponseBuilder.build(
                     ResponseCodes.SYSTEM_ERROR,
@@ -88,15 +71,11 @@ def token_required():
 
             lg.log_info(
                 message="[TOKEN][CALL]",
-                view=self.__class__.__name__,
-                func=func.__name__,
                 headers=dict(request.headers)
             )
             if 'Token' not in request.headers:
                 lg.log_error(
                     message="[TOKEN][MISSING]",
-                    view=self.__class__.__name__,
-                    func=func.__name__,
                 )
                 return ResponseBuilder.build(
                     ResponseCodes.TOKEN_REQUIRED
@@ -113,9 +92,6 @@ def token_required():
             except Exception as e:
                 lg.log_error(
                     message="[TOKEN][DECODE_EXCEPTION]",
-                    view=self.__class__.__name__,
-                    func=func.__name__,
-                    error=str(e)
                 )
                 return ResponseBuilder.build(
                     ResponseCodes.SYSTEM_ERROR
@@ -124,20 +100,28 @@ def token_required():
             if error_format:
                 lg.log_error(
                     message="[TOKEN][INVALID]",
-                    view=self.__class__.__name__,
-                    func=func.__name__,
                     error_code=error_format
                 )
                 return ResponseBuilder.build(error_format)
             
             lg.log_info(
                 message="[TOKEN][SUCCESS]",
-                view=self.__class__.__name__,
-                func=func.__name__,
                 data=data
             )
 
             request.data_decode_token = data
+            return func(self, request, *args, **kwargs)
+
+        return wrapper
+    return decorator
+
+
+def check_role(list_role: list):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, request, *args, **kwargs):
+            
+
             return func(self, request, *args, **kwargs)
 
         return wrapper

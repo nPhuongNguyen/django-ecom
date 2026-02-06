@@ -13,8 +13,10 @@ $(document).ready(function () {
                 })
                 if (result_api){
                     if (result_api.status_code === 1){
-                        console.log('Verification successful');
-                        window.location.href = confirm_form$.data('url-login');
+                        ToastHelper.showSuccess();
+                        setTimeout(()=>{
+                            window.location.href = confirm_form$.data('url-login');
+                        },500);
                     }
                     else{
                         confirm_validator.showErrors(result_api.errors)
