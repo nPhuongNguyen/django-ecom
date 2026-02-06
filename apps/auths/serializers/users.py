@@ -2,7 +2,7 @@ import email
 from rest_framework import serializers
 
 from apps.auths.models.users import Users
-
+from django.contrib.auth.hashers import make_password
 class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -29,10 +29,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         validated_data.pop('confirm_password')
+        validated_data["password"] = make_password(validated_data["password"])
         return super().create(validated_data)
     class Meta:
         model = Users
-        fields = ['email', 'password', 'confirm_password', 'is_super', 'is_active']
+        fields = ['email', 'password', 'confirm_password']
 
 class UserDetailSerializer(serializers.ModelSerializer):
 
@@ -44,3 +45,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ['full_name', 'phone_number', 'email']
+
+
+class UserConfirmSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = ['is_active']

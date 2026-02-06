@@ -28,7 +28,7 @@ class BaseModelInt(BaseModel):
 
 
 class BaseModelActive(BaseModel):
-    is_active = models.BooleanField(default=True, db_comment='Trạng thái kích hoạt')
+    is_active = models.BooleanField(default=False, db_comment='Trạng thái kích hoạt')
 
     class Meta:
         abstract = True

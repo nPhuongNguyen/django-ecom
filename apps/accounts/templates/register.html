@@ -15,7 +15,11 @@
 <body class="antialiased flex h-full text-base text-foreground bg-background">
     <div class="flex items-center justify-center grow bg-center bg-no-repeat px-4 sm:px-6">
         <div class="kt-card max-w-[370px] w-full">
-            <form class="kt-card-content flex flex-col gap-5 p-10" id="sign_up_form" data-url="{% url 'RegisterAPI' %}">
+            <form class="kt-card-content flex flex-col gap-5 p-10" 
+                id="sign_up_form" 
+                data-url="{% url 'RegisterAPI' %}"
+                data-verify-url="{% url 'VerifyOTPView' email='__email__' %}"
+            >
                 <div class="text-center mb-2.5">
                     <h3 class="text-lg font-medium text-mono leading-none mb-2.5">
                         Sign up
@@ -70,8 +74,7 @@
             </form>
         </div>
     </div>
-    {% include 'extends/confirm.html' %}
-    {% include 'admin/partials/script.html' %}
 </body>
+    {% include 'admin/partials/script.html' %}
 <script src="{% static 'register.js' %}"></script>
 </html>
