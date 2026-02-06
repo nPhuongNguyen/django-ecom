@@ -41,7 +41,10 @@ $(document).ready(function () {
                     })
                     if (result_api){
                         if (result_api.status_code === 1){
-                           window.location.href = frm_register$.data('verify-url').replace('__email__', formdata.email);
+                            ToastHelper.showSuccess();
+                            setTimeout(()=>{
+                                window.location.href = frm_register$.data('verify-url').replace('__email__', formdata.email);
+                            },500);
                         }else{
                             validator.showErrors(result_api.errors)
                         }
