@@ -1,15 +1,11 @@
 
-from datetime import date, datetime, time
-from decimal import Decimal
 import json
 import logging
 import sys
-from uuid import UUID
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import Model, QuerySet
 from apps.config.kafka_config import PushO2mSmartlinkAPILog
-from apps.utils import request_func
+from ..utils.request_func import UtilsRequestFunc
 logger = logging.getLogger("o2m-smart-link-api-logging")
 class JsonFormatter(logging.Formatter):
     def format(self, record):
@@ -30,7 +26,7 @@ def _log(level: str, message=None, **kwargs):
     log_data = {
         "timestamp": timezone.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],
         "level": level,
-        "func_name": request_func.get_request_func(),
+        "func_name": UtilsRequestFunc.get_request_func(),
         "message": message,
     }
 

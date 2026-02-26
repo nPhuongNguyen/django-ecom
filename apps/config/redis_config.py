@@ -12,9 +12,11 @@ class RedisService:
     def set(key, value, timeout=3600,  alias="default"):
         cache = RedisService.get_cache(alias)
         if not cache:
+            lg.log_error("[REDIS] Cache not found")
             return False
         try:
             cache.set(key, value, timeout)
+            lg.log_info(f"[REDIS] Set key: {key} with timeout: {timeout} seconds")
             return True
         except Exception as e:
             lg.log_error("[REDIS][SET]")
@@ -68,4 +70,20 @@ class RedisService:
             return client.ping() is True
         except Exception:
             lg.log_error(message=f"[REDIS][PING]")
+            return False
+        
+    @staticmethod
+    def rate_limit(key: str, limit: int, window: int, alias="default") -> bool:
+        try:
+            cache = RedisService.get_cache(alias)
+            if not cache:
+                return False
+
+            client = cache.client.get_client()
+            current = client.incr(key)
+            if current == 1:
+                client.expire(key, window)
+            return current <= limit
+        except Exception:
+            lg.log_error(message=f"[REDIS][RATE_LIMIT]")
             return False

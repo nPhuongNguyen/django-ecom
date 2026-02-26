@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.utils import timezone
 import uuid
 import jwt
-from apps.catalogue.serializers.token import InfoTokenSerializer
 from apps.shared.response import ResponseCodes
 from apps.logging import logging_log as lg
 def encode_token(jti: str, secret_key: str)-> str:
@@ -26,11 +25,7 @@ def encode_token(jti: str, secret_key: str)-> str:
 def decode_token(token: str, secret_key: str = None):
     try:
         payload = jwt.decode(token, secret_key,  algorithms="HS256")
-        serializer = InfoTokenSerializer(data = payload)
-        if not serializer.is_valid():
-            return None, ResponseCodes.TOKEN_INVALID_TOKEN
-        result = serializer.validated_data
-        return result, None
+        return payload, None
     except jwt.ExpiredSignatureError:
         return None, ResponseCodes.TOKEN_EXPIRED
     except jwt.InvalidTokenError:
@@ -38,10 +33,17 @@ def decode_token(token: str, secret_key: str = None):
     
 def normalize_token(token: str)->str|None:
     if not token:
+        lg.log_error(
+            message="Token không được cung cấp!"
+        )
         return None
     parts = token.split()
     if len(parts) == 2 and parts[0].lower() == "bearer":
         token = parts[1]
+        lg.log_info(
+            message="Token đã được chuẩn hóa!",
+            token=token
+        )
     return token
 
 

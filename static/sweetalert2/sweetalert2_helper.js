@@ -58,7 +58,8 @@ class SweetAlertHelper {
             title,
             text,
             icon: SweetAlertHelper.Icons.error,
-            confirmButtonText: "OK"
+            confirmButtonText: "OK",
+            heightAuto: false, // Ép buộc không tự động điều chỉnh chiều cao của layout
         });
     }
 

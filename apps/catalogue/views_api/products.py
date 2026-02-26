@@ -1,6 +1,6 @@
 from apps.catalogue.models.products import Product
 from apps.catalogue.serializers.products import ProductCreateSerializer, ProductDetailSerializer, ProductListSerializer, ProductUpdateSerializer
-from apps.shared.decorator.decorator import token_required, validate_exception
+from apps.shared.decorator.decorator import check_permission, token_required, validate_exception
 from apps.shared.mixins import CreateMixin, DestroyMixin, DetailMixin, ListMixin, UpdateMixin
 class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     queryset = Product.objects.all()
@@ -10,6 +10,7 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     filterset_fields = ['is_active']
     @validate_exception()
     @token_required()
+    # @check_permission(permission_list=["catalogue_list_products"])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     

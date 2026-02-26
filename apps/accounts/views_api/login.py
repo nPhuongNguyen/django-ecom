@@ -73,17 +73,17 @@ class LoginAPI(APIView):
 
         key_redis_user_login = str(uuid.uuid4())
         value_redis_user_login = {
-            "id": str(user_db.id),
             "email": user_db.email,
             "is_super": str(user_db.is_super),
             "list_permission": list(permission_codes),
             "list_role_code": list(role_codes)
         }
-        RedisService.set(
+        set_redis_user =RedisService.set(
             key=key_redis_user_login,
             value=value_redis_user_login,
             alias="auth"
         )
+        
         _encode_token = encode_token(key_redis_user_login, TOKEN_SECRET_KEY)
         if not _encode_token:
             return ResponseBuilder.build(

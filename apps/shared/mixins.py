@@ -11,6 +11,7 @@ from datetime import datetime
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from apps.logging import logging_log as lg
+from .decorator.decorator import track_execution
 from apps.shared.response import ResponseBuilder, ResponseCodes
 from django.db import transaction
 from django.utils import timezone
@@ -77,6 +78,7 @@ class BaseMixin(GenericAPIView):
 
 
 class ListMixin(BaseMixin):
+    @track_execution("LIST")
     def list(self, request, *args, **kwargs):
         query_params = dict(request.query_params)
         lg.log_info(
@@ -142,7 +144,7 @@ class CreateMixin(BaseMixin):
             'created_by' : user_email,
             'updated_by': user_email,
         }
-       
+    @track_execution("CREATE")
     def create(self, request, *args, **kwargs):
         input_data = self.get_create_data()
 
@@ -201,7 +203,7 @@ class UpdateMixin(BaseMixin):
         return {
             'updated_by': user_email,
         }
-
+    @track_execution("UPDATE")
     def update(self, request, partial=False, *args, **kwargs):
         input_data = self.get_update_data()
         object_id = self.kwargs.get("pk")
@@ -262,6 +264,7 @@ class UpdateMixin(BaseMixin):
             data=output_data
         )
     
+    @track_execution("CHANGE_STATUS")
     def change_status(self, request, *args, **kwargs):
         serializer_detail = self.get_serializer_class_detail()
         object_id = self.kwargs.get("pk")
@@ -309,6 +312,7 @@ class DestroyMixin(BaseMixin):
             'deleted_at': timezone.now(),
             'deleted_by': user_email,
         }
+    @track_execution("DESTROY")
     def destroy_many(self, request, *args, **kwargs):
         query_param = self.query_params()
         list_id_by_delete = query_param.getlist('id[]')
@@ -368,6 +372,7 @@ class DestroyMixin(BaseMixin):
         )
     
 class DetailMixin(BaseMixin):
+    @track_execution("DETAIL")
     def detail(self, request, *args, **kwargs):
         object_id = self.kwargs.get("pk")
         input_data = {
