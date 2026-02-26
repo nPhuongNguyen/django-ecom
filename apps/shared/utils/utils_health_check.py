@@ -4,12 +4,16 @@ from ...config.kafka_config import KafkaService
 
 from ...config.redis_config import RedisService
 from ...utils.minio import S3Minio
+from apps.logging import logging_log as lg
 
 def check_database(alias="default") -> bool:
     try:
         connections[alias].ensure_connection()
         return True
     except Exception:
+        lg.log_info(
+            message="Connect DB Error"
+        )
         return False
 
     

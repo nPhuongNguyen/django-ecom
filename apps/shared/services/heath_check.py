@@ -1,4 +1,4 @@
-from django.conf import settings
+
 from ..utils import utils_health_check as ut_hc
 class HealthCheckServices:
     def health_check():

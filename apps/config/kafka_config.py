@@ -1,9 +1,8 @@
 from contextlib import contextmanager
 import json
-import uuid
-
 from django.conf import settings
 from kafka import KafkaAdminClient, KafkaProducer, KafkaConsumer
+from apps.logging import logging_log as lg
 class KafkaProducerPool:
     _instance = None
     def __new__(cls):
@@ -101,4 +100,5 @@ class KafkaService:
             admin.close()
             return True
         except Exception:
+            lg.log_error(message=f"[Kafka][PING] Error")
             return False

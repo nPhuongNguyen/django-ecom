@@ -6,7 +6,7 @@ class RedisService:
         try:
             return caches[alias]
         except Exception:
-            lg.log_error("[REDIS] Cache alias")
+            lg.log_error("[REDIS] Cache alias Error")
             return None
     @staticmethod
     def set(key, value, timeout=3600,  alias="default"):
@@ -19,7 +19,7 @@ class RedisService:
             lg.log_info(f"[REDIS] Set key: {key} with timeout: {timeout} seconds")
             return True
         except Exception as e:
-            lg.log_error("[REDIS][SET]")
+            lg.log_error("[REDIS][SET] Error")
             return False
         
     @staticmethod
@@ -30,7 +30,7 @@ class RedisService:
         try:
             return cache.get(key)
         except Exception:
-            lg.log_error("[REDIS][GET]")
+            lg.log_error("[REDIS][GET] Error")
             return None
         
     @staticmethod
@@ -43,7 +43,7 @@ class RedisService:
             return True
         except Exception:
             lg.log_error(
-                message="[REDIS][DELETE]"
+                message="[REDIS][DELETE] Error"
             )
             return False
 
@@ -57,7 +57,7 @@ class RedisService:
             client.hset(f"user:{user_id}", mapping=data_dict)
             return True
         except Exception:
-            lg.log_error(message="[REDIS-ERROR] HSET")
+            lg.log_error(message="[REDIS-ERROR] HSET Error")
             return False
     @staticmethod
     def ping(alias="default") -> bool:
@@ -69,7 +69,7 @@ class RedisService:
             client = cache.client.get_client()
             return client.ping() is True
         except Exception:
-            lg.log_error(message=f"[REDIS][PING]")
+            lg.log_error(message=f"[REDIS][PING] Error")
             return False
         
     @staticmethod
@@ -85,5 +85,5 @@ class RedisService:
                 client.expire(key, window)
             return current <= limit
         except Exception:
-            lg.log_error(message=f"[REDIS][RATE_LIMIT]")
+            lg.log_error(message=f"[REDIS][RATE_LIMIT] Error")
             return False

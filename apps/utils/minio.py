@@ -2,6 +2,7 @@ import base64
 import mimetypes
 from io import BytesIO
 from minio import Minio
+from apps.logging import logging_log as lg
 from ecom.settings import (
     MINIO_ACCESS_KEY,
     MINIO_SECRET_KEY,
@@ -57,7 +58,7 @@ class S3Minio:
             return f"{MINIO_BASE_URL}/{MINIO_BUCKET_NAME}/{object_name}"
 
         except Exception as e:
-            print(f"Upload error: {e}")
+            lg.log_error(message=f"[Upload] Error")
             return None
 
     @staticmethod
@@ -67,4 +68,5 @@ class S3Minio:
             client.bucket_exists(MINIO_BUCKET_NAME)
             return True
         except Exception:
+            lg.log_error(message=f"[Minio][PING] Error")
             return False
