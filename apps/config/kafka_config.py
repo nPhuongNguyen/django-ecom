@@ -3,6 +3,7 @@ import json
 from django.conf import settings
 from kafka import KafkaAdminClient, KafkaProducer, KafkaConsumer
 from apps.logging import logging_log as lg
+import time
 class KafkaProducerPool:
     _instance = None
     def __new__(cls):
@@ -90,7 +91,8 @@ class KafkaService:
     def __init__(self):
         self.bootstrap_servers = settings.LIST_BROKERS
         self.request_timeout_ms = 2000
-    def ping(self) -> bool:
+    def ping(self):
+        start = time.process_time()
         try:
             admin = KafkaAdminClient(
                 bootstrap_servers=self.bootstrap_servers,
@@ -98,7 +100,7 @@ class KafkaService:
             )
             admin.describe_cluster()
             admin.close()
-            return True
+            return "WARING" if (time.process_time() - start > 3) else "NORMAL"
         except Exception:
             lg.log_error(message=f"[Kafka][PING] Error")
-            return False
+            return "CRITICAL"

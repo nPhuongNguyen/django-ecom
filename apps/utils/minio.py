@@ -1,6 +1,7 @@
 import base64
 import mimetypes
 from io import BytesIO
+import time
 from minio import Minio
 from apps.logging import logging_log as lg
 from ecom.settings import (
@@ -62,11 +63,12 @@ class S3Minio:
             return None
 
     @staticmethod
-    def ping() -> bool:
+    def ping():
+        start = time.perf_counter()
         try:
             client = S3Minio.get_minio_client()
             client.bucket_exists(MINIO_BUCKET_NAME)
-            return True
+            return "WARNING" if (time.process_time() - start > 3) else "NORMAL"
         except Exception:
             lg.log_error(message=f"[Minio][PING] Error")
-            return False
+            return "CRITICAL"

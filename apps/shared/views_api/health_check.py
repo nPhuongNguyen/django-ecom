@@ -11,7 +11,7 @@ class HealthCheckAPIView(APIView):
         services_helth_check = HealthCheckServices.health_check()
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
-            data= {
+            data = {
                 **services_helth_check
             } 
         )

@@ -1,5 +1,6 @@
 from django.core.cache import caches
 from apps.logging import logging_log as lg
+import time
 class RedisService:
     @staticmethod
     def get_cache(alias="default"):
@@ -60,17 +61,16 @@ class RedisService:
             lg.log_error(message="[REDIS-ERROR] HSET Error")
             return False
     @staticmethod
-    def ping(alias="default") -> bool:
+    def ping(alias="default") -> str:
+        start_time = time.perf_counter()
         try:
             cache = RedisService.get_cache(alias)
-            if not cache:
-                return False
-
-            client = cache.client.get_client()
-            return client.ping() is True
-        except Exception:
-            lg.log_error(message=f"[REDIS][PING] Error")
-            return False
+            if not cache or not cache.client.get_client().ping():
+                return "CRITICAL"
+            return "WARNING" if (time.perf_counter() - start_time) > 3 else "NORMAL"
+        except Exception as e:
+            lg.log_error(message=f"[REDIS][PING][{alias}]")
+            return "CRITICAL"
         
     @staticmethod
     def rate_limit(key: str, limit: int, window: int, alias="default") -> bool:
