@@ -22,12 +22,16 @@ $(document).ready(function () {
                         method: 'POST',
                         data: formdata
                     })
-                    if (result_api){
-                        if (result_api.status_code !== 1){
-                            ToastHelper.showError();
-                            validator.showErrors(result_api.errors || {});
-                            return;
-                        }
+                    if (result_api == null || result_api.status_code == 500){
+                        SweetAlertHelper.NotiError();
+                        return;
+                    }
+                    else if (result_api.status_code !== 1){
+                        ToastHelper.showError();
+                        validator.showErrors(result_api.errors || {});
+                        return;
+                    }
+                    else{
                         const check_token = AuthStorage.hasToken("Token")
                         try{
                             if (check_token == true){
@@ -37,9 +41,6 @@ $(document).ready(function () {
                         finally{
                             AuthStorage.setToken("Token", result_api.data)
                         }
-                        ToastHelper.showSuccess();
-                    }else{
-                        SweetAlertHelper.NotiError()
                     }
                 }finally{
                     MyLoading.close()

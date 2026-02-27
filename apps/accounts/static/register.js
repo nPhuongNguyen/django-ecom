@@ -3,8 +3,6 @@ $(document).ready(function () {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
     const frm_register$ = $('#sign_up_form');
-    const modalEl = document.querySelector('#modal-confirm');
-    const modal_confirm$ = KTModal.getInstance(modalEl);
     const email$ = $('#user_email');
     const password$ = $('#user_password');
     const confirm_password$ = $('#confirm_user_password');
@@ -39,15 +37,18 @@ $(document).ready(function () {
                         method: 'POST',
                         data: formdata
                     })
-                    if (result_api){
-                        if (result_api.status_code === 1){
-                            ToastHelper.showSuccess();
-                            setTimeout(()=>{
-                                window.location.href = frm_register$.data('verify-url').replace('__email__', formdata.email);
-                            },500);
-                        }else{
-                            validator.showErrors(result_api.errors)
-                        }
+                    if (result_api == null || result_api.status_code == 500){
+                        SweetAlertHelper.NotiError();
+                        return;
+                    }else if (result_api.status_code !== 1){
+                        ToastHelper.showError();
+                        validator.showErrors(result_api.errors);
+                        return;
+                    }else{
+                        ToastHelper.showSuccess();
+                        setTimeout(()=>{
+                            window.location.href = frm_register$.data('verify-url').replace('__email__', formdata.email);
+                        },500);
                     }
                 }finally{
                     MyLoading.close()
@@ -55,5 +56,4 @@ $(document).ready(function () {
             }
         }
     )
-
 })

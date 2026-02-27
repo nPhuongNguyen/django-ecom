@@ -83,6 +83,11 @@ class LoginAPI(APIView):
             value=value_redis_user_login,
             alias="auth"
         )
+
+        if not set_redis_user:
+            return ResponseBuilder.build(
+                code=ResponseCodes.SYSTEM_ERROR
+            )
         
         _encode_token = encode_token(key_redis_user_login, TOKEN_SECRET_KEY)
         if not _encode_token:
