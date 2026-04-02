@@ -25,17 +25,17 @@ class RequestLogger:
         path = request.get_full_path()
         remote_addr = RequestLogger._get_client_ip(request)
         method = request.method.upper()
-        data_input = None
-        if method in ("GET", "DELETE"):
-            data_input = request.GET.dict()
-        elif method in ("POST", "PUT", "PATCH"):
-            if "application/json" in content_type:
-                try:
-                    raw = request.body
-                    data_input = json.loads(raw.decode("utf-8"))
-                except Exception:
-                    data_input = "<INVALID JSON>"
-            else:
-                data_input = f"<SKIP {content_type}>"
+        data_params = request.GET.dict()
+        if content_type.startswith("application/json"):
+            try:
+                data_body = json.loads(request.body.decode('utf-8'))
+            except Exception:
+                data_body = request.body.decode('utf-8')
+        else:
+            data_body = request.POST.dict()
+        data_input = {
+            "params": data_params,
+            "body": data_body
+        }
         return method, path, remote_addr, content_type, data_input
         

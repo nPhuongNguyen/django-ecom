@@ -1,6 +1,8 @@
+from urllib.parse import parse_qs, urlparse
+
 from apps.catalogue.models.products import Product
 from apps.catalogue.serializers.products import ProductCreateSerializer, ProductDetailSerializer, ProductListSerializer, ProductUpdateSerializer
-from apps.shared.decorator.decorator import check_permission, token_required, validate_exception
+from apps.shared.decorator.decorator import check_permission, rate_limit_ip, token_required, validate_exception
 from apps.shared.mixins import CreateMixin, DestroyMixin, DetailMixin, ListMixin, UpdateMixin
 class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     queryset = Product.objects.all()
@@ -9,8 +11,9 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     ordering_fields = ['name']
     filterset_fields = ['is_active']
     @validate_exception()
+    @rate_limit_ip(limit=5, window=60)
     @token_required()
-    # @check_permission(permission_list=["catalogue_list_products"])
+    @check_permission(permission_list=["catalogue_products__list"])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
@@ -36,8 +39,7 @@ class ProductDestroyAPI(DestroyMixin):
     @validate_exception()
     @token_required()
     def post(self, request, *args, **kwargs):
-        return self.destroy_many(request, *args, **kwargs) 
-    
+        return self.destroy_many(request, *args, **kwargs)  
 
 class ProductChangeStatusAPI(UpdateMixin):
     queryset = Product.objects.all()

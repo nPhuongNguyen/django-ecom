@@ -4,65 +4,72 @@ from django.conf import settings
 from kafka import KafkaAdminClient, KafkaProducer, KafkaConsumer
 from apps.logging import logging_log as lg
 import time
+
 class KafkaProducerPool:
     _instance = None
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance.producers = {}
-            cls._instance.initialized = False
+            cls._instance._producers = {} 
         return cls._instance
-    def initialize(self, bootstrap_servers: str):
-        if not self.initialized:
-            self.bootstrap_servers = bootstrap_servers
-            self.initialized = True
+
+    def _get_or_create_producer(self, broker_list) -> KafkaProducer:
+        key = str(broker_list)
+        if key not in self._producers:
+            self._producers[key] = KafkaProducer(
+                bootstrap_servers=broker_list,
+                value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+                key_serializer=lambda k: k.encode("utf-8"),
+                
+                #Cấu hình nếu kafka broker yeu cầu xác thực
+                security_protocol="SASL_PLAINTEXT",
+                sasl_mechanism="PLAIN",
+                sasl_plain_username="admin",
+                sasl_plain_password="admin-secret",
+            )
+        return self._producers[key]
 
     @contextmanager
-    def get_producer(self):
-        producer = self._get_or_create_producer()
+    def get_producer(self, broker_list):
+        producer = self._get_or_create_producer(broker_list)
         try:
             yield producer
         finally:
-            # Không đóng producer ở đây để tái sử dụng
             pass
-    
-    def _get_or_create_producer(self) -> KafkaProducer:
-        key = tuple(self.bootstrap_servers) if isinstance(self.bootstrap_servers, list) else self.bootstrap_servers
-        if key not in self.producers:
-            self.producers[key] = KafkaProducer(
-                bootstrap_servers=self.bootstrap_servers,
-                value_serializer=lambda v: json.dumps(v).encode("utf-8"),
-                key_serializer=lambda k: k.encode("utf-8")
-            )
-        return self.producers[key]
-    
-    def shutdown(self):
-        for producer in self.producers.values():
-            producer.close()
-        self.producers.clear()
 
 class PushO2mSmartlinkAPILog:
-    def __init__(self, message):
-        self.message = message
-        self.topic_name = settings.KAFKA_TOPIC
-        self.producer_pool = KafkaProducerPool()
-        self.producer_pool.initialize(settings.LIST_BROKERS)
-        self.prefix_url = settings.PREFIX_URL
+    def __init__(self, broker_list, topic):
+        self.kafkapool = KafkaProducerPool()
+        self.broker_list = broker_list
+        self.topic = topic  
+    def run(self, key, message):
+        value = message.to_dict() if hasattr(message, "to_dict") else message
+        with self.kafkapool.get_producer(self.broker_list) as producer:
+            producer.send(
+                topic=self.topic,
+                key=key,
+                value=value
+            )
+            producer.flush() 
 
-    def run(self):
-        try:
-            value = self.message.to_dict() if hasattr(self.message, "to_dict") else self.message
-            with self.producer_pool.get_producer() as producer:
-                producer.send(
-                    self.topic_name,
-                    key=self.prefix_url,
-                    value=value
-                ) 
-                producer.flush()
-        except Exception as e:
-            print(f"[CONSOLE-ERROR] PushO2mSmartlinkAPILog: {e}")
+class InitBroker:
+    _instance = None
+    _initialized = False
 
-
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(InitBroker, cls).__new__(cls)
+        return cls._instance
+    
+    def __init__(self):
+        if not self._initialized:
+            self.push_log_django_ecom = PushO2mSmartlinkAPILog(
+                settings.LIST_BROKERS,
+                settings.KAFKA_TOPIC
+            )
+            self._initialized = True
+      
 class KafkaConsumerWorker:
     def __init__(self):
         self.consumer = KafkaConsumer(

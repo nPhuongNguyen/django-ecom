@@ -71,6 +71,7 @@ class LoginAPI(APIView):
             .values_list('role__code', flat=True)
         )
 
+        redis = RedisService()
         key_redis_user_login = str(uuid.uuid4())
         value_redis_user_login = {
             "email": user_db.email,
@@ -78,7 +79,7 @@ class LoginAPI(APIView):
             "list_permission": list(permission_codes),
             "list_role_code": list(role_codes)
         }
-        set_redis_user =RedisService.set(
+        set_redis_user = redis.set(
             key=key_redis_user_login,
             value=value_redis_user_login,
             alias="auth"
