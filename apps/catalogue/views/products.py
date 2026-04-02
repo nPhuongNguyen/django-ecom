@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.views import View
 
 from apps.catalogue.models.products import Product
-from ..serializers.products import ProductDetailSerializer
 from apps.shared.decorator.views import mask_view
 
 MASK_VIEW_CONFIG ={

@@ -87,23 +87,18 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
-# RabbitMQ broker
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
-
-# Result backend
-# CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+#Celery
+CELERY_BROKER_URL = redis_url(REDIS_HOST, REDIS_PORT, REDIS_DB, REDIS_PASSWORD)
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_BACKEND = None
 CELERY_TASK_IGNORE_RESULT = True  # Ép Celery không lưu kết quả, tránh đụng tới DB
 CELERY_RESULT_EXTENDED = False     # Tắt mở rộng kết quả
-
+print("BROKER:", CELERY_BROKER_URL)
 #Telegram BOT
 TOKEN_TELEGRAM_BOT = os.environ.get("TOKEN_TELEGRAM_BOT")
 CHAT_ID_TELEGRAM_BOT = os.environ.get('CHAT_ID_TELEGRAM_BOT')
 
-CELERY_ACCEPT_CONTENT = [
-    os.environ.get("CELERY_ACCEPT_CONTENT")
-]
-CELERY_TASK_SERIALIZER = os.environ.get("CELERY_TASK_SERIALIZER")
 
 
 
@@ -137,15 +132,14 @@ INSTALLED_APPS = [
     'apps.accounts',
     'django_filters',
     'apps.shared',
-    'django_celery_results',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.security.SecurityMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "apps.middleware.request_middleware.RequestMiddleware",
 ]
 

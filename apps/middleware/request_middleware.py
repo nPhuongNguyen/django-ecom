@@ -17,7 +17,7 @@ class RequestMiddleware:
             request_func = (
                 request.headers.get("X-Request-ID") or uuid.uuid4().hex
             )
-            UtilsRequestFunc.init_request_func(request_func)
+            UtilsRequestFunc.set_request_id(request_func)
             request_info = RequestLogger.process_request(request)
             lg.log_info(
                 request=request_info,
@@ -27,16 +27,17 @@ class RequestMiddleware:
                 response = self.get_response(request)
             except Exception:
                 end = time.perf_counter()
-                duration_ms = (end - start) * 1000
+                duration = f"{(end - start): .3f} s"
                 lg.log_error(
                     message="[EXCEPTION] Error",
-                    duration_ms=duration_ms
+                    duration=duration
                 )
             end = time.perf_counter()
-            duration_ms = (end - start) * 1000
+            duration = f"{(end - start): .3f} s"
             lg.log_info(
                 message="[REQUEST][END]",
-                duration_ms=duration_ms
+                response=response.data if isinstance(response.data, dict) else "",
+                duration=duration
             )
             return response
         finally:

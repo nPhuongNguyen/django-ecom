@@ -27,8 +27,16 @@ def decode_token(token: str, secret_key: str = None):
         payload = jwt.decode(token, secret_key,  algorithms="HS256")
         return payload, None
     except jwt.ExpiredSignatureError:
+        lg.log_error(
+            message="Token đã hết hạn!",
+            token=token
+        )
         return None, ResponseCodes.TOKEN_EXPIRED
     except jwt.InvalidTokenError:
+        lg.log_error(
+            message="Token không hợp lệ!",
+            token=token
+        )
         return None, ResponseCodes.TOKEN_INVALID_TOKEN
     
 def normalize_token(token: str)->str|None:
@@ -45,6 +53,3 @@ def normalize_token(token: str)->str|None:
             token=token
         )
     return token
-
-
-

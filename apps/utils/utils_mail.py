@@ -12,21 +12,16 @@ class UtilsMail:
         from_email: str | None = None,
         fail_silently: bool = False
     ):
-        try:
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=from_email or settings.DEFAULT_FROM_EMAIL,
-                recipient_list=to,
-                html_message=html_message,
-                fail_silently=fail_silently,
-            )
-            lg.log_info(
-                message="[MAIL][SENT]",
-                to=to,
-                subject=subject
-            )
-        except Exception:
-            lg.log_error(
-                message="[MAIL][ERROR]"
-            )
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=from_email or settings.DEFAULT_FROM_EMAIL,
+            recipient_list=to,
+            html_message=html_message,
+            fail_silently=fail_silently,
+        )
+        lg.log_info(
+            message="[MAIL][SENT]",
+            to=to,
+            subject=subject
+        )

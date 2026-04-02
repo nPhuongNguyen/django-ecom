@@ -2,16 +2,16 @@ from django.core.cache import caches
 from apps.logging import logging_log as lg
 import time
 class RedisService:
-    @staticmethod
-    def get_cache(alias="default"):
+    def __init__(self):
+        self.alias = "default"
+    def get_cache(self):
         try:
-            return caches[alias]
+            return caches[self.alias]
         except Exception:
             lg.log_error("[REDIS] Cache alias Error")
             return None
-    @staticmethod
-    def set(key, value, timeout=3600,  alias="default"):
-        cache = RedisService.get_cache(alias)
+    def set(self, key, value, timeout=3600):
+        cache = self.get_cache()
         if not cache:
             lg.log_error("[REDIS] Cache not found")
             return False
@@ -23,9 +23,8 @@ class RedisService:
             lg.log_error("[REDIS][SET] Error")
             return False
         
-    @staticmethod
-    def get(key, alias="default"):
-        cache = RedisService.get_cache(alias)
+    def get(self, key):
+        cache = self.get_cache()
         if not cache:
             return None
         try:
@@ -34,9 +33,8 @@ class RedisService:
             lg.log_error("[REDIS][GET] Error")
             return None
         
-    @staticmethod
-    def delete(key, alias="default"):
-        cache = RedisService.get_cache(alias)
+    def delete(self, key):
+        cache = self.get_cache()
         if not cache:
             return False
         try:
@@ -48,10 +46,9 @@ class RedisService:
             )
             return False
 
-    @staticmethod
-    def hset_user(user_id, data_dict, alias="default"):
+    def hset_user(self, user_id, data_dict):
         try:
-            cache = RedisService.get_cache(alias)
+            cache = self.get_cache()
             if not cache:
                 return False
             client = cache.client.get_client()
@@ -60,11 +57,10 @@ class RedisService:
         except Exception:
             lg.log_error(message="[REDIS-ERROR] HSET Error")
             return False
-    @staticmethod
-    def ping(alias="default") -> str:
+    def ping(self, alias="default") -> str:
         start_time = time.perf_counter()
         try:
-            cache = RedisService.get_cache(alias)
+            cache = self.get_cache(alias)
             if not cache or not cache.client.get_client().ping():
                 return "CRITICAL"
             return "WARNING" if (time.perf_counter() - start_time) > 3 else "NORMAL"
@@ -72,10 +68,9 @@ class RedisService:
             lg.log_error(message=f"[REDIS][PING][{alias}]")
             return "CRITICAL"
         
-    @staticmethod
-    def rate_limit(key: str, limit: int, window: int, alias="default") -> bool:
+    def rate_limit(self, key: str, limit: int, window: int) -> bool:
         try:
-            cache = RedisService.get_cache(alias)
+            cache = self.get_cache()
             if not cache:
                 return False
 

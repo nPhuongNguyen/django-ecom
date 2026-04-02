@@ -1,5 +1,4 @@
 from functools import wraps
-
 def mask_view(**kwargs):
     accordion = kwargs.get('accordion', None)
     accordion_child = kwargs.get('accordion_child', None)
@@ -17,3 +16,4 @@ def mask_view(**kwargs):
             return func_view(self, request, *args, context=context, **kwargs)
         return wrapper
     return decorator
+

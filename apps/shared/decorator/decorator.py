@@ -2,10 +2,9 @@ from functools import wraps
 import time
 
 from ...logging.log_request import RequestLogger
-from ...config.redis_config import RedisService
 from apps.logging import logging_log as lg
 from rest_framework import serializers
-
+from apps.config.redis_config import RedisService
 from apps.shared.response import ResponseBuilder, ResponseCodes
 from apps.utils.utils_token import decode_token, normalize_token
 from ecom.settings import TOKEN_SECRET_KEY
@@ -47,7 +46,6 @@ def validate_serializer(serializer_class: type[serializers.Serializer]):
 
             request.validated_data = serializer.validated_data
             return func(self, request, *args, **kwargs)
-
         return wrapper
     return decorator
 
@@ -90,14 +88,14 @@ def token_required():
                 )
                 if error_format:
                     lg.log_error(
-                        message="[TOKEN][INVALID]",
-                        error_code=error_format
+                        message="Lỗi khi decode token",
+                        token=token,
                     )
                     return ResponseBuilder.build(error_format)
                 serializer = InfoTokenSerializer(data = data)
                 if not serializer.is_valid():
                     lg.log_error(
-                        message="[TOKEN][INVALID_DATA]",
+                        message="Lỗi khi validate token",
                         errors=serializer.errors
                     )
                     return ResponseBuilder.build(
@@ -118,7 +116,6 @@ def token_required():
                     ResponseCodes.SYSTEM_ERROR
                 )
             return func(self, request, *args, **kwargs)
-
         return wrapper
     return decorator
 
@@ -128,7 +125,7 @@ def check_permission(permission_list: list):
         @wraps(func)
         def wrapper(self, request, *args, **kwargs):
             data_token = request.data_decode_token
-            cache_permission = RedisService.get(data_token.get("jti"), alias="auth")
+            cache_permission = RedisService().get(data_token.get("jti"), alias="auth")
             if not cache_permission:
                 lg.log_error(
                     message="[PERMISSION][CACHE_MISS]",
@@ -151,8 +148,7 @@ def rate_limit_ip(limit=5, window=60):
         def wrapper(self, request, *args, **kwargs):
             ip = RequestLogger._get_client_ip(request)
             key = f"rate_limit:ip:{ip}"
-
-            allowed = RedisService.rate_limit(key, limit, window)
+            allowed = RedisService().rate_limit(key, limit, window)
 
             if not allowed:
                 lg.log_error(
