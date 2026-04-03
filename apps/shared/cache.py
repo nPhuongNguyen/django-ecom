@@ -22,8 +22,8 @@ class Caching:
     def get(self, key, default=None):
         try:
             return self.sv.get(key, default=default)
-        except Exception as err:  # pylint: disable=W0718
-            logger.error('[CACHING][GET] Error: %s', str(err))
+        except Exception:  # pylint: disable=W0718
+            logger.error('[CACHING][GET] Error')
         return None
 
     def set(self, key, value, expires=None):
@@ -32,13 +32,13 @@ class Caching:
                 expires = settings.CACHE_EXPIRE_SECONDS
 
             return self.sv.set(key, value, timeout=expires)
-        except Exception as err:  # pylint: disable=W0718
-            logger.error('[CACHING][SET] Error: %s', str(err))
+        except Exception:  # pylint: disable=W0718
+            logger.error('[CACHING][SET] Error')
         return None
 
     def delete(self, key):
         try:
             return self.sv.delete(key)
-        except Exception as err:  # pylint: disable=W0718
-            logger.error('[CACHING][DELETE] Error: %s', str(err))
+        except Exception:  # pylint: disable=W0718
+            logger.error('[CACHING][DELETE] Error')
         return None

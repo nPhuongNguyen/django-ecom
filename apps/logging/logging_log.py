@@ -1,4 +1,6 @@
 import logging
+import sys
+import traceback
 from django.conf import settings
 from django.utils import timezone
 import inspect
@@ -9,9 +11,10 @@ logger = logging.getLogger("o2m-smart-link-api-logging")
 
 def _log(level: str, message=None, **kwargs):
     try:
-        caller_frame = inspect.stack()[2]
+        frame = inspect.currentframe()
+        caller = frame.f_back.f_back
         caller_info = {
-            "caller": f"{caller_frame.function} | {os.path.basename(caller_frame.filename)}:{caller_frame.lineno}"
+            "caller": f"{caller.f_code.co_name} | {os.path.basename(caller.f_code.co_filename)}:{caller.f_lineno}"
         }
     except Exception:
         caller_info = {
@@ -26,6 +29,14 @@ def _log(level: str, message=None, **kwargs):
     }
     if kwargs:
         log_data.update(kwargs)
+
+    if level == "ERROR":
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        if exc_value:
+            log_data["error"] = str(exc_value)
+            log_data["error_type"] = exc_type.__name__ if exc_type else None
+            log_data["traceback"] = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+
     log_data.update(caller_info)
     try:
         if level == "ERROR":
