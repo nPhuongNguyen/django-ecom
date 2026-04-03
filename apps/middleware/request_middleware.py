@@ -19,6 +19,7 @@ class RequestMiddleware:
             )
             UtilsRequestFunc.set_request_id(request_func)
             request_info = RequestLogger.process_request(request)
+            request.data_input = request_info.get("data", {})
             lg.log_info(
                 request=request_info,
                 message="[REQUEST][START]"

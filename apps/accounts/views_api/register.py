@@ -17,15 +17,14 @@ from ...auths.models.users import Users
 
 from ...shared.response import ResponseBuilder, ResponseCodes
 from apps.logging import logging_log as lg
-from ...shared.decorator.decorator import validate_exception, validate_serializer
+from ...shared.decorator.decorator import validate_exception
 from ..serializers.register import RegisterConfirmInputSerializer, RegisterInputSerializer
 from django.db import transaction
 class RegisterAPI(APIView):
     @validate_exception()
-    @validate_serializer(serializer_class=RegisterInputSerializer)
     def post(self, request, *args, **kwargs):
         #Data input
-        data_input = request.validated_data
+        data_input = request.data_input
         email = data_input.get('email')
         serializer = UserCreateSerializer(data = data_input)
         #Check validate serializer
@@ -70,11 +69,18 @@ class RegisterAPI(APIView):
     
 class RegisterConfirmAPI(APIView):
     @validate_exception()
-    @validate_serializer(serializer_class=RegisterConfirmInputSerializer)
     def post(self, request, *args, **kwargs):
-        data_input = request.validated_data
-        email = data_input.get('email')
-        confirmation_code = data_input.get('confirmation_code')
+        data_input = request.data_input
+        serializer = RegisterConfirmInputSerializer(data=data_input)
+        if not serializer.is_valid():
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT,
+                errors=serializer.errors
+            )
+        data_input_safe = serializer.validated_data
+        data_input_body = data_input_safe.get("body", {})
+        email = data_input_body.get('email')
+        confirmation_code = data_input_body.get('confirmation_code')
         check_user = Users.objects.filter(email=email, is_active=False).first()
         if not check_user:
             return ResponseBuilder.build(

@@ -10,45 +10,6 @@ from apps.utils.utils_token import decode_token, normalize_token
 from ecom.settings import TOKEN_SECRET_KEY
 from apps.catalogue.serializers.token import InfoTokenSerializer
 
-def validate_serializer(serializer_class: type[serializers.Serializer]):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(self, request, *args, **kwargs):
-            lg.log_info(
-                message="[VALIDATE_SERIALIZER][CALL]",
-                input=request.data
-            )
-
-            try:
-                serializer = serializer_class(data=request.data)
-            except Exception as e:
-                lg.log_error(
-                    message="[VALIDATE_SERIALIZER][INIT_FAILED]"
-                )
-                return ResponseBuilder.build(
-                    ResponseCodes.INVALID_INPUT,
-                    errors=str(e)
-                )
-
-            if not serializer.is_valid():
-                lg.log_error(
-                    message="[VALIDATE_SERIALIZER][INVALID]",
-                    errors=serializer.errors
-                )
-                return ResponseBuilder.build(
-                    ResponseCodes.INVALID_INPUT,
-                    errors=serializer.errors
-                )
-
-            lg.log_info(
-                message="[VALIDATE_SERIALIZER][SUCCESS]"
-            )
-
-            request.validated_data = serializer.validated_data
-            return func(self, request, *args, **kwargs)
-        return wrapper
-    return decorator
-
 def validate_exception():
     def decorator(func):
         @wraps(func)
@@ -57,7 +18,8 @@ def validate_exception():
                 return func(self, request, *args, **kwargs)
             except Exception as e:
                 lg.log_error(
-                    message="[EXCEPTION][UNHANDLED]"
+                    message="[EXCEPTION][UNHANDLED]",
+                    error=str(e)
                 )
                 return ResponseBuilder.build(
                     ResponseCodes.SYSTEM_ERROR,
