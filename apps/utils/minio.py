@@ -63,10 +63,9 @@ class S3Minio:
 
             return f"{MINIO_BASE_URL}/{MINIO_BUCKET_NAME}/{object_name}"
 
-        except Exception as e:
+        except Exception:
             lg.log_error(
-                message=f"[Upload] Error",
-                error=str(e)
+                message=f"[Upload] Error"
             )
             return None
 

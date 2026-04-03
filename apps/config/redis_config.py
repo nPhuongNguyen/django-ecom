@@ -19,7 +19,7 @@ class RedisService:
             cache.set(key, value, timeout)
             lg.log_info(f"[REDIS] Set key: {key} with timeout: {timeout} seconds")
             return True
-        except Exception as e:
+        except Exception:
             lg.log_error("[REDIS][SET] Error")
             return False
         
@@ -64,7 +64,7 @@ class RedisService:
             if not cache or not cache.client.get_client().ping():
                 return "CRITICAL"
             return "WARNING" if (time.perf_counter() - start_time) > 3 else "NORMAL"
-        except Exception as e:
+        except Exception:
             lg.log_error(message=f"[REDIS][PING][{alias}]")
             return "CRITICAL"
         

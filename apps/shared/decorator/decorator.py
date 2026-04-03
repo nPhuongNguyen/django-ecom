@@ -16,10 +16,9 @@ def validate_exception():
         def wrapper(self, request, *args, **kwargs):
             try:
                 return func(self, request, *args, **kwargs)
-            except Exception as e:
+            except Exception:
                 lg.log_error(
-                    message="[EXCEPTION][UNHANDLED]",
-                    error=str(e)
+                    message="[EXCEPTION][UNHANDLED]"
                 )
                 return ResponseBuilder.build(
                     ResponseCodes.SYSTEM_ERROR,
@@ -70,7 +69,7 @@ def token_required():
                     data=serializer.validated_data
                 )
                 request.data_decode_token = serializer.validated_data
-            except Exception as e:
+            except Exception:
                 lg.log_error(
                     message="[TOKEN][DECODE_EXCEPTION]",
                 )

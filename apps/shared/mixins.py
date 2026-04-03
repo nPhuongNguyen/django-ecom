@@ -348,15 +348,13 @@ class DestroyMixin(BaseMixin):
                     obj.deleted_by = deleted_data.get('deleted_by')
                     obj.save(update_fields=['is_deleted', 'deleted_by', 'deleted_at'])
                     deleted_ids.append(obj_id)
-        except Exception as err:
+        except Exception:
             lg.log_error(
                 message="[DESTROY_MANY][FAILED]",
                 input=input_data,
-                error=str(err)
             )
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
-                errors=str(err)
             )
         lg.log_info(
             message="[DESTROY_MANY][SUCCESS]",

@@ -13,7 +13,7 @@ class QueryLogger:
         try:
             result = execute(sql, params, many, context)
             return result
-        except Exception as e:
+        except Exception:
             # duration_ms = (time.monotonic() - start) * 1000
             duration_ms = (time.perf_counter() - start) * 1000
             lg.log_error(
@@ -22,7 +22,6 @@ class QueryLogger:
                 params=params,
                 many=many,
                 duration_ms=round(duration_ms, 3),
-                error=str(e),
             )
         finally:
             # Sử dụng per_couter thay vì monotonic để đo thời gian chính xác hơn
