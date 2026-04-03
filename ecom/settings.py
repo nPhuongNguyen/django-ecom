@@ -143,6 +143,36 @@ MIDDLEWARE = [
     "apps.middleware.request_middleware.RequestMiddleware",
 ]
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "simple": {
+            "format": "%(message)s",
+        },
+        "detailed": {
+            "format": "[%(asctime)s] %(levelname)s | %(name)s | %(message)s",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "detailed",
+        },
+    },
+
+    "loggers": {
+        "o2m-smart-link-api-logging": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
 
 
 REST_FRAMEWORK = {

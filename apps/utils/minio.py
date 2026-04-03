@@ -55,11 +55,19 @@ class S3Minio:
                 length=lenfile,
                 content_type=content_type,
             )
+            lg.log_info(
+                message=f"[Upload] Success",
+                file_name=file_name,
+                object_name=object_name
+            )
 
             return f"{MINIO_BASE_URL}/{MINIO_BUCKET_NAME}/{object_name}"
 
         except Exception as e:
-            lg.log_error(message=f"[Upload] Error")
+            lg.log_error(
+                message=f"[Upload] Error",
+                error=str(e)
+            )
             return None
 
     @staticmethod

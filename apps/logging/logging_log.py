@@ -29,21 +29,15 @@ def _log(level: str, message=None, **kwargs):
     log_data.update(caller_info)
     try:
         if level == "ERROR":
-            local_log_error(log_data)
+            logger.error(log_data)
         else:
-            local_log_info(log_data)
+            logger.info(log_data)
     finally:
         if settings.IS_DEV == 0:
             push_kafka_task.delay(
                 key="django_ecom_log", 
                 message=log_data
             )
-
-def local_log_info(log_data):
-    logger.info(log_data)
-
-def local_log_error(log_data):
-    logger.error(log_data)
 
 def log_info(message=None, **kwargs):
     _log("INFO", message, **kwargs)
