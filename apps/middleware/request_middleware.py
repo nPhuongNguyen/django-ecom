@@ -18,8 +18,9 @@ class RequestMiddleware:
                 request.headers.get("X-Request-ID") or uuid.uuid4().hex
             )
             UtilsRequestFunc.set_request_id(request_func)
-            request_info = RequestLogger.process_request(request)
+            request_info, files = RequestLogger.process_request(request)
             request.data_input = request_info.get("data", {})
+            request.files = files
             lg.log_info(
                 request=request_info,
                 message="[REQUEST][START]"

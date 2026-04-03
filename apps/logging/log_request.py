@@ -4,14 +4,24 @@ from urllib3 import request
 class RequestLogger:
     @staticmethod
     def process_request(request):
-        method, path, remote_addr, content_type, data = RequestLogger.input_request(request)
-        return{
+        method, path, remote_addr, content_type, data, files = RequestLogger.input_request(request)
+        files_log = {
+            k: {
+                "filename": f.name,
+                "size": f.size,
+                "content_type": f.content_type
+            }
+            for k, f in files.items()
+        } if files else {}
+        request_info = {
             "method": method,
             "path": path,
             "remote_addr": remote_addr,
             "content_type": content_type,
-            "data": data
+            "data": data,
+            "files": files_log
         }
+        return request_info, files
     @staticmethod
     def _get_client_ip(request):
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -26,16 +36,19 @@ class RequestLogger:
         remote_addr = RequestLogger._get_client_ip(request)
         method = request.method.upper()
         data_params = request.GET.dict()
-        if content_type.startswith("application/json"):
+        data_body = {}
+        files = {}
+        if "application/json" in content_type:
             try:
-                data_body = json.loads(request.body.decode('utf-8'))
+                data_body = json.loads(request.body.decode("utf-8"))
             except Exception:
-                data_body = request.body.decode('utf-8')
+                data_body = {}
         else:
             data_body = request.POST.dict()
+            files = request.FILES
         data_input = {
             "params": data_params,
             "body": data_body
         }
-        return method, path, remote_addr, content_type, data_input
+        return method, path, remote_addr, content_type, data_input, files
         
