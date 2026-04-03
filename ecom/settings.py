@@ -94,7 +94,7 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_BACKEND = None
 CELERY_TASK_IGNORE_RESULT = True  # Ép Celery không lưu kết quả, tránh đụng tới DB
 CELERY_RESULT_EXTENDED = False     # Tắt mở rộng kết quả
-print("BROKER:", CELERY_BROKER_URL)
+
 #Telegram BOT
 TOKEN_TELEGRAM_BOT = os.environ.get("TOKEN_TELEGRAM_BOT")
 CHAT_ID_TELEGRAM_BOT = os.environ.get('CHAT_ID_TELEGRAM_BOT')

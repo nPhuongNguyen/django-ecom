@@ -1,7 +1,7 @@
 
 from ..models.products import Attribute, AttributeValue, M2MAttribute
 from ...shared.response import ResponseBuilder, ResponseCodes
-from ...shared.decorator.decorator import validate_exception, validate_serializer
+from ...shared.decorator.decorator import validate_exception
 from ..serializers.m2m_attribute import M2MAtrributeCreateSerializer, M2MAtrributeDetailSerializer, M2MAtrributeInputSerializer
 from ...shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
 from django.db import transaction
@@ -10,11 +10,18 @@ class M2MAttributeUpdateAPI(CreateMixin):
     serializer_class_create = M2MAtrributeCreateSerializer
     serializer_class_detail = M2MAtrributeDetailSerializer
 
-    @validate_serializer(serializer_class=M2MAtrributeInputSerializer)
     def create(self, request, *args, **kwargs):
-        data = request.validated_data
-        attribute_id = data.get('attribute')
-        list_attribute_value = set(data.get('list_attribute_value', []))
+        dataa_input = request.data_input
+        serializer = M2MAtrributeInputSerializer(data=dataa_input)
+        if not serializer.is_valid():
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT,
+                errors=serializer.errors
+            )
+        data_safe = serializer.validated_data
+        data_body_input = data_safe.get("body", {})
+        attribute_id = data_body_input.get('attribute')
+        list_attribute_value = set(data_body_input.get('list_attribute_value', []))
 
         # Lấy danh sách hiện tại trong DB
         existing_values = set(

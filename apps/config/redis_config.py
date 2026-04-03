@@ -2,8 +2,8 @@ from django.core.cache import caches
 from apps.logging import logging_log as lg
 import time
 class RedisService:
-    def __init__(self):
-        self.alias = "default"
+    def __init__(self, alias='default'):
+        self.alias = alias
     def get_cache(self):
         try:
             return caches[self.alias]

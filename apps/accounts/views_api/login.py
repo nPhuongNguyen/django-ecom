@@ -13,18 +13,25 @@ from ...auths.models.users import UserRoles, Users
 
 from ..serializers.login import LoginInputSerializer
 
-from ...shared.decorator.decorator import validate_exception, validate_serializer
+from ...shared.decorator.decorator import validate_exception
 from django.contrib.auth.hashers import check_password
 import uuid
 
 class LoginAPI(APIView):
     @validate_exception()
-    @validate_serializer(serializer_class=LoginInputSerializer)
     def post(self, request, *args, **kwargs):
-        data_input = request.validated_data
-        email_input = data_input.get('user_email')
-        password_input = data_input.get('user_password')
-        remember_me_input = data_input.get('remember_me')
+        data_input = request.data_input
+        data_body_input = data_input.get("body", {})
+        serializer = LoginInputSerializer(data=data_body_input)
+        if not serializer.is_valid():
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT,
+                errors=serializer.errors
+            )
+        data_body_safe = serializer.validated_data
+        email_input = data_body_safe.get('user_email')
+        password_input = data_body_safe.get('user_password')
+        remember_me_input = data_body_safe.get('remember_me')
         user_db = Users.objects.filter(email=email_input).first()
         if not user_db:
             return ResponseBuilder.build(
@@ -71,7 +78,7 @@ class LoginAPI(APIView):
             .values_list('role__code', flat=True)
         )
 
-        redis = RedisService()
+        redis = RedisService(alias="auth")
         key_redis_user_login = str(uuid.uuid4())
         value_redis_user_login = {
             "email": user_db.email,
@@ -82,7 +89,6 @@ class LoginAPI(APIView):
         set_redis_user = redis.set(
             key=key_redis_user_login,
             value=value_redis_user_login,
-            alias="auth"
         )
 
         if not set_redis_user:
