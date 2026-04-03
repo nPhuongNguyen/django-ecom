@@ -1,7 +1,6 @@
 
 from datetime import timedelta
 from django.utils import timezone
-import uuid
 import jwt
 from apps.shared.response import ResponseCodes
 from apps.logging import logging_log as lg
