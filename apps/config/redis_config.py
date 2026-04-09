@@ -46,17 +46,6 @@ class RedisService:
             )
             return False
 
-    def hset_user(self, user_id, data_dict):
-        try:
-            cache = self.get_cache()
-            if not cache:
-                return False
-            client = cache.client.get_client()
-            client.hset(f"user:{user_id}", mapping=data_dict)
-            return True
-        except Exception:
-            lg.log_error(message="[REDIS-ERROR] HSET Error")
-            return False
     def ping(self, alias="default") -> str:
         start_time = time.perf_counter()
         try:

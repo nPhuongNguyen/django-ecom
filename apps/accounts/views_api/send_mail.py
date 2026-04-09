@@ -13,7 +13,8 @@ class SendMailAPIView(APIView):
     @validate_exception()
     def post(self, request, *args, **kwargs):
         data_input = request.data_input
-        serializer = SendMailInputSerializer(data=data_input)
+        data_input_body = data_input.get("body", {})
+        serializer = SendMailInputSerializer(data=data_input_body)
         if not serializer.is_valid():
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,

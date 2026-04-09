@@ -36,9 +36,13 @@ class RequestMiddleware:
                 )
             end = time.perf_counter()
             duration = f"{(end - start): .3f} s"
+            response_data = ""
+            if hasattr(response, "data") and isinstance(response.data, dict):
+                response_data = response.data
             lg.log_info(
                 message="[REQUEST][END]",
-                response=response.data if isinstance(response.data, dict) else "",
+                status_code=response.status_code,
+                response=response_data,
                 duration=duration
             )
             return response
