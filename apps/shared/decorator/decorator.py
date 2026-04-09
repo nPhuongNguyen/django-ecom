@@ -86,7 +86,8 @@ def check_permission(permission_list: list):
         @wraps(func)
         def wrapper(self, request, *args, **kwargs):
             data_token = request.data_decode_token
-            cache_permission = RedisService().get(data_token.get("jti"), alias="auth")
+            redis_service = RedisService(alias="auth")
+            cache_permission = redis_service.get(data_token.get("jti"))
             if not cache_permission:
                 lg.log_error(
                     message="[PERMISSION][CACHE_MISS]",

@@ -23,7 +23,6 @@ class ResponseCodes:
     TOKEN_REQUIRED = ResponseCode(1000, "Token không tồn tại")
     TOKEN_EXPIRED = ResponseCode(1001, "Token hết hạn")
     TOKEN_INVALID_TOKEN = ResponseCode(1002, "Token không hợp lệ")
-    TOKEN_APP_ERROR = ResponseCode(10403, "unauthorized")
 
     FORBIDDEN = ResponseCode(403, "Bạn không có quyền truy cập.")
     

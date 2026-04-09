@@ -123,6 +123,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    "channels",
     'django.contrib.staticfiles',
 
     'apps.catalogue',
@@ -205,6 +207,16 @@ MINIO_BASE_URL = config("MINIO_BASE_URL")
 MINIO_LOCATION = config("MINIO_LOCATION")
 MINIO_PORT = config("MINIO_PORT")
 
+ASGI_APPLICATION = "ecom.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [redis_url(REDIS_HOST, REDIS_PORT, REDIS_DB, REDIS_PASSWORD)]
+        },
+    },
+}
 
 STORAGES = {
     "default": {

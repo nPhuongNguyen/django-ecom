@@ -18,6 +18,7 @@ from django.contrib.auth.hashers import check_password
 import uuid
 
 class LoginAPI(APIView):
+    redis = RedisService(alias="auth")
     @validate_exception()
     def post(self, request, *args, **kwargs):
         data_input = request.data_input
@@ -40,13 +41,6 @@ class LoginAPI(APIView):
                     "email": "Email không tồn tại."
                 }
             )
-        if not check_password(password_input, user_db.password):
-            return ResponseBuilder.build(
-                code=ResponseCodes.INVALID_INPUT,
-                errors={
-                    "password": "Mật khẩu không đúng."
-                }
-            )
         if not user_db.is_active:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -54,7 +48,13 @@ class LoginAPI(APIView):
                     "email": "Email chưa được kích hoạt."
                 }
             )
-        
+        if not check_password(password_input, user_db.password):
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT,
+                errors={
+                    "password": "Mật khẩu không đúng."
+                }
+            )
         #Lấy permissions và roles của user
         list_role = UserRoles.objects.filter(user_id=user_db.id, is_active=True).values_list('role_id', flat=True)
         permission_codes = (
@@ -78,15 +78,15 @@ class LoginAPI(APIView):
             .values_list('role__code', flat=True)
         )
 
-        redis = RedisService(alias="auth")
-        key_redis_user_login = str(uuid.uuid4())
+        jti = str(uuid.uuid4())
+        key_redis_user_login = f"login:{jti}"
         value_redis_user_login = {
             "email": user_db.email,
             "is_super": str(user_db.is_super),
             "list_permission": list(permission_codes),
             "list_role_code": list(role_codes)
         }
-        set_redis_user = redis.set(
+        set_redis_user = self.redis.set(
             key=key_redis_user_login,
             value=value_redis_user_login,
         )
@@ -96,7 +96,7 @@ class LoginAPI(APIView):
                 code=ResponseCodes.SYSTEM_ERROR
             )
         
-        _encode_token = encode_token(key_redis_user_login, TOKEN_SECRET_KEY)
+        _encode_token = encode_token(jti, TOKEN_SECRET_KEY)
         if not _encode_token:
             return ResponseBuilder.build(
                 code=ResponseCodes.SYSTEM_ERROR
