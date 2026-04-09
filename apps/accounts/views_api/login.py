@@ -78,8 +78,8 @@ class LoginAPI(APIView):
             .values_list('role__code', flat=True)
         )
 
-        
-        key_redis_user_login = f"login:{str(uuid.uuid4())}"
+        jti = str(uuid.uuid4())
+        key_redis_user_login = f"login:{jti}"
         value_redis_user_login = {
             "email": user_db.email,
             "is_super": str(user_db.is_super),
@@ -96,7 +96,7 @@ class LoginAPI(APIView):
                 code=ResponseCodes.SYSTEM_ERROR
             )
         
-        _encode_token = encode_token(key_redis_user_login, TOKEN_SECRET_KEY)
+        _encode_token = encode_token(jti, TOKEN_SECRET_KEY)
         if not _encode_token:
             return ResponseBuilder.build(
                 code=ResponseCodes.SYSTEM_ERROR
