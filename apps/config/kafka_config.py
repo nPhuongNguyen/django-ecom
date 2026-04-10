@@ -69,31 +69,6 @@ class InitBroker:
                 settings.KAFKA_TOPIC
             )
             self._initialized = True
-      
-class KafkaConsumerWorker:
-    def __init__(self):
-        self.consumer = KafkaConsumer(
-            settings.KAFKA_TOPIC,
-            bootstrap_servers=settings.LIST_BROKERS,
-            group_id= settings.KAFKA_GROUP_LOG,
-            value_deserializer=lambda v: json.loads(v.decode('utf-8')),
-            key_deserializer=lambda k: k.decode('utf-8') if k else None,
-            auto_offset_reset='earliest',
-            enable_auto_commit=False
-        )
-
-    def run(self, process_message_fn):
-        try:
-            for msg in self.consumer:
-                try:
-                    process_message_fn(msg.key, msg.value)
-                    self.consumer.commit() 
-                except Exception as e:
-                    print(f"[CONSOLE-ERROR] KafkaConsumerWorker: {e}")
-        finally:
-            self.consumer.close()
-
-
 class KafkaService:
     def __init__(self):
         self.bootstrap_servers = settings.LIST_BROKERS
