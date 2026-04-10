@@ -4,31 +4,36 @@ from io import BytesIO
 import time
 from minio import Minio
 from apps.logging import logging_log as lg
-from ecom.settings import (
-    MINIO_ACCESS_KEY,
-    MINIO_SECRET_KEY,
-    MINIO_ENDPOINT,
-    MINIO_PORT,
-    MINIO_BUCKET_NAME,
-    MINIO_LOCATION,
-    MINIO_BASE_URL,
-)
+from django.conf import settings
 
 
 class S3Minio:
-    @staticmethod
-    def get_minio_client():
+    _instance = None
+    _initialized = False
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    def __init__(self):
+        if not self._initialized:
+            self.MINIO_ENDPOINT = settings.MINIO_ENDPOINT
+            self.MINIO_PORT = settings.MINIO_PORT
+            self.MINIO_ACCESS_KEY = settings.MINIO_ACCESS_KEY
+            self.MINIO_SECRET_KEY = settings.MINIO_SECRET_KEY
+            self.MINIO_BUCKET_NAME = settings.MINIO_BUCKET_NAME
+            self.MINIO_LOCATION = settings.MINIO_LOCATION
+            self.MINIO_BASE_URL = settings.MINIO_BASE_URL
+            self._initialized = True
+    def get_minio_client(self):
         return Minio(
-            endpoint=f"{MINIO_ENDPOINT}:{MINIO_PORT}",
-            access_key=MINIO_ACCESS_KEY,
-            secret_key=MINIO_SECRET_KEY,
+            endpoint=f"{self.MINIO_ENDPOINT}:{self.MINIO_PORT}",
+            access_key=self.MINIO_ACCESS_KEY,
+            secret_key=self.MINIO_SECRET_KEY,
             secure=False,
         )
-
-    @staticmethod
-    def minio_upload_file(file, file_name: str, folder: str = "") -> str | None:
+    def minio_upload_file(self, file, file_name: str, folder: str = "") -> str | None:
         try:
-            client = S3Minio.get_minio_client()
+            client = self.get_minio_client()
             if isinstance(file, str):
                 if file.startswith("data:"):
                     file = file.split(",", 1)[1]
@@ -44,12 +49,12 @@ class S3Minio:
             lenfile = len(file)
 
             if folder:
-                object_name = f"{MINIO_LOCATION}/{folder}/{file_name}"
+                object_name = f"{self.MINIO_LOCATION}/{folder}/{file_name}"
             else:
-                object_name = f"{MINIO_LOCATION}/{file_name}"
+                object_name = f"{self.MINIO_LOCATION}/{file_name}"
 
             client.put_object(
-                bucket_name=MINIO_BUCKET_NAME,
+                bucket_name=self.MINIO_BUCKET_NAME,
                 object_name=object_name,
                 data=data,
                 length=lenfile,
@@ -61,20 +66,19 @@ class S3Minio:
                 object_name=object_name
             )
 
-            return f"{MINIO_BASE_URL}/{MINIO_BUCKET_NAME}/{object_name}"
+            return f"{self.MINIO_BASE_URL}/{self.MINIO_BUCKET_NAME}/{object_name}"
 
         except Exception:
             lg.log_error(
                 message=f"[Upload] Error"
             )
             return None
-
-    @staticmethod
-    def ping():
+        
+    def ping(self):
         start = time.perf_counter()
         try:
-            client = S3Minio.get_minio_client()
-            client.bucket_exists(MINIO_BUCKET_NAME)
+            client = self.get_minio_client()
+            client.bucket_exists(self.MINIO_BUCKET_NAME)
             return "WARNING" if (time.process_time() - start > 3) else "NORMAL"
         except Exception:
             lg.log_error(message=f"[Minio][PING] Error")
