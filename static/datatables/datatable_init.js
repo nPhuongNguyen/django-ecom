@@ -1,23 +1,18 @@
 class DataTableLoader {
-    static dt_container$(tbl$) {
-        return tbl$.closest('.dt-container');
-    }
 
-    static dt_top$(tbl$) {
-        return tbl$.closest('.dt-container').find('.dt-top');
+    static dt_search$(tbl$) {
+        return tbl$.closest('.dt-container').find('.dt-search');
     }
-    
-
-    static dt_select_container$(tbl$) {
-        return tbl$.closest('.dt-container').find('.dt-select-container');
-    }
-
     static dt_select_info$(tbl$) {
         return tbl$.closest('.dt-container').find('.dt-select-info');
     }
     static get_selected_row_data(table$) {
         let dtb = table$.DataTable();
         return dtb.rows({ selected: true }).data().toArray();
+    }
+
+    static dt_add$(tbl$){
+        return tbl$.closest('.dt-container').find('.dt-add');
     }
 
     // --- AJAX CONFIG ---
@@ -61,13 +56,19 @@ class DataTableLoader {
     // --- DOM / LAYOUT ---
     static dom() {
         return `
-            <"dt-top flex flex-wrap items-center justify-between kt-card-header min-h-16"f>
-            t
-            <"dt-footer flex flex-wrap items-center justify-between kt-card-footer"
-                <"kt-datatable-length"l>
-                <"p-portion kt-datatable-pagination flex flex-wrap items-center gap-2"
-                    <"kt-datatable-info"i>
-                    p
+            <"dt-header flex items-center justify-between py-3 px-4"
+                <"flex items-center gap-3"
+                    <"dt-search"f>
+                    <"dt-select-info">
+                >
+                <"dt-add ms-auto"> 
+            >
+            <t>
+            <"dt-footer flex justify-between items-center"
+                <"kt-datatable-length" l>
+                <"flex items-center gap-3"
+                    <"kt-datatable-info" i>
+                    <"kt-datatable-pagination" p>
                 >
             >
         `;
@@ -102,41 +103,56 @@ class DataTableLoader {
         if (selectrow === 'multi') return { style: 'multi', info: false };
         return null;
     }
+    static info_selected_row(table$, options, select_info, selectedRows) {
+        const count = selectedRows.length;
+        if (count === 0) {
+            return select_info.empty().hide();
+        }
+
+        // Hiển thị nội dung khi có hàng được chọn
+        const htmlContent = `
+            <div class="dt-select-info-rows flex gap-3 rounded-lg">
+    
+                <div class="flex items-center gap-2">
+                    <i class="ki-filled ki-information-2 text-primary text-xl"></i>
+                    <span class="font-semibold text-gray-700">
+                        Đã chọn: <span class="text-primary">${count}</span> hàng
+                    </span>
+                </div>
+
+                <div class="info-actions-container flex items-center">
+                    
+                </div>
+                
+            </div>
+        `;
+        select_info.html(htmlContent).show();
+        if (options && typeof options.selectRowRender === 'function') {
+            const dt_select_rows$ = select_info.find('.dt-select-info-rows');
+            const actionContainer = dt_select_rows$.find('.info-actions-container');
+            options.selectRowRender(actionContainer, selectedRows, table$);
+        } 
+    }
+
 
     static _init_select_row(settings, json, options, table$, dtb) {
-        const dt_search$ = DataTableLoader.dt_container$(table$).find('.dt-search');
+        const dt_search$ = DataTableLoader.dt_search$(table$);
         if (dt_search$.length > 0) {
-            dtb.on('draw select deselect', function () {
-                const selectInfo$ = DataTableLoader.dt_select_info$(table$);
-                const selectedRow = DataTableLoader.get_selected_row_data(table$);
-                if (selectedRow.length > 0) {
-                    selectInfo$.show();
-                    selectInfo$.find('.dt-select-info-text').text(`${selectedRow.length} row selected`);
-                } else {
-                    selectInfo$.find('.dt-select-info-text').text('');
-                    selectInfo$.hide();
-                }
-            });
-            const select_info$ = $(`
-                <div class="dt-select-info hidden items-center gap-2 text-primary text-sm font-medium">
-                    <span class="dt-select-info-text"></span>
-                </div>
-            `);
-            select_info$.insertAfter(dt_search$);
-            const func_select_render = options?.['selectRowRender'] || null;
-            if (func_select_render && typeof func_select_render === 'function') {
-                func_select_render(select_info$);
-            }
-           
-            const addUrl = table$.data('url-add');
-            if (addUrl) {
-                const addBtn$ = $('<button class="kt-btn kt-btn-primary ml-2">Thêm mới</button>');
-                DataTableLoader.dt_top$(table$).append(addBtn$);
-                addBtn$.on('click', () => {
-                    window.location.href = addUrl;
-                });
+            const searchInput$ = dt_search$.find('input[type="search"]');
+            if (searchInput$.length > 0) {
+                searchInput$.addClass('kt-input w-48');
             }
         }
+        /* 
+            draw để bắt sự kiện load lại datatable
+            select deselect để bắt sự kiện chọn hàng
+        */
+        const dt_select_info$ = DataTableLoader.dt_select_info$(table$);
+        dtb.on('draw select deselect', function () {
+            const selectedRowData$ = DataTableLoader.get_selected_row_data(table$);
+            DataTableLoader.info_selected_row(table$, options, dt_select_info$, selectedRowData$);
+        });
+       
     }
     static init_filter_is_status(table$) {
         const filter$ = table$.find('thead select.dtb_filter_status');
@@ -160,22 +176,18 @@ class DataTableLoader {
         
     }
 
-    static initAddButton(table$, label = 'Thêm mới', onClick) {
-        const dt_top$ = DataTableLoader.dt_top$(table$);
-        if (!dt_top$ || dt_top$.length === 0) return;
+    static initAddButton(table$, label = 'Thêm mới') {
+        const dt_add$ = DataTableLoader.dt_add$(table$);
+        if (!dt_add$ || dt_add$.length === 0) return;
 
-        const addBtn$ = $(`<button class="kt-btn kt-btn-primary ml-2">${label}</button>`);
-        dt_top$.append(addBtn$); 
-        if (typeof onClick === 'function') addBtn$.on('click', onClick);
+        const addBtn$ = $(`<button class="kt-btn kt-btn-primary">${label}</button>`);
+        dt_add$.append(addBtn$); 
     }
 
     static baseInitComplete(settings, json, options, table$){
         const dtb = table$.DataTable();
-        const dt_search$ = DataTableLoader.dt_container$(table$).find('.dt-search');
-        dt_search$.addClass('min-w-64 max-w-96')
-        dt_search$.find('input').addClass('kt-input sm:w-48');
         DataTableLoader._init_select_row(settings, json, options, table$, dtb);
-
+        DataTableLoader.initAddButton(table$);
     }
 
     // --- INIT ---
@@ -208,22 +220,14 @@ class DataTableLoader {
                 checkOnToggle(id);
             });
         }
-        return dt;
-        
+        return dt; 
     }
 
     static formatPriceOnInput(value) {
         if (!value) return "";
-
-        // đổi về dạng số với dấu phẩy
         value = value.toString().replace(".", ",");
-
-        // tách phần nguyên + thập phân
         let parts = value.split(",");
-
-        // format phần nguyên: 100000 → 100.000
         parts[0] = Number(parts[0]).toLocaleString("vi-VN");
-
         return parts.join(",");
     }
     static col_is_price(opts) {
