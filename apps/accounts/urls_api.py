@@ -5,6 +5,6 @@ from apps.accounts import views_api
 
 urlpatterns = [
        #User
-    path('users',views_api.UserListAPI.as_view(), name='UserListAPI'),
+    path('user',views_api.UserListAPI.as_view(), name='UserListAPI'),
     path('user-detail', views_api.UserDetailAPI.as_view(), name= 'UserDetailAPI'),
 ]

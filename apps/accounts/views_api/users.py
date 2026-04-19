@@ -1,11 +1,11 @@
 
-from ..models.users import Users
+from ..models.user import User
 from apps.accounts.serializers.users import UserListSerializer, UserDetailSerializer, UserCreateSerializer, UserUpdateSerializer
 from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
 
 
 class UserListAPI(ListMixin, CreateMixin, DestroyMixin):
-    queryset = Users.objects.all()
+    queryset = User.objects.all()
     serializer_class_list = UserListSerializer
     serializer_class_detail = UserDetailSerializer
     serializer_class_create = UserCreateSerializer
@@ -20,7 +20,7 @@ class UserListAPI(ListMixin, CreateMixin, DestroyMixin):
         return self.destroy_many(request, *args, **kwargs)
 
 class UserDetailAPI(UpdateMixin, DestroyMixin):
-    queryset = Users.objects.all()
+    queryset = User.objects.all()
     serializer_class_update = UserUpdateSerializer
 
     def put(self, request, *args, **kwargs):

@@ -3,17 +3,17 @@ from rest_framework import serializers
 
 from django.contrib.auth.hashers import make_password
 
-from ..models.users import Users
+from ..models.user import User
 class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Users
+        model = User
         fields = ['full_name', 'phone_number', 'email']
 
 class UserCreateSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
     def validate_email(self, email):
-        if Users.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("Email already exists.")
         return email
     
@@ -33,22 +33,22 @@ class UserCreateSerializer(serializers.ModelSerializer):
         validated_data["password"] = make_password(validated_data["password"])
         return super().create(validated_data)
     class Meta:
-        model = Users
+        model = User
         fields = ['email', 'password', 'confirm_password']
 
 class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Users
+        model = User
         fields = ['full_name', 'phone_number', 'email']
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Users
+        model = User
         fields = ['full_name', 'phone_number', 'email', 'is_active']
 
 
 class UserConfirmSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Users
+        model = User
         fields = ['is_active']

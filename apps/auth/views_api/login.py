@@ -1,8 +1,11 @@
 from rest_framework.views import APIView
 
-from ...accounts.models.roles import RolePermissions
+from ...accounts.models.user import User
 
-from ...accounts.models.users import UserRoles, Users
+
+from ..models.user_role import UserRole
+
+from ..models.role_permission import RolePermission
 
 from ..serializers.login import LoginInputSerializer
 
@@ -35,7 +38,7 @@ class LoginAPI(APIView):
         email_input = data_body_safe.get('user_email')
         password_input = data_body_safe.get('user_password')
         remember_me_input = data_body_safe.get('remember_me')
-        user_db = Users.objects.filter(email=email_input).first()
+        user_db = User.objects.filter(email=email_input).first()
         if not user_db:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -58,9 +61,9 @@ class LoginAPI(APIView):
                 }
             )
         #Lấy permissions và roles của user
-        list_role = UserRoles.objects.filter(user_id=user_db.id, is_active=True).values_list('role_id', flat=True)
+        list_role = UserRole.objects.filter(user_id=user_db.id, is_active=True).values_list('role_id', flat=True)
         permission_codes = (
-            RolePermissions.objects
+            RolePermission.objects
             .filter(
                 role_id__in=list_role,
                 is_active=True,
@@ -71,7 +74,7 @@ class LoginAPI(APIView):
             .distinct() # User có thể có nhiều role, nên cần distinct để tránh trùng lặp permission
         )
         role_codes = (
-            UserRoles.objects
+            UserRole.objects
             .filter(
                 user_id=user_db.id,
                 is_active=True,

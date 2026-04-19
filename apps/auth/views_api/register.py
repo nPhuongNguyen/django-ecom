@@ -1,7 +1,7 @@
 
 from rest_framework.views import APIView
 
-from ...accounts.models.users import Users
+from ...accounts.models.user import User
 
 from ..models.send_mail import TemplateEmail
 
@@ -84,7 +84,7 @@ class RegisterConfirmAPI(APIView):
         data_input_safe = serializer.validated_data
         email = data_input_safe.get('email')
         confirmation_code = data_input_safe.get('confirmation_code')
-        check_user = Users.objects.filter(email=email, is_active=False).first()
+        check_user = User.objects.filter(email=email, is_active=False).first()
         if not check_user:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -100,7 +100,7 @@ class RegisterConfirmAPI(APIView):
                 }
             )
         #Update user is_active = True
-        Users.objects.filter(id=check_user.id).update(is_active=True)
+        User.objects.filter(id=check_user.id).update(is_active=True)
         #Delete cache OTP
         self.redis_auth.delete(key=f"register:otp:{check_user.id}")
         return ResponseBuilder.build(
@@ -121,7 +121,7 @@ class RegisterResendOTPAPI(APIView):
             )
         data_input_safe = serializer.validated_data
         email = data_input_safe.get('email')
-        check_user = Users.objects.filter(email=email, is_active=False).first()
+        check_user = User.objects.filter(email=email, is_active=False).first()
         if not check_user:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
