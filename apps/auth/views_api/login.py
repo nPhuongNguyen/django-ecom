@@ -1,6 +1,11 @@
 from rest_framework.views import APIView
 
-from ...auths.models.roles import RolePermissions
+from ...accounts.models.roles import RolePermissions
+
+from ...accounts.models.users import UserRoles, Users
+
+from ..serializers.login import LoginInputSerializer
+
 
 from ...config.redis_config import RedisService
 from ecom.settings import TOKEN_SECRET_KEY
@@ -9,9 +14,6 @@ from ...utils.utils_token import encode_token
 
 from ...shared.response import ResponseBuilder, ResponseCodes
 
-from ...auths.models.users import UserRoles, Users
-
-from ..serializers.login import LoginInputSerializer
 
 from ...shared.decorator.decorator import validate_exception
 from django.contrib.auth.hashers import check_password

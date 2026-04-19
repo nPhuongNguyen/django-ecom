@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'django_filters',
     'storages',
     'apps.catalogue',
-    'apps.auths',
+    'apps.auth',
     'apps.accounts',
     'apps.shared',
 ]
@@ -141,7 +141,37 @@ REST_FRAMEWORK = {
     'DATE_FORMAT': '%Y-%m-%d',
 }
 
-# 9. EMAIL & NOTIFICATIONS
+# 9. LOGGING
+# ----------------------------------------------------------------------
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "%(message)s",
+        },
+        "detailed": {
+            "format": "[%(asctime)s] %(levelname)s | %(name)s | %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "detailed",
+        },
+    },
+    "loggers": {
+        "o2m-smart-link-api-logging": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+
+}
+
+# 10. EMAIL & NOTIFICATIONS
 # ----------------------------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
@@ -154,7 +184,7 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 TOKEN_TELEGRAM_BOT = os.environ.get("TOKEN_TELEGRAM_BOT")
 CHAT_ID_TELEGRAM_BOT = os.environ.get('CHAT_ID_TELEGRAM_BOT')
 
-# 10. INTERNATIONALIZATION & STATIC
+# 11. INTERNATIONALIZATION & STATIC
 # ----------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Ho_Chi_Minh'

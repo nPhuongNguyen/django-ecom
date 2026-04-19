@@ -5,7 +5,7 @@ import time
 import uuid
 from apps.logging import logging_log as lg
 from apps.logging.log_request import RequestLogger
-from ..utils.request_func import UtilsRequestFunc
+from ..shared.utils.contextvar import RequestContext
 
 class RequestMiddleware:
     def __init__(self, get_response):
@@ -17,7 +17,7 @@ class RequestMiddleware:
             request_func = (
                 request.headers.get("X-Request-ID") or uuid.uuid4().hex
             )
-            UtilsRequestFunc.set_request_id(request_func)
+            RequestContext.set_request_id(request_func)
             request_info, files = RequestLogger.process_request(request)
             request.data_input = request_info.get("data", {})
             request.files = files
@@ -47,4 +47,5 @@ class RequestMiddleware:
             )
             return response
         finally:
-            UtilsRequestFunc.clear_request_func()
+            RequestContext.clear_request_id()
+            RequestContext.clear_request_func()

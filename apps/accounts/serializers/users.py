@@ -1,8 +1,9 @@
 import email
 from rest_framework import serializers
 
-from apps.auths.models.users import Users
 from django.contrib.auth.hashers import make_password
+
+from ..models.users import Users
 class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:

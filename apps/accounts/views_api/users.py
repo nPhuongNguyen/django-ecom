@@ -1,5 +1,6 @@
-from apps.auths.models.users import Users
-from apps.auths.serializers.users import UserListSerializer, UserDetailSerializer, UserCreateSerializer, UserUpdateSerializer
+
+from ..models.users import Users
+from apps.accounts.serializers.users import UserListSerializer, UserDetailSerializer, UserCreateSerializer, UserUpdateSerializer
 from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
 
 

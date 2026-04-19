@@ -5,8 +5,8 @@ from django.conf import settings
 from django.utils import timezone
 import inspect
 import os
+from ..shared.utils.contextvar import RequestContext
 from apps.utils.tasks import push_kafka_task
-from ..utils.request_func import UtilsRequestFunc
 logger = logging.getLogger("o2m-smart-link-api-logging")
 
 def _log(level: str, message=None, **kwargs):
@@ -23,8 +23,8 @@ def _log(level: str, message=None, **kwargs):
     log_data = {
         "timestamp": timezone.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],
         "level": level,
-        "request_id": UtilsRequestFunc.get_request_id(),
-        "func_name": UtilsRequestFunc.get_request_func(),
+        "request_id": RequestContext.get_request_id(),
+        "func_name": RequestContext.get_request_func(),
         "message": message,
     }
     if kwargs:

@@ -1,4 +1,5 @@
 
+from .models.users import Users
 
 class AccountsRepository:
     _instance = None
@@ -10,5 +11,6 @@ class AccountsRepository:
 
     def __init__(self):
         if not self._initialized:
+            self.model_user = Users
             self._initialized = True
     pass

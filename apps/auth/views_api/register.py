@@ -1,6 +1,8 @@
 
 from rest_framework.views import APIView
 
+from ...accounts.models.users import Users
+
 from ..models.send_mail import TemplateEmail
 
 from ...utils.generate_otp import generate_otp
@@ -11,9 +13,8 @@ from ...config.redis_config import RedisService
 from ...utils.tasks import send_mail_task
 
 
-from ...auths.serializers.users import UserCreateSerializer
+from ...accounts.serializers.users import UserCreateSerializer
 
-from ...auths.models.users import Users
 
 from ...shared.response import ResponseBuilder, ResponseCodes
 from apps.logging import logging_log as lg
