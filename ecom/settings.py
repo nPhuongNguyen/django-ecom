@@ -17,8 +17,6 @@ API_VERSION = os.environ.get("API_VERSION")
 IS_DEV = int(os.environ.get('IS_DEV', 0))
 
 DJANGO_APPS = [
-    'daphne',
-    'channels',
     'django.contrib.staticfiles',
 ]
 

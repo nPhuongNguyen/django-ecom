@@ -11,9 +11,9 @@ class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     ordering_fields = ['name']
     filterset_fields = ['is_active']
     @validate_exception()
-    @rate_limit_ip(limit=5, window=60)
-    @token_required()
-    @check_permission(permission_list=["catalogue_products__list"])
+    # @rate_limit_ip(limit=5, window=60)
+    # @token_required()
+    # @check_permission(permission_list=["catalogue_products__list"])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     

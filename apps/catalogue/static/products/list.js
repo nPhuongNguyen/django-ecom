@@ -67,12 +67,16 @@ $(document).ready(function () {
             } 
         },
         selectRow: 'multi',
-        selectRowRender: (select_info$) => {
-            const btnDestroy$ = $(`<button class="kt-btn kt-btn-destructive">Delete selected</button>`);
-            select_info$.append(btnDestroy$);
-
+        selectRowRender: (actionContainer, selectedRows, table$) => {
+            const btnDestroy$ = $(`
+                <button class="kt-btn kt-btn-destructive flex items-center gap-2">
+                    <i class="ki-filled ki-trash"></i>
+                    Delete selected
+                </button>
+            `);
+            actionContainer.append(btnDestroy$);
             btnDestroy$.on('click', async function () {
-                const id_selecteds = DataTableLoader.get_selected_row_data(tbl$).map(row => row.id);
+                const id_selecteds = selectedRows.map(r => r.id);
                 if (id_selecteds.length === 0) return;
                 const check_confirmed = await SweetAlertHelper.confirmDelete({});
                 if (!check_confirmed) return;
@@ -99,5 +103,11 @@ $(document).ready(function () {
             });
         },
     });
+    // DataTableLoader.initAddButton(tbl$, 'Thêm mới', () => {
+    //     const addUrl = tbl$.data('url-add');
+    //     if (addUrl) {
+    //         window.location.href = addUrl;
+    //     }
+    // });
     DataTableLoader.init_filter_is_status(tbl$);
 });
