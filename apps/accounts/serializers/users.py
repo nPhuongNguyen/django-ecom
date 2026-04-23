@@ -13,9 +13,15 @@ class UserListSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
     def validate_email(self, email):
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("Email already exists.")
-        return email
+        user_check = User.objects.filter(email=email).first()
+        if user_check:
+            if not user_check.is_active:
+                raise serializers.ValidationError("Email đã tồn tại nhưng chưa được kích hoạt, vui lòng kiểm tra email để kích hoạt tài khoản.")
+            elif user_check.is_deleted:
+                raise serializers.ValidationError("Email đã tồn tại nhưng đã bị khóa, vui lòng liên hệ admin để được hỗ trợ.")
+            else:
+                raise serializers.ValidationError("Email đã tồn tại.")
+        return email  
     
     def validate(self, attrs):
         password = attrs.get('password')

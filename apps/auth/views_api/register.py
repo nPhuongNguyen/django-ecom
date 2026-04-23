@@ -57,11 +57,11 @@ class RegisterAPI(APIView):
             html = template_email.format
             html = html.replace("{otp}", otp)
             #Send mail
-            # send_mail_task.delay(
-            #     subject="OTP Register",
-            #     to=[email],
-            #     html_message=html
-            # )
+            send_mail_task.delay(
+                subject="OTP Register",
+                to=[email],
+                html_message=html
+            )
             return ResponseBuilder.build(
                 code=ResponseCodes.SUCCESS
             )
@@ -151,11 +151,11 @@ class RegisterResendOTPAPI(APIView):
             html = template_email.format
             html = html.replace("{otp}", otp)
             #Send mail
-            # send_mail_task.delay(
-            #     subject="OTP Register",
-            #     to=[email],
-            #     html_message=html
-            # )
+            send_mail_task.delay(
+                subject="OTP Register",
+                to=[email],
+                html_message=html
+            )
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS
         )
