@@ -1,6 +1,8 @@
 
 from rest_framework.views import APIView
 
+from ...accounts.models.user import User
+
 from ..models.send_mail import TemplateEmail
 
 from ...utils.generate_otp import generate_otp
@@ -11,9 +13,8 @@ from ...config.redis_config import RedisService
 from ...utils.tasks import send_mail_task
 
 
-from ...auths.serializers.users import UserCreateSerializer
+from ...accounts.serializers.users import UserCreateSerializer
 
-from ...auths.models.users import Users
 
 from ...shared.response import ResponseBuilder, ResponseCodes
 from apps.logging import logging_log as lg
@@ -56,11 +57,11 @@ class RegisterAPI(APIView):
             html = template_email.format
             html = html.replace("{otp}", otp)
             #Send mail
-            # send_mail_task.delay(
-            #     subject="OTP Register",
-            #     to=[email],
-            #     html_message=html
-            # )
+            send_mail_task.delay(
+                subject="OTP Register",
+                to=[email],
+                html_message=html
+            )
             return ResponseBuilder.build(
                 code=ResponseCodes.SUCCESS
             )
@@ -83,7 +84,7 @@ class RegisterConfirmAPI(APIView):
         data_input_safe = serializer.validated_data
         email = data_input_safe.get('email')
         confirmation_code = data_input_safe.get('confirmation_code')
-        check_user = Users.objects.filter(email=email, is_active=False).first()
+        check_user = User.objects.filter(email=email, is_active=False).first()
         if not check_user:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -99,7 +100,7 @@ class RegisterConfirmAPI(APIView):
                 }
             )
         #Update user is_active = True
-        Users.objects.filter(id=check_user.id).update(is_active=True)
+        User.objects.filter(id=check_user.id).update(is_active=True)
         #Delete cache OTP
         self.redis_auth.delete(key=f"register:otp:{check_user.id}")
         return ResponseBuilder.build(
@@ -120,7 +121,7 @@ class RegisterResendOTPAPI(APIView):
             )
         data_input_safe = serializer.validated_data
         email = data_input_safe.get('email')
-        check_user = Users.objects.filter(email=email, is_active=False).first()
+        check_user = User.objects.filter(email=email, is_active=False).first()
         if not check_user:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -150,11 +151,11 @@ class RegisterResendOTPAPI(APIView):
             html = template_email.format
             html = html.replace("{otp}", otp)
             #Send mail
-            # send_mail_task.delay(
-            #     subject="OTP Register",
-            #     to=[email],
-            #     html_message=html
-            # )
+            send_mail_task.delay(
+                subject="OTP Register",
+                to=[email],
+                html_message=html
+            )
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS
         )
