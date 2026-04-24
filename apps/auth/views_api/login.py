@@ -1,11 +1,11 @@
 from rest_framework.views import APIView
 
-from ...accounts.models.user import User
+from ..services.role_permission import RolePermissionService
 
+from ..services.user_role import UserRoleService
 
-from ..models.user_role import UserRole
+from ...accounts.services.user import UserService
 
-from ..models.role_permission import RolePermission
 
 from ..serializers.login import LoginInputSerializer
 
@@ -24,6 +24,9 @@ import uuid
 
 class LoginAPI(APIView):
     redis = RedisService(alias="auth")
+    user_service = UserService()
+    user_role_service = UserRoleService()
+    role_permission_service = RolePermissionService()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         data_input = request.data_input
@@ -38,7 +41,7 @@ class LoginAPI(APIView):
         email_input = data_body_safe.get('user_email')
         password_input = data_body_safe.get('user_password')
         remember_me_input = data_body_safe.get('remember_me')
-        user_db = User.objects.filter(email=email_input).first()
+        user_db = self.user_service.get_user_by_email(email_input)
         if not user_db:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -61,27 +64,9 @@ class LoginAPI(APIView):
                 }
             )
         #Lấy permissions và roles của user
-        list_role = UserRole.objects.filter(user_id=user_db.id, is_active=True).values_list('role_id', flat=True)
-        permission_codes = (
-            RolePermission.objects
-            .filter(
-                role_id__in=list_role,
-                is_active=True,
-                permission__is_active=True,
-                role__is_active=True,
-            )
-            .values_list('permission__code', flat=True)
-            .distinct() # User có thể có nhiều role, nên cần distinct để tránh trùng lặp permission
-        )
-        role_codes = (
-            UserRole.objects
-            .filter(
-                user_id=user_db.id,
-                is_active=True,
-                role__is_active=True
-            )
-            .values_list('role__code', flat=True)
-        )
+        list_role = self.user_role_service.get_list_role_by_user_id(user_id=user_db.id)
+        permission_codes = self.role_permission_service.list_permission_by_list_role(list_role=list_role)
+        role_codes = self.user_role_service.get_role_code_by_user_id(user_id=user_db.id)
 
         jti = str(uuid.uuid4())
         key_redis_user_login = f"login:{jti}"
