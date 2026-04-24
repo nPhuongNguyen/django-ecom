@@ -1,6 +1,6 @@
 from rest_framework import serializers
 class SendMailInputSerializer(serializers.Serializer):
-    template_id = serializers.IntegerField()
+    template_code = serializers.CharField(max_length=100)
     subject = serializers.CharField(max_length=255)
     mail_to = serializers.ListField(
         child=serializers.EmailField(),

@@ -1,6 +1,10 @@
 
 from rest_framework.views import APIView
 
+from ...accounts.services.user import UserService
+
+from ...catalogue.services.template_email import TemplateEmailService
+
 from ...accounts.models.user import User
 
 from ..models.send_mail import TemplateEmail
@@ -13,7 +17,7 @@ from ...config.redis_config import RedisService
 from ...utils.tasks import send_mail_task
 
 
-from ...accounts.serializers.users import UserCreateSerializer
+from ...accounts.serializers.users import UserConfirmSerializer, UserCreateSerializer
 
 
 from ...shared.response import ResponseBuilder, ResponseCodes
@@ -23,6 +27,7 @@ from ..serializers.register import RegisterConfirmInputSerializer, RegisterResen
 from django.db import transaction
 class RegisterAPI(APIView):
     redis_auth = RedisService('auth')
+    template_email_service = TemplateEmailService()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         #Data input
@@ -36,7 +41,7 @@ class RegisterAPI(APIView):
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
-        template_email = TemplateEmail.objects.filter(code="confirm-register", is_active=True).first()
+        template_email = self.template_email_service.get_template_by_code(code='confirm-register')
         if not template_email:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -71,6 +76,7 @@ class RegisterAPI(APIView):
     
 class RegisterConfirmAPI(APIView):
     redis_auth = RedisService('auth')
+    user_service = UserService()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         data_input = request.data_input
@@ -84,7 +90,7 @@ class RegisterConfirmAPI(APIView):
         data_input_safe = serializer.validated_data
         email = data_input_safe.get('email')
         confirmation_code = data_input_safe.get('confirmation_code')
-        check_user = User.objects.filter(email=email, is_active=False).first()
+        check_user = self.user_service.get_user_by_email(email=email,is_active=False)
         if not check_user:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -100,7 +106,10 @@ class RegisterConfirmAPI(APIView):
                 }
             )
         #Update user is_active = True
-        User.objects.filter(id=check_user.id).update(is_active=True)
+        serializer = UserConfirmSerializer(instance=check_user, data={
+            'is_active': True
+        }, partial=True)
+        serializer.save()
         #Delete cache OTP
         self.redis_auth.delete(key=f"register:otp:{check_user.id}")
         return ResponseBuilder.build(
@@ -109,6 +118,8 @@ class RegisterConfirmAPI(APIView):
     
 class RegisterResendOTPAPI(APIView):
     redis_auth = RedisService('auth')
+    user_service = UserService()
+    template_email_service = TemplateEmailService()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         data_input = request.data_input
@@ -121,7 +132,7 @@ class RegisterResendOTPAPI(APIView):
             )
         data_input_safe = serializer.validated_data
         email = data_input_safe.get('email')
-        check_user = User.objects.filter(email=email, is_active=False).first()
+        check_user = self.user_service.get_user_by_email(email=email,is_active=False)
         if not check_user:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -143,7 +154,7 @@ class RegisterResendOTPAPI(APIView):
                 },
                 timeout=300 #5 minutes
             )
-            template_email = TemplateEmail.objects.filter(code="confirm-register", is_active=True).first()
+            template_email = self.template_email_service.get_template_by_code(code='confirm-register')
             if not template_email:
                 return ResponseBuilder.build(
                     code=ResponseCodes.INVALID_INPUT,
