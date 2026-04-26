@@ -109,6 +109,11 @@ class RegisterConfirmAPI(APIView):
         serializer = UserConfirmSerializer(instance=check_user, data={
             'is_active': True
         }, partial=True)
+        if not serializer.is_valid():
+            return ResponseBuilder.build(
+                code=ResponseCodes.INVALID_INPUT,
+                errors=serializer.errors
+            )
         serializer.save()
         #Delete cache OTP
         self.redis_auth.delete(key=f"register:otp:{check_user.id}")

@@ -17,7 +17,7 @@ class ProductListView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        return render(request,'products/list.html', context=context)
+        return render(request,'product/list.html', context=context)
     
 class ProductDetailView(View):
     MASK_VIEW_CONFIG_UPDATE = {
@@ -32,7 +32,7 @@ class ProductDetailView(View):
             context['obj_product'] = product
         except:
             return render(request,'admin/notfound/notfound.html', context=context)
-        return render(request, 'products/detail.html', context=context)
+        return render(request, 'product/detail.html', context=context)
     
 class ProductCreateView(View):
     MASK_VIEW_CONFIG_UPDATE = {
@@ -41,4 +41,4 @@ class ProductCreateView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        return render(request, 'products/create.html', context=context)
+        return render(request, 'product/create.html', context=context)

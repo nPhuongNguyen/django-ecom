@@ -17,7 +17,7 @@ class AttributeListView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        return render(request,'attributes/list.html', context=context)
+        return render(request,'attribute/list.html', context=context)
     
 class AttributeDetailView(View):
     MASK_VIEW_CONFIG_UPDATE = {
@@ -29,12 +29,12 @@ class AttributeDetailView(View):
         pk = kwargs.get('pk')
         try:
             attribute = Attribute.objects.get(pk=pk)
-            attribute_values = attribute.values.all()
+            attribute_value = attribute.values.all()
             context['obj_attribute'] = attribute
-            context['obj_attribute_values'] = attribute_values
+            context['obj_attribute_value'] = attribute_value
         except:
             return render(request,'admin/notfound/notfound.html', context=context)
-        return render(request,'attributes/detail.html', context=context)
+        return render(request,'attribute/detail.html', context=context)
     
 class AttributeCreateView(View):
     MASK_VIEW_CONFIG_UPDATE = {
@@ -43,7 +43,7 @@ class AttributeCreateView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        return render(request,'attributes/create.html', context=context)
+        return render(request,'attribute/create.html', context=context)
     
 class AttributeValueListView(View):
     MASK_VIEW_CONFIG_UPDATE = {
@@ -52,4 +52,4 @@ class AttributeValueListView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        return render(request,'attribute_values/list.html', context=context)
+        return render(request,'attribute_value/list.html', context=context)
