@@ -15,5 +15,4 @@ pip install -r requirements.txt
 python manage.py runserver
 
 # Run task
-
 celery -A ecom worker --loglevel=info --pool=solo -Q celery,woker-push-task

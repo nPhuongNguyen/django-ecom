@@ -1,3 +1,3 @@
-from .products import *
-from .product_variants import *
-from .attributes import *
+from .product import *
+from .product_variant import *
+from .attribute import *

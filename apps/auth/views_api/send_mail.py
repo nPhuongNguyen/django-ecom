@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
 
+from ...catalogue.services.template_email import TemplateEmailService
+
 from ...utils.tasks import send_mail_task
 
 from ...shared.response import ResponseBuilder, ResponseCodes
@@ -10,6 +12,7 @@ from ..serializers.send_mail import SendMailInputSerializer
 from ...shared.decorator.decorator import validate_exception
 
 class SendMailAPIView(APIView):
+    template_email_service = TemplateEmailService()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         data_input = request.data_input
@@ -22,7 +25,7 @@ class SendMailAPIView(APIView):
             )
         data_input_safe = serializer.validated_data
         data_input_body = data_input_safe.get("body", {})
-        template_email = TemplateEmail.objects.filter(id=data_input_body.get("template_id"), is_active=True).first()
+        template_email = self.template_email_service.get_template_by_code(code=data_input_body.get("template_code"))
         if not template_email:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
