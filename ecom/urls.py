@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/auth/', include('apps.auth.urls_api')),
     path('api/catalogue/', include('apps.catalogue.urls_api')),
     path('api/accounts/', include('apps.accounts.urls_api')),
+    path('api/sales/', include('apps.sales.urls_api')),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ]
 
@@ -29,6 +30,7 @@ urlpatterns = [
 urlpatterns +=[
     path('catalogue/',include('apps.catalogue.urls')),
     path('auth/', include('apps.auth.urls')),
+    path('accounts/', include('apps.accounts.urls'))
 ]
 
 #Health Check
