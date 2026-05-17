@@ -1,0 +1,58 @@
+{% extends 'admin/base.html' %}
+{% load static i18n %}
+{% block head %}
+{% include 'import/jquery_import.html' %}
+{% include 'import/datatable_import.html' %}
+{% include 'import/sweetalert2_import.html' %}
+{% include 'import/spin_import.html' %}
+{% include 'import/axios_import.html' %}
+{% include 'import/select2_import.html' %}
+{% include 'import/toast_import.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="w-full px-10 lg:px-10 xl:px-4">
+    <div class="grid w-full space-y-5">
+        <div class="kt-card">
+            <table class="kt-table hover cursor-pointer" id="datatables-user"
+                data-url="{% url 'ProductListAPI' %}" data-url-list="{% url 'ProductListView' %}"
+                data-url-delete="{% url 'ProductDestroyAPI' %}" data-url-add="{% url 'ProductCreateView' %}"
+                data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
+                data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}">
+                <thead>
+                    <tr>
+                        <th scope="col" class="w-30" data-kt-datatable-column="label">
+                            {% trans 'Name' %}
+                        </th>
+                        <th scope="col" class="w-30" data-kt-datatable-column="label">
+                            {% trans 'Slug' %}
+                        </th>
+                        <th scope="col" class="w-30" data-kt-datatable-column="label">
+                            {% trans 'Description' %}
+                        </th>
+                        <th scope="col" class="w-30" data-kt-datatable-column="label">
+                            {% trans 'Price' %}
+                        </th>
+                        <th scope="col" class="w-30" data-kt-datatable-column="label">
+                            {% trans 'Status' %}
+                        </th>
+                    </tr>
+                    <tr class="dt-filter-row">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            {% include 'extends/filter/status.html' %}
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot %}
+
+{% endblock %}

@@ -5,7 +5,7 @@ from ...shared.decorator.views import mask_view
 
 
 MASK_VIEW_CONFIG ={
-    "accordion": "account",
+    "accordion": "ecommerce",
     "accordion_child": "user"
 }
 
