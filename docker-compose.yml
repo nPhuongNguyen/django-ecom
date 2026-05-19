@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: django-ecom
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    container_name: adminer_ui
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  redis_auth:
+    image: redis:7
+    container_name: redis_auth
+    restart: always
+    command: >
+      redis-server
+      --requirepass redis_auth
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_auth_data:/data
+
+  redis_default:
+    image: redis:7
+    container_name: redis_default
+    restart: always
+    command: >
+      redis-server
+      --requirepass redis_default
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_default_data:/data
+
+volumes:
+  mysql_data:
+  redis_auth_data:
+  redis_default_data:

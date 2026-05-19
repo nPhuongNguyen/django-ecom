@@ -3,7 +3,7 @@ from telegram import Bot
 
 from ..settings import TOKEN_TELEGRAM_BOT
 
-bot = Bot(token=TOKEN_TELEGRAM_BOT)
+bot = Bot(token=TOKEN_TELEGRAM_BOT) if TOKEN_TELEGRAM_BOT else None
 
 async def _send(chat_id: str, message: str):
     await bot.send_message(chat_id=chat_id, text=message)
