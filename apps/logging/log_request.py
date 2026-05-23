@@ -31,7 +31,7 @@ class RequestLogger:
     
     @staticmethod
     def input_request(request):
-        content_type = request.headers.get("Content-Type", "")
+        content_type = request.headers.get("Content-Type", "").lower()
         path = request.get_full_path()
         remote_addr = RequestLogger._get_client_ip(request)
         method = request.method.upper()

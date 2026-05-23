@@ -2,9 +2,6 @@ import uuid
 from apps.logging import logging_log as lg
 from apps.logging.log_request import RequestLogger
 import time
-import uuid
-from apps.logging import logging_log as lg
-from apps.logging.log_request import RequestLogger
 from ..shared.utils.contextvar import RequestContext
 
 class RequestMiddleware:

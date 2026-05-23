@@ -12,8 +12,8 @@ class ResponseCode:
     def __init__(self, status_code: int, message: str):
         self.status_code = status_code
         self.message = message
-class Messsage:
-    pass
+
+
 class ResponseCodes:
     SUCCESS = ResponseCode(1, "Thành công.")
     SYSTEM_ERROR = ResponseCode(500, "Lỗi hệ thống, vui lòng thử lại sau.")

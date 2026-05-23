@@ -103,7 +103,6 @@ CELERY_RESULT_EXTENDED = False
 # Kafka
 LIST_BROKERS = os.environ.get('LIST_BROKERS', '').split(',')
 KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
-KAFKA_GROUP_LOG = os.environ.get('KAFKA_GROUP_LOG')
 
 # 7. STORAGE (MINIO)
 # ----------------------------------------------------------------------
