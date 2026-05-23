@@ -6,8 +6,6 @@ __all__ = [
     'UpdateMixin',
     'DestroyMixin',
 ]
-
-from datetime import datetime
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from apps.logging import logging_log as lg
@@ -180,8 +178,6 @@ class CreateMixin(BaseMixin):
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
-        
-        # instance = serializer.save(**self.get_context_created())
         instance = self.perform_create(serializer, **self.get_context_created())
         output_data = serializer_detail(instance=instance).data
         lg.log_info(

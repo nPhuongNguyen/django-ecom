@@ -7,40 +7,42 @@ from apps.shared.models import BaseModelActive, BaseModelCreated, BaseModelDelet
 class Product(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    price = models.IntegerField(default=0)
     description = models.TextField(blank=True)
     img = models.CharField(max_length=255, blank=True)
     category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, null=True)
 
     class Meta:
-        db_table = 'catalogue_products'
+        db_table = 'catalogue_product'
 
 class ProductVariant(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     product = models.ForeignKey(Product, db_column= 'product_id', on_delete=models.RESTRICT, related_name='variants')
     name = models.CharField(max_length=100)
     img = models.CharField(max_length=255, blank=True)
     sku = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    price = models.IntegerField(default=0)
     stock_qty = models.IntegerField(default=0)
 
     class Meta:
-        db_table = 'catalogue_product_variants'
+        db_table = 'catalogue_product_variant'
 
-class Attribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
-    name = models.CharField(max_length=100)
-    values = models.ManyToManyField(
-        'AttributeValue',
-        through='M2MAttribute',
-        related_name='attributes'
-    )
-    class Meta:
-        db_table = 'catalogue_attribute'
 
 class AttributeValue(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=50)
-   
+    description = models.CharField(max_length=200, default='')
     class Meta:
         db_table = 'catalogue_attribute_value'
+        
+class Attribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
+    name = models.CharField(max_length=100)
+    values = models.ManyToManyField(
+        AttributeValue,
+        through='M2MAttribute',
+        related_name='attributes'
+    )
+    description = models.CharField(max_length=200, default='')
+    class Meta:
+        db_table = 'catalogue_attribute'
 
 class M2MAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     attribute = models.ForeignKey(Attribute, db_column='attribute_id', on_delete=models.RESTRICT)
