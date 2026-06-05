@@ -23,6 +23,19 @@ class RedisService:
             lg.log_error("[REDIS][SET] Error")
             return False
         
+    def hset(self, name, key, value):
+        cache = self.get_cache()
+        if not cache:
+            lg.log_error("[REDIS] Cache not found")
+            return False
+        try:
+            cache.client.get_client().hset(name, key, value)
+            lg.log_info(f"[REDIS] HSet name: {name}, key: {key}")
+            return True
+        except Exception:
+            lg.log_error("[REDIS][HSET] Error")
+            return False
+        
     def get(self, key):
         cache = self.get_cache()
         if not cache:

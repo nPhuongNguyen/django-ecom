@@ -4,8 +4,8 @@ from apps.sales.model.order import Order
 from apps.shared.models import BaseModel, BaseModelActive, BaseModelCreated, BaseModelDeleted, BaseModelInt, BaseModelUpdated
 
 class OrderItem(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
-    order_id = models.ForeignKey(Order, on_delete=models.RESTRICT)
-    product_variant_id = models.ForeignKey(ProductVariant, on_delete=models.RESTRICT)
+    order = models.ForeignKey(Order, db_column='order_id', on_delete=models.RESTRICT)
+    product_variant_id = models.ForeignKey(ProductVariant, db_column='product_variant_id', on_delete=models.RESTRICT)
     quantity = models.IntegerField(default=1)
     price = models.IntegerField(default=0)
     total_price = models.IntegerField(default=0)
@@ -15,7 +15,7 @@ class OrderItem(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdate
         
 class CarItem(BaseModel):
     user_id = models.IntegerField()
-    product_variant_id = models.ForeignKey(ProductVariant, on_delete=models.RESTRICT)
+    product_variant = models.ForeignKey(ProductVariant, db_column='product_variant_id', on_delete=models.RESTRICT)
     quantity = models.IntegerField(default=1)
     class Meta:
         abstract = True
