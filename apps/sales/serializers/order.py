@@ -3,6 +3,7 @@
 from rest_framework import serializers
 
 from apps.sales.model.order import Order
+from apps.sales.model.order_item import OrderItem
 
 class OrderItemsCreateInputSerializer(serializers.Serializer):
     product_variant_id = serializers.IntegerField()
@@ -23,3 +24,9 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
+        
+class OrderItemCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = "__all__"
+        read_only_fields = ['order']
