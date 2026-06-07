@@ -35,6 +35,16 @@ class RedisService:
         except Exception:
             lg.log_error("[REDIS][HSET] Error")
             return False
+    def hget(self, name, key):
+        cache = self.get_cache()
+        if not cache:
+            lg.log_error("[REDIS] Cache not found")
+            return None
+        try:
+            return cache.client.get_client().hget(name, key)
+        except Exception:
+            lg.log_error("[REDIS][HGET] Error")
+            return None
         
     def get(self, key):
         cache = self.get_cache()
@@ -84,3 +94,6 @@ class RedisService:
         except Exception:
             lg.log_error(message=f"[REDIS][RATE_LIMIT] Error")
             return False
+        
+redis_auth = RedisService(alias="auth")
+redis_default = RedisService(alias="default")

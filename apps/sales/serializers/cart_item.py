@@ -8,3 +8,6 @@ class ItemSerializer(serializers.Serializer):
 class CartItemSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
     items = serializers.ListField(child=ItemSerializer())
+    
+class CartUpdateItemSerializer(serializers.Serializer):
+    items = serializers.ListField(child=ItemSerializer())

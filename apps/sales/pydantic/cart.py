@@ -6,3 +6,6 @@ class ItemPydantic(BaseModel):
 class CartPydantic(BaseModel):
     user_id: int
     items: list[ItemPydantic]
+    
+class CartUpdatePydantic(BaseModel):
+    items: list[ItemPydantic]
