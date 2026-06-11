@@ -1,2 +1,2 @@
-from .cart_item import *
+from .cart import *
 from .order import *

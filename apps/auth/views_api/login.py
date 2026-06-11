@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
 
+from apps.accounts.pydantic.user import UserInfoPydantic
+
 from ..services.role_permission import RolePermissionService
 
 from ..services.user_role import UserRoleService
@@ -70,15 +72,15 @@ class LoginAPI(APIView):
 
         jti = str(uuid.uuid4())
         key_redis_user_login = f"login:{jti}"
-        value_redis_user_login = {
-            "email": user_db.email,
-            "is_super": str(user_db.is_super),
-            "list_permission": list(permission_codes),
-            "list_role_code": list(role_codes)
-        }
+        user_info = UserInfoPydantic(
+            email=user_db.email,
+            is_super=user_db.is_super,
+            list_permission=list(permission_codes),
+            list_role_code=list(role_codes)
+        )
         set_redis_user = self.redis.set(
             key=key_redis_user_login,
-            value=value_redis_user_login,
+            value=user_info.model_dump(),
         )
 
         if not set_redis_user:

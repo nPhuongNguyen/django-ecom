@@ -5,4 +5,4 @@ class Role(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, Ba
     code = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'core_roles'
+        db_table = 'core_role'

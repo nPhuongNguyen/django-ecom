@@ -1,25 +1,30 @@
 
-from apps.sales.pydantic.cart import CartPydantic, CartUpdatePydantic
+from apps.sales.pydantic.cart import CartItemPydantic
 from apps.config.redis_config import redis_default
 
 class CartRepository:
     
-    def add_to_cart(self, cart_data: CartPydantic):
-        add_cart_to_redis = redis_default.hset("cart", cart_data.user_id, cart_data.model_dump_json())
-        if not add_cart_to_redis:
-            return None
-        return cart_data
+    def add_to_cart(self, email, cart_data):
+        cart_data = CartItemPydantic(**cart_data)
+        return redis_default.hincrby(
+            f"cart:{email}",
+            cart_data.product_variant_id,
+            cart_data.quantity
+        )
     
-    def get_cart(self, user_id):
-        cart_data = redis_default.hget("cart", user_id)
-        if not cart_data:
-            return None
-        return CartPydantic.model_validate_json(cart_data)
+    def get_cart(self, email):
+        cart_data = redis_default.hgetall(f"cart:{email}")
+        return cart_data
 
-    def update_cart(self, user_id, cart_data: CartUpdatePydantic):
-        update_cart_in_redis = redis_default.hset("cart", user_id, cart_data.model_dump_json())
-        if not update_cart_in_redis:
-            return None
-        return user_id
+    def update_cart(self, email, cart_data):
+        cart_data = CartItemPydantic(**cart_data)
+        return redis_default.hset(
+            f"cart:{email}", 
+            cart_data.product_variant_id, 
+            cart_data.quantity
+        )
+
+    def delete_from_cart(self, email, product_variant_id):
+        return redis_default.hdel(f"cart:{email}", product_variant_id)
 
 cart_repository = CartRepository()
