@@ -1,7 +1,7 @@
 
 
 from rest_framework import serializers
-
+from apps.catalogue.repositories.product_variant import product_variant_repository
 class AddToCartSerializer(serializers.Serializer):
     product_variant_id = serializers.IntegerField()
     quantity = serializers.IntegerField()
@@ -23,7 +23,6 @@ class CartItemSerializer(serializers.Serializer):
         return value
     
     def validate_product_variant_id(self, value):
-        from apps.catalogue.models.products import ProductVariant
-        if not ProductVariant.objects.filter(id=value).exists():
+        if not product_variant_repository.get_product_variant_by_id(value):
             raise serializers.ValidationError("Product variant does not exist.")
         return value
