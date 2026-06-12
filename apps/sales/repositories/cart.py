@@ -26,5 +26,12 @@ class CartRepository:
 
     def delete_from_cart(self, email, product_variant_id):
         return redis_default.hdel(f"cart:{email}", product_variant_id)
+    
+    def get_cart_item_quantity(self, email, product_variant_id):
+        quantity = redis_default.hget(
+            f"cart:{email}",
+            product_variant_id
+        )
+        return int(quantity) if quantity else 0
 
 cart_repository = CartRepository()

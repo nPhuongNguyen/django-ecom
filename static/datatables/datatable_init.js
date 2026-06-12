@@ -223,35 +223,6 @@ class DataTableLoader {
         return dt; 
     }
 
-    static formatPriceOnInput(value) {
-        if (!value) return "";
-        value = value.toString().replace(".", ",");
-        let parts = value.split(",");
-        parts[0] = Number(parts[0]).toLocaleString("vi-VN");
-        return parts.join(",");
-    }
-    static col_is_price(opts) {
-        const {
-            visible,
-            orderable,
-            ...restProps
-        } = {
-            visible: true,
-            orderable: false,
-            ...opts,
-        }
-        return {
-            ...restProps,
-            data: 'price',
-            name: 'price',
-            orderable: !!orderable,
-            visible: !!visible,
-            render:  function(data, type, row) {
-                return DataTableLoader.formatPriceOnInput(data) || '-';
-            }
-        };
-    }
-
     static col_is_status(opts) {
         const {
             visible,

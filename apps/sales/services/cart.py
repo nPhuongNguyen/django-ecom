@@ -1,6 +1,4 @@
 
-from PIL.Image import item
-
 from apps.sales.pydantic.cart import CartDetailPydantic, CartItemPydantic, CartItemStatus, ItemPydantic
 from apps.sales.repositories.cart import cart_repository
 from apps.sales.serializers.cart import CartItemSerializer
@@ -11,6 +9,17 @@ class CartService:
         cart_data = CartItemSerializer(data=cart_data)
         cart_data.is_valid(raise_exception=True)
         cart_data = cart_data.validated_data
+        cart_data = CartItemPydantic(**cart_data)
+        product_variant = product_variant_repository.get_product_variant_by_id(cart_data.product_variant_id)
+        current_quantity = cart_repository.get_cart_item_quantity(
+            email,
+            cart_data.product_variant_id
+        )
+        total_quantity = current_quantity + cart_data.quantity
+        if product_variant.stock_qty <= 0:
+            raise ValueError("Product variant is out of stock")
+        if product_variant.stock_qty < total_quantity:
+            raise ValueError("Insufficient stock for the requested quantity")
         return cart_repository.add_to_cart(email, cart_data)
 
     def get_cart(self, email):
@@ -44,6 +53,7 @@ class CartService:
         cart_data = CartItemSerializer(data=cart_data)
         cart_data.is_valid(raise_exception=True)
         cart_data = cart_data.validated_data
+        
         return cart_repository.update_cart(email, cart_data)
 
     def delete_from_cart(self, email, product_variant_id):

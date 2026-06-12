@@ -36,7 +36,14 @@ $(document).ready(function () {
                     return data || '-';
                 }
             },
-            DataTableLoader.col_is_price(),  
+            { 
+                data: 'price',
+                name: 'price',
+                orderable: false,
+                render(data, type, row) {
+                    return data || '-';
+                }
+            },  
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
         ontoggleActive: async (id)=>{
