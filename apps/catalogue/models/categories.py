@@ -4,4 +4,4 @@ class Category(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated
     name = models.CharField(max_length=100)
     sku = models.CharField(max_length=100, unique=True)
     class Meta:
-        db_table = 'catalogue_product_categories'
+        db_table = 'catalogue_product_category'

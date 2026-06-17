@@ -15,7 +15,7 @@ $(document).ready(function () {
                 name: 'name',
                 allowHtml: true,
                 render(data, type, row) {
-                    const url = tbl$.data('url-detail').replaceAll('__slug__', row['slug'] || '');
+                    const url = tbl$.data('url-detail').replaceAll('__pk__', row['id'] || '');
                     return `<a class="kt-link kt-link-underline" href="${url}">${data || '-'}</a>`;
                 }
             },
@@ -109,12 +109,11 @@ $(document).ready(function () {
                 }
             });
         },
+        onAddButtonCreated: (btn$)=>{
+            btn$.on('click', ()=>{
+                window.location.href = tbl$.data('url-add')
+            })
+        }
     });
-    // DataTableLoader.initAddButton(tbl$, 'Thêm mới', () => {
-    //     const addUrl = tbl$.data('url-add');
-    //     if (addUrl) {
-    //         window.location.href = addUrl;
-    //     }
-    // });
     DataTableLoader.init_filter_is_status(tbl$);
 });

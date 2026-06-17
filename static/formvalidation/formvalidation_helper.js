@@ -155,4 +155,28 @@ class FormValidateLoader {
         }
         setTimeout(funcNext, timeout);
     }
+    
+    static fillForm(form, data) {
+        const frm$ = $(form);
+
+        Object.entries(data).forEach(([key, value]) => {
+            const field$ = frm$.find(`[name="${key}"]`);
+
+            if (!field$.length) return;
+
+            if (field$.is(':checkbox')) {
+                field$.prop('checked', !!value);
+            }
+            else if (field$.is(':radio')) {
+                frm$
+                    .find(`[name="${key}"][value="${value}"]`)
+                    .prop('checked', true);
+            }
+            else {
+                field$.val(value);
+            }
+
+            field$.trigger('change');
+        });
+    }
 }

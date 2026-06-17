@@ -30,14 +30,14 @@ class ProductUpdateAPI(UpdateMixin):
     serializer_class_update = ProductUpdateSerializer
     serializer_class_detail = ProductDetailSerializer
     @validate_exception()
-    @token_required()
+    # @token_required()
     def post(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
 class ProductDestroyAPI(DestroyMixin):
     queryset = Product.objects.all()
     @validate_exception()
-    @token_required()
+    # @token_required()
     def post(self, request, *args, **kwargs):
         return self.destroy_many(request, *args, **kwargs)  
 
@@ -54,7 +54,7 @@ class ProductChangeStatusAPI(UpdateMixin):
 class ProductDetailAPI(DetailMixin):
     queryset = Product.objects.select_related('category').prefetch_related('variants').all()
     serializer_class_detail = ProductDetailSerializer
-    @token_required()
     @validate_exception()
+    # @token_required()
     def get(self, request, *args, **kwargs):
         return self.detail(request, *args, **kwargs)
