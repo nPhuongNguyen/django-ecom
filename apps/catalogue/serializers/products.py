@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+from apps.catalogue.serializers.categories import CategoryInProduct
 from ..models.categories import Category
 from apps.catalogue.models.products import Product
 from .product_variants import ProductVariantInProductSerializer, ProductVariantListSerializer
@@ -45,17 +47,10 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     variants = ProductVariantInProductSerializer(many=True)
-    category = serializers.SerializerMethodField()
+    category = CategoryInProduct(allow_null=True)
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'is_active', 'price', 'category', 'slug', 'img', 'variants', 'updated_by']
-    def get_category(self, obj):
-        if obj.category:
-            return {
-                "id": obj.category.id,
-                "name": obj.category.name
-            }
-        return None
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
 

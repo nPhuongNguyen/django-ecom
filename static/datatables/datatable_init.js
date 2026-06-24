@@ -170,12 +170,12 @@ class DataTableLoader {
     }
 
     static initAddButton(table$,options, label = 'Thêm mới') {
-        const dt_add$ = DataTableLoader.dt_add$(table$);
-        if (!dt_add$ || dt_add$.length === 0) return;
-
-        const addBtn$ = $(`<button class="kt-btn kt-btn-primary">${label}</button>`);
-        dt_add$.append(addBtn$);
         if (options && typeof options.onAddButtonCreated  === 'function'){
+            const dt_add$ = DataTableLoader.dt_add$(table$);
+            if (!dt_add$ || dt_add$.length === 0) return;
+
+            const addBtn$ = $(`<button class="kt-btn kt-btn-primary">${label}</button>`);
+            dt_add$.append(addBtn$);
             options.onAddButtonCreated(addBtn$)
         }
     }
