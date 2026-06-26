@@ -39,6 +39,12 @@ class ProductVariantCreateSerializer(serializers.ModelSerializer):
         return value
     
 class ProductVariantDetailSerializer(serializers.ModelSerializer):
+    product = serializers.SerializerMethodField()
+    def get_product(self, obj):
+        return{
+            'id': obj.product.id,
+            'name': obj.product.name
+        }
     class Meta:
         model = ProductVariant
         fields = ['id', 'name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active', 'updated_by']

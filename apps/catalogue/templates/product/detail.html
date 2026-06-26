@@ -15,7 +15,15 @@
   <div class="kt-container-fixed space-y-6">
     {% if pk %}
       <div>
-        <form class="kt-form" id="frm_detail_product" data-url="{% url 'ProductDetailAPI' pk=pk %}" data-pk="{{ pk }}" data-url-update="{% url 'ProductUpdateAPI' pk=pk %}" data-url-upload="{% url 'UploadImageAPI' %}" data-url-list="{% url 'ProductListView' %}" data-url-delete="{% url 'ProductDestroyAPI' %}" data-url-add="{% url 'ProductCreateView' %}" data-url-detail="{% url 'ProductDetailView' pk=pk %}">
+        <form class="kt-form" id="frm_detail_product" 
+          data-url="{% url 'ProductDetailAPI' pk=pk %}" 
+          data-url-update="{% url 'ProductUpdateAPI' pk=pk %}" 
+          data-url-upload="{% url 'UploadImageAPI' %}" 
+          data-url-list="{% url 'ProductListView' %}" 
+          data-url-delete="{% url 'ProductDestroyAPI' %}" 
+          data-url-add="{% url 'ProductCreateView' %}" 
+          data-url-detail="{% url 'ProductDetailView' pk=pk %}"
+        >
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2">
               <div class="kt-card p-5 rounded-xl border bg-card">
@@ -43,12 +51,6 @@
 
                     <!-- Giá & Trạng thái -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                      <div class="kt-form-item">
-                        <label class="kt-form-label">Giá:</label>
-                        <div class="kt-form-control">
-                          <input id="inp_price" type="text" name="price" class="kt-input w-full" value="" required />
-                        </div>
-                      </div>
                       <div class="kt-form-item">
                         <label class="kt-form-label">Trạng thái:</label>
                         <input name="is_active" type="checkbox" class="kt-switch toggle-active" />

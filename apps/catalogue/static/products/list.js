@@ -36,14 +36,6 @@ $(document).ready(function () {
                     return data || '-';
                 }
             },
-            { 
-                data: 'price',
-                name: 'price',
-                orderable: false,
-                render(data, type, row) {
-                    return data || '-';
-                }
-            },  
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
         ontoggleActive: async (id)=>{
@@ -56,15 +48,14 @@ $(document).ready(function () {
                         url: tbl$.data('url-change-status').replaceAll('__pk__', id),
                         method: 'POST',
                     });
-                    if (result_ai == null){
-                        ToastHelper.showError();
-                        return;
-                    }
                     if (result_ai.status_code !== 1){
                         ToastHelper.showError();
                         return;
                     }
                     ToastHelper.showSuccess();
+                }catch{
+                    ToastHelper.showError();
+                    return;
                 }
                 finally{
                     MyLoading.close();

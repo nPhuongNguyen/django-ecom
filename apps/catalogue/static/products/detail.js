@@ -42,6 +42,7 @@ function initCategory(category) {
     }
 }
 
+
 async function uploadImage(frm, uppyInstance) {
 
     if (!UppyUploader.hasChanged(uppyInstance)) {
@@ -190,8 +191,7 @@ $(document).ready(async function () {
             product
         );
 
-        const uppyInstance =
-            initUppy(product.img);
+        const uppyInstance = initUppy(product.img);
 
         initCategory(
             product.category

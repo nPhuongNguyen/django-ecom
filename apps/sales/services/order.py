@@ -1,13 +1,10 @@
 
 
 from apps.sales.pydantic.order import OrderPydantic
-from apps.sales.repositories.order import OrderRepository
-
+from apps.sales.repositories.order import order_repository
 
 class OrderService:
-    def __init__(self):
-        self.order_repository = OrderRepository()
-        
+
     def create_order(self, order_data):
         data_input_safe = OrderPydantic(**order_data)
         data_safe_order = {
@@ -18,7 +15,7 @@ class OrderService:
             "discount_amount": data_input_safe.discount_amount,
         }
         data_safe_order_item = data_input_safe.items
-        return self.order_repository.create_order(data_safe_order, data_safe_order_item)
+        return order_repository.create_order(data_safe_order, data_safe_order_item)
         
         
 oreder_service = OrderService()

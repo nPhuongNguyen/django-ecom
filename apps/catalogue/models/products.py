@@ -7,7 +7,6 @@ from apps.shared.models import BaseModelActive, BaseModelCreated, BaseModelDelet
 class Product(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
-    price = models.IntegerField(default=0)
     description = models.TextField(blank=True)
     img = models.CharField(max_length=255, blank=True)
     category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, null=True)
@@ -26,35 +25,29 @@ class ProductVariant(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelU
     class Meta:
         db_table = 'catalogue_product_variant'
 
-
+class Attribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
+    name = models.CharField(max_length=100)
+    class Meta:
+        db_table = 'catalogue_attribute'
+        
 class AttributeValue(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=200, default='')
+    attribute = models.ForeignKey(Attribute, db_column= 'attribute_id', on_delete=models.RESTRICT,)
     class Meta:
         db_table = 'catalogue_attribute_value'
         
-class Attribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
-    name = models.CharField(max_length=100)
-    values = models.ManyToManyField(
-        AttributeValue,
-        through='M2MAttribute',
-        related_name='attributes'
-    )
-    description = models.CharField(max_length=200, default='')
+class M2MProductAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
+    product = models.ForeignKey(Product, db_column= 'product_id', on_delete=models.RESTRICT)
+    attribute = models.ForeignKey(Attribute, db_column= 'attribute_id', on_delete=models.RESTRICT,)
+    
     class Meta:
-        db_table = 'catalogue_attribute'
-
-class M2MAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
-    attribute = models.ForeignKey(Attribute, db_column='attribute_id', on_delete=models.RESTRICT)
-    attribute_value = models.ForeignKey(AttributeValue, db_column='attribute_value_id', on_delete=models.RESTRICT)
-    class Meta:
-        db_table = 'catalogue_m2m_attribute'
-        unique_together = ('attribute_id','attribute_value_id')
+        db_table = 'catalogue_m2m_product_attribute'
+        unique_together = ('product', 'attribute')
 
 class M2MProductVarianAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     product_variant = models.ForeignKey(ProductVariant, db_column='product_variant_id',on_delete=models.RESTRICT)
-    m2m_attribute = models.ForeignKey(Attribute, db_column='m2m_attribute_id',on_delete=models.RESTRICT)
+    attribute_value = models.ForeignKey(AttributeValue, db_column='attribute_value_id',on_delete=models.RESTRICT)
 
     class Meta:
-        db_table = 'catalogue_m2m_product_variant_attribute'
-        unique_together = ('product_variant_id', 'm2m_attribute_id')
+        db_table = 'catalogue_m2m_product_variant_attribute_value'
+        unique_together = ('product_variant', 'attribute_value')

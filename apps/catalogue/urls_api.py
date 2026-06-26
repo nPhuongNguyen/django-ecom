@@ -9,10 +9,14 @@ urlpatterns = [
     path('product-update/<str:pk>', views_api.ProductUpdateAPI.as_view(), name= 'ProductUpdateAPI'),
     path('product-change-status/<str:pk>', views_api.ProductChangeStatusAPI.as_view(), name='ProductChangeStatusAPI'),
     path('product-destroy', views_api.ProductDestroyAPI.as_view(), name ='ProductDestroyAPI'),
+    
+    #product atribute
+    path('product-attribute-create', views_api.ProductAttributeCreateAPI.as_view(), name='ProductAttributeCreateAPI'),
 
     #product variant
     path('product-variant-list',views_api.ProductVariantListAPI.as_view(), name='ProductVariantListAPI'),
     path('product-variant-create', views_api.ProductVariantCreateAPI.as_view(), name='ProductVariantCreateAPI'),
+    path('product-variant-detail/<str:pk>', views_api.ProductVariantDetailAPI.as_view(), name='ProductVariantDetailAPI'),
     path('product-variant-update/<str:pk>',views_api.ProductVariantUpdateAPI.as_view(), name='ProductVariantUpdateAPI'),
     path('product-variant-change-status/<str:pk>', views_api.ProductVariantChangeStatusAPI.as_view(), name='ProductVariantChangeStatusAPI'),
     path('product-variant-destroy',views_api.ProductVariantDestroyAPI.as_view(), name='ProductVariantDestroyAPI'),
@@ -27,10 +31,6 @@ urlpatterns = [
     #attribute value
     path('attribute-value-create', views_api.AttributeValueCreateAPI.as_view(), name='AttributeValueCreateAPI'),
     path('attribute-value-list', views_api.AttributeValueListAPI.as_view(),name='AttributeValueListAPI'),
-
-    #m2m attribute
-    path('m2m-attribute-update', views_api.M2MAttributeUpdateAPI.as_view(),name='M2MAttributeUpdateAPI'),
-
 
     #category
     path('category-list', views_api.CategoryListAPI.as_view(), name='CategoryListAPI'),

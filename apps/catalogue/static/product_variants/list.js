@@ -47,7 +47,14 @@ $(document).ready(function () {
                     return data || '-';
                 }
             },
-            DataTableLoader.col_is_price(),  
+            { 
+                data: 'price',
+                name: 'price',
+                orderable: false,
+                render(data, type, row) {
+                    return data || '-';
+                }
+            },
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
         rowGroup: {
@@ -59,18 +66,30 @@ $(document).ready(function () {
             }
         },
         ontoggleActive: async (id)=>{
-            const result = await SweetAlertHelper.confirmSave({
-                url: tbl$.data('url-change-status').replaceAll('__pk__', id),
-                method: 'POST',
-            });
-            if (!result.confirmed || !result.data) return;
-            const res = result.data;
-            if (res.status_code !== 1){
-                ToastHelper.showError();
-                return;
-            }
-            ToastHelper.showSuccess();
-            tbl$.DataTable().ajax.reload();
+            try{
+                const check_confirmed = await SweetAlertHelper.confirmSave({});
+                if (!check_confirmed) return;
+                MyLoading.show();
+                try {
+                    const result_ai = await CallApi.request({
+                        url: tbl$.data('url-change-status').replaceAll('__pk__', id),
+                        method: 'POST',
+                    });
+                    if (result_ai.status_code !== 1){
+                        ToastHelper.showError();
+                        return;
+                    }
+                    ToastHelper.showSuccess();
+                }catch{
+                    ToastHelper.showError();
+                    return;
+                }
+                finally{
+                    MyLoading.close();
+                }
+            }finally{
+                tbl$.DataTable().ajax.reload();
+            } 
         },
         selectRow: 'multi',
         selectRowRender: (select_info$) => {

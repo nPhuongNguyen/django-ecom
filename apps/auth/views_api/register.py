@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 
 from ...accounts.services.user import UserService
 
-from ...catalogue.services.template_email import TemplateEmailService
+from ...catalogue.services.template_email import template_email_service
 
 from ...accounts.models.user import User
 
@@ -27,7 +27,6 @@ from ..serializers.register import RegisterConfirmInputSerializer, RegisterResen
 from django.db import transaction
 class RegisterAPI(APIView):
     redis_auth = RedisService('auth')
-    template_email_service = TemplateEmailService()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         #Data input
@@ -41,7 +40,7 @@ class RegisterAPI(APIView):
                 code=ResponseCodes.INVALID_INPUT,
                 errors=serializer.errors
             )
-        template_email = self.template_email_service.get_template_by_code(code='confirm-register')
+        template_email = template_email_service.get_template_by_code(code='confirm-register')
         if not template_email:
             return ResponseBuilder.build(
                 code=ResponseCodes.INVALID_INPUT,
@@ -124,7 +123,6 @@ class RegisterConfirmAPI(APIView):
 class RegisterResendOTPAPI(APIView):
     redis_auth = RedisService('auth')
     user_service = UserService()
-    template_email_service = TemplateEmailService()
     @validate_exception()
     def post(self, request, *args, **kwargs):
         data_input = request.data_input
@@ -159,7 +157,7 @@ class RegisterResendOTPAPI(APIView):
                 },
                 timeout=300 #5 minutes
             )
-            template_email = self.template_email_service.get_template_by_code(code='confirm-register')
+            template_email = template_email_service.get_template_by_code(code='confirm-register')
             if not template_email:
                 return ResponseBuilder.build(
                     code=ResponseCodes.INVALID_INPUT,

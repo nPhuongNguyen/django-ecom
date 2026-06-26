@@ -1,7 +1,7 @@
 from apps.catalogue.models.products import ProductVariant
 from apps.catalogue.serializers.product_variants import ProductVariantCreateSerializer, ProductVariantDetailSerializer, ProductVariantListSerializer, ProductVariantUpdateSerializer
 from ...shared.decorator.decorator import token_required, validate_exception
-from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin
+from apps.shared.mixins import CreateMixin, DestroyMixin, ListMixin, UpdateMixin, DetailMixin
 class ProductVariantListAPI(ListMixin):
     queryset = ProductVariant.objects.all()
     serializer_class_list = ProductVariantListSerializer
@@ -21,6 +21,15 @@ class ProductVariantCreateAPI(CreateMixin):
     # @token_required()
     def post(self, request, *args, **kwargs):
         return self.create(request, args, kwargs)
+    
+class ProductVariantDetailAPI(DetailMixin):
+    queryset = ProductVariant.objects.all()
+    serializer_class_detail = ProductVariantDetailSerializer
+    @validate_exception()
+    # @token_required()
+    def get(self, request, *args, **kwargs):
+        return self.detail(request, *args, **kwargs)
+    
     
 class ProductVariantDestroyAPI(DestroyMixin):
     queryset = ProductVariant.objects.all()
