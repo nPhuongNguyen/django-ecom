@@ -11,12 +11,14 @@
 {% include 'import/axios_import.html' %}
 {% endblock %}
 {% block content %}
-<div class="kt-container-fixed space-y-6">
+<div class="kt-container-fixed">
     <form class="kt-form" id="frm_create_product" data-url-add="{% url 'ProductCreateView' %}"
-        data-url-list="{% url 'ProductListView' %}" data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
-        data-url="{% url 'ProductCreateAPI' %}" data-url-upload="{% url 'UploadImageAPI' %}">
+        data-url-list="{% url 'ProductListView' %}" data-url-detail="{% url 'ProductDetailView' pk='__pk__' %}"
+        data-url="{% url 'ProductCreateAPI' %}" data-url-upload="{% url 'UploadImageAPI' %}"
+        data-url-add-product-attribute="{% url 'ProductAttributeCreateAPI' %}"
+        >
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
+            <div class="order-2 lg:order-1 lg:col-span-2">
                 <div class="kt-card p-5 rounded-xl border bg-card">
                     <h2 class="text-lg font-semibold mb-3">Thêm sản phẩm</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -38,12 +40,6 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="kt-form-item">
-                            <label class="kt-form-label" for="inp_price">{% trans 'Price' %}:</label>
-                            <div class="kt-form-control">
-                                <input id="inp_price" type="text" name="price" class="kt-input w-full">
-                            </div>
-                        </div>
-                        <div class="kt-form-item">
                             <label class="kt-form-label" for="inp_is_active">{% trans 'Status' %}:</label>
                             <div class="kt-form-control">
                                 <input class="kt-switch kt-switch-lg" type="checkbox" id="inp_is_active"
@@ -64,14 +60,26 @@
                     </div>
                 </div>
             </div>
-            <div class="lg:col-span-1">
-                <div class="kt-card p-5 rounded-xl border bg-card space-y-6">
+            <div class="order-1 lg:order-2 lg:col-span-1">
+                <div class="kt-card p-5 rounded-xl border bg-card">
                     <div>
                         <h2 class="text-lg font-semibold mb-3">Category</h2>
                         <div class="kt-form-item">
                             <label class="kt-form-label">Select category:</label>
                             <select id="inp_select_category" name="category" class="kt-select w-full"
                                 data-url="{% url 'CategoryListAPI' %}">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="kt-card mt-6 p-5 rounded-xl border bg-card">
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3">Attributes</h2>
+                        <div class="kt-form-item">
+                            <label class="kt-form-label">Select attributes:</label>
+                            <select id="inp_select_attribute" name="attributes"
+                                class="kt-select w-full"
+                                data-url="{% url 'AttributeListAPI' %}">
                             </select>
                         </div>
                     </div>

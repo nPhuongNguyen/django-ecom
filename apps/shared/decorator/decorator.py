@@ -3,12 +3,13 @@ import time
 
 from ...logging.log_request import RequestLogger
 from apps.logging import logging_log as lg
-from rest_framework import serializers
 from apps.config.redis_config import RedisService
 from apps.shared.response import ResponseBuilder, ResponseCodes
 from apps.utils.utils_token import decode_token, normalize_token
 from ecom.settings import TOKEN_SECRET_KEY
-from apps.catalogue.serializers.token import InfoTokenSerializer
+from apps.auth.serializers.token import InfoTokenSerializer
+from apps.config.redis_config import redis_auth
+from rest_framework.exceptions import ValidationError
 
 def validate_exception():
     def decorator(func):
@@ -38,9 +39,7 @@ def token_required():
                 return ResponseBuilder.build(
                     ResponseCodes.TOKEN_REQUIRED
                 )
-
             token = request.headers["Token"]
-
             try:
                 bearer_prefix = normalize_token(token)
                 data, error_format = decode_token(
@@ -68,7 +67,19 @@ def token_required():
                     message="[TOKEN][SUCCESS]",
                     data=serializer.validated_data
                 )
-                request.data_decode_token = serializer.validated_data
+                data_token = serializer.validated_data
+                key_redis_user_login = f"login:{data_token.get('jti')}"
+                data_redis = redis_auth.get(key_redis_user_login)
+                request.user = data_redis
+            except ValidationError as e:
+                lg.log_error(
+                    message="[TOKEN][VALIDATION_ERROR]",
+                    errors=e.detail
+                )
+                return ResponseBuilder.build(
+                    ResponseCodes.TOKEN_INVALID_TOKEN,
+                    errors=e.detail
+                )
             except Exception:
                 lg.log_error(
                     message="[TOKEN][DECODE_EXCEPTION]",

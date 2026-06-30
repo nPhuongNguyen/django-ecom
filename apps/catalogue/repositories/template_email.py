@@ -8,3 +8,5 @@ class TemplateEmailRepository:
 
     def template_email_repository(self, code, is_active):
         return self._teamplate_model.objects.filter(code=code, is_active=is_active).first()
+    
+template_email_repository = TemplateEmailRepository()

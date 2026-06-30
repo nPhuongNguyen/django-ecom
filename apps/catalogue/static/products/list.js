@@ -15,7 +15,7 @@ $(document).ready(function () {
                 name: 'name',
                 allowHtml: true,
                 render(data, type, row) {
-                    const url = tbl$.data('url-detail').replaceAll('__slug__', row['slug'] || '');
+                    const url = tbl$.data('url-detail').replaceAll('__pk__', row['id'] || '');
                     return `<a class="kt-link kt-link-underline" href="${url}">${data || '-'}</a>`;
                 }
             },
@@ -36,7 +36,6 @@ $(document).ready(function () {
                     return data || '-';
                 }
             },
-            DataTableLoader.col_is_price(),  
             DataTableLoader.col_is_status({ useToggle: true }),
         ],
         ontoggleActive: async (id)=>{
@@ -49,15 +48,14 @@ $(document).ready(function () {
                         url: tbl$.data('url-change-status').replaceAll('__pk__', id),
                         method: 'POST',
                     });
-                    if (result_ai == null){
-                        ToastHelper.showError();
-                        return;
-                    }
                     if (result_ai.status_code !== 1){
                         ToastHelper.showError();
                         return;
                     }
                     ToastHelper.showSuccess();
+                }catch{
+                    ToastHelper.showError();
+                    return;
                 }
                 finally{
                     MyLoading.close();
@@ -102,12 +100,11 @@ $(document).ready(function () {
                 }
             });
         },
+        onAddButtonCreated: (btn$)=>{
+            btn$.on('click', ()=>{
+                window.location.href = tbl$.data('url-add')
+            })
+        }
     });
-    // DataTableLoader.initAddButton(tbl$, 'Thêm mới', () => {
-    //     const addUrl = tbl$.data('url-add');
-    //     if (addUrl) {
-    //         window.location.href = addUrl;
-    //     }
-    // });
     DataTableLoader.init_filter_is_status(tbl$);
 });

@@ -1,8 +1,5 @@
 from django.shortcuts import render
 from django.views import View
-
-from ..models.products import ProductVariant
-
 from ...shared.decorator.views import mask_view
 
 MASK_VIEW_CONFIG ={
@@ -17,7 +14,7 @@ class ProductVariantListView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        return render(request,'product_variants/list.html', context=context)
+        return render(request,'product_variant/list.html', context=context)
     
 class ProductVariantDetailView(View):
     MASK_VIEW_CONFIG_UPDATE = {
@@ -26,12 +23,12 @@ class ProductVariantDetailView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        if 'pk' in kwargs:
-            obj_product_variant = ProductVariant.objects.get(pk=kwargs.get('pk'), is_deleted = False)
-            context['obj_product_variant'] = obj_product_variant
+        pk_product_variant = kwargs.get('pk')
+        if pk_product_variant:
+            context['pk'] = pk_product_variant
         else:
             return render(request,'admin/notfound/notfound.html', context=context)
-        return render(request,'product_variants/detail.html', context=context)
+        return render(request,'product_variant/detail.html', context=context)
     
 class ProductVariantCreateView(View):
     MASK_VIEW_CONFIG_UPDATE = {
@@ -40,4 +37,4 @@ class ProductVariantCreateView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        return render(request,'product_variants/create.html', context=context)
+        return render(request,'product_variant/create.html', context=context)

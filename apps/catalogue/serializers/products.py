@@ -1,30 +1,28 @@
 from rest_framework import serializers
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+from apps.catalogue.serializers.categories import CategoryInProduct
 from ..models.categories import Category
-from apps.catalogue.models.products import Product
+from apps.catalogue.models.products import M2MProductAttribute, Product
 from .product_variants import ProductVariantInProductSerializer, ProductVariantListSerializer
 class ProductListSerializer(serializers.ModelSerializer):
     variants = ProductVariantInProductSerializer(many=True)
     category = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id','name', 'slug', 'description', 'price', 'is_active', 'img', 'category','variants']
+        fields = ['id','name', 'slug', 'description', 'is_active', 'img', 'category','variants']
 
     def get_category(self, obj):
-        try:
-            category = Category.objects.get(pk=obj.category.id)
-            return {
-                "id": category.id,
-                "name": category.name
-            }
-        except:
-            return ''
+        return {
+            "id": obj.id,
+            "name": obj.name
+        }
     
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'is_active', 'price', 'category', 'img']
+        fields = ['name', 'description', 'is_active', 'category', 'img']
 
     def validate(self, attrs):
         if "name" in attrs:
@@ -45,24 +43,16 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     variants = ProductVariantInProductSerializer(many=True)
-    category = serializers.SerializerMethodField()
+    category = CategoryInProduct(allow_null=True)
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'is_active', 'price', 'category', 'slug', 'img', 'variants', 'updated_by']
-    def get_category(self, obj):
-        if obj.category:
-            return {
-                "id": obj.category.id,
-                "name": obj.category.name
-            }
-        return None
+        fields = ['id', 'name', 'description', 'is_active', 'category', 'slug', 'img', 'variants', 'updated_by']
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
-
     name = serializers.CharField(required = False)
     class Meta:
         model = Product
-        fields = ['name', 'description', 'is_active', 'price', 'category', 'img']
+        fields = ['name', 'description', 'is_active', 'category', 'img']
 
     def validate(self, attrs):
         if "name" in attrs:
@@ -80,4 +70,14 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
             attrs["slug"] = slug
 
         return attrs
+    
+class ProductDestroySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['is_deleted', 'deleted_at', 'deleted_by']
+        
+class ProductChangeStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['is_active']
         

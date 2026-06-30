@@ -65,7 +65,6 @@ class S3Minio:
                 file_name=file_name,
                 object_name=object_name
             )
-
             return f"{self.MINIO_BASE_URL}/{self.MINIO_BUCKET_NAME}/{object_name}"
 
         except Exception:
@@ -83,3 +82,4 @@ class S3Minio:
         except Exception:
             lg.log_error(message=f"[Minio][PING] Error")
             return "CRITICAL"
+minio_s3 = S3Minio()

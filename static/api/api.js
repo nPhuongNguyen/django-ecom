@@ -32,7 +32,7 @@ class CallApi {
             });
         } catch (error) {
             Logger.apiError({ url, method, error });
-            return null;
+            throw error;
         }
     }
 }

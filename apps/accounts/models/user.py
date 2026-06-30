@@ -8,4 +8,4 @@ class User(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, Ba
     is_super = models.BooleanField(default=0)
     last_login = models.DateTimeField(auto_now=True)
     class Meta:
-        db_table = 'core_users'
+        db_table = 'core_user'

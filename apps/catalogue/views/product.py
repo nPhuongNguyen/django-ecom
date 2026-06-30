@@ -26,12 +26,10 @@ class ProductDetailView(View):
     }
     @mask_view(**MASK_VIEW_CONFIG_UPDATE)
     def get(self, request, *args, context, **kwargs):
-        slug = kwargs.get('slug')
-        try:
-            product = Product.objects.get(slug=slug)
-            context['obj_product'] = product
-        except:
+        pk = kwargs.get('pk')
+        if not pk:
             return render(request,'admin/notfound/notfound.html', context=context)
+        context['pk'] = pk
         return render(request, 'product/detail.html', context=context)
     
 class ProductCreateView(View):

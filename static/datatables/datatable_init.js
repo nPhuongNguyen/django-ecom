@@ -108,8 +108,6 @@ class DataTableLoader {
         if (count === 0) {
             return select_info.empty().hide();
         }
-
-        // Hiển thị nội dung khi có hàng được chọn
         const htmlContent = `
             <div class="dt-select-info-rows flex gap-3 rounded-lg">
     
@@ -134,7 +132,6 @@ class DataTableLoader {
         } 
     }
 
-
     static _init_select_row(settings, json, options, table$, dtb) {
         const dt_search$ = DataTableLoader.dt_search$(table$);
         if (dt_search$.length > 0) {
@@ -143,10 +140,6 @@ class DataTableLoader {
                 searchInput$.addClass('kt-input w-48');
             }
         }
-        /* 
-            draw để bắt sự kiện load lại datatable
-            select deselect để bắt sự kiện chọn hàng
-        */
         const dt_select_info$ = DataTableLoader.dt_select_info$(table$);
         dtb.on('draw select deselect', function () {
             const selectedRowData$ = DataTableLoader.get_selected_row_data(table$);
@@ -176,18 +169,21 @@ class DataTableLoader {
         
     }
 
-    static initAddButton(table$, label = 'Thêm mới') {
-        const dt_add$ = DataTableLoader.dt_add$(table$);
-        if (!dt_add$ || dt_add$.length === 0) return;
+    static initAddButton(table$,options, label = 'Thêm mới') {
+        if (options && typeof options.onAddButtonCreated  === 'function'){
+            const dt_add$ = DataTableLoader.dt_add$(table$);
+            if (!dt_add$ || dt_add$.length === 0) return;
 
-        const addBtn$ = $(`<button class="kt-btn kt-btn-primary">${label}</button>`);
-        dt_add$.append(addBtn$); 
+            const addBtn$ = $(`<button class="kt-btn kt-btn-primary">${label}</button>`);
+            dt_add$.append(addBtn$);
+            options.onAddButtonCreated(addBtn$)
+        }
     }
 
     static baseInitComplete(settings, json, options, table$){
         const dtb = table$.DataTable();
         DataTableLoader._init_select_row(settings, json, options, table$, dtb);
-        DataTableLoader.initAddButton(table$);
+        DataTableLoader.initAddButton(table$, options);
     }
 
     // --- INIT ---
@@ -221,35 +217,6 @@ class DataTableLoader {
             });
         }
         return dt; 
-    }
-
-    static formatPriceOnInput(value) {
-        if (!value) return "";
-        value = value.toString().replace(".", ",");
-        let parts = value.split(",");
-        parts[0] = Number(parts[0]).toLocaleString("vi-VN");
-        return parts.join(",");
-    }
-    static col_is_price(opts) {
-        const {
-            visible,
-            orderable,
-            ...restProps
-        } = {
-            visible: true,
-            orderable: false,
-            ...opts,
-        }
-        return {
-            ...restProps,
-            data: 'price',
-            name: 'price',
-            orderable: !!orderable,
-            visible: !!visible,
-            render:  function(data, type, row) {
-                return DataTableLoader.formatPriceOnInput(data) || '-';
-            }
-        };
     }
 
     static col_is_status(opts) {
