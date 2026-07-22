@@ -20,7 +20,10 @@ class ProductVariantCreateAPI(CreateMixin):
     @validate_exception()
     # @token_required()
     def post(self, request, *args, **kwargs):
-        return self.create(request, args, kwargs)
+        return self.create(request, *args, **kwargs)
+    
+    def perform_create(self, serializer, **kwargs):
+        pass
     
 class ProductVariantDetailAPI(DetailMixin):
     queryset = ProductVariant.objects.all()

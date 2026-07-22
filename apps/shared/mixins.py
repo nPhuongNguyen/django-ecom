@@ -140,7 +140,6 @@ class CreateMixin(BaseMixin):
                 errors=serializer.errors
             )
         instance = self.perform_create(serializer, **self.get_context_created())
-        instance.refresh_from_db()
         output_data = serializer_detail(instance=instance).data
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,
@@ -208,7 +207,6 @@ class UpdateMixin(BaseMixin):
                 errors=serializer.errors
             )
         instance_sr = self.perform_update(serializer, **self.get_context_updated())
-        instance_sr.refresh_from_db()
         output_data = serializer_detail(instance=instance_sr).data
         return ResponseBuilder.build(
             code=ResponseCodes.SUCCESS,

@@ -2,11 +2,15 @@ from django.db import models
 from apps.catalogue.models.categories import Category
 from apps.catalogue.models.collection import Collection
 from apps.shared.models import BaseModelActive, BaseModelCreated, BaseModelDeleted, BaseModelInt, BaseModelUpdated
+import uuid
 # Create your models here.
+
+def generate_slug():
+    return uuid.uuid4().hex
 
 class Product(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, default=generate_slug) #fix tạm
     description = models.TextField(blank=True)
     img = models.CharField(max_length=255, blank=True)
     category = models.ForeignKey(Category, db_column='category_id' , on_delete=models.RESTRICT, null=True)
@@ -37,14 +41,14 @@ class AttributeValue(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelU
         db_table = 'catalogue_attribute_value'
         
 class M2MProductAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
-    product = models.ForeignKey(Product, db_column= 'product_id', on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, db_column= 'product_id', on_delete=models.RESTRICT, related_name='product_attributes')
     attribute = models.ForeignKey(Attribute, db_column= 'attribute_id', on_delete=models.RESTRICT,)
     
     class Meta:
         db_table = 'catalogue_m2m_product_attribute'
         unique_together = ('product', 'attribute')
 
-class M2MProductVarianAttribute(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
+class M2MProductVarianAttributeValue(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdated, BaseModelDeleted):
     product_variant = models.ForeignKey(ProductVariant, db_column='product_variant_id',on_delete=models.RESTRICT)
     attribute_value = models.ForeignKey(AttributeValue, db_column='attribute_value_id',on_delete=models.RESTRICT)
 

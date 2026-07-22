@@ -52,6 +52,9 @@ def _log(level: str, message=None, **kwargs):
 
 def log_info(message=None, **kwargs):
     _log("INFO", message, **kwargs)
+    
+def log_warn(message=None, **kwargs):
+    _log("WARNING", message, **kwargs)
 
 def log_error(message=None, **kwargs):
     _log("ERROR", message, **kwargs)

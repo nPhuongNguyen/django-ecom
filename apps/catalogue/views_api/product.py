@@ -2,6 +2,7 @@ from apps.catalogue.models.products import Product
 from apps.catalogue.serializers.products import ProductChangeStatusSerializer, ProductCreateSerializer, ProductDestroySerializer, ProductDetailSerializer, ProductListSerializer, ProductUpdateSerializer
 from apps.shared.decorator.decorator import check_permission, rate_limit_ip, token_required, validate_exception
 from apps.shared.mixins import CreateMixin, DestroyMixin, DetailMixin, ListMixin, UpdateMixin
+from apps.catalogue.services.product import product_service
 class ProductListAPI(ListMixin, CreateMixin, DestroyMixin):
     queryset = Product.objects.all()
     serializer_class_list = ProductListSerializer
@@ -22,6 +23,18 @@ class ProductCreateAPI(CreateMixin):
     # @token_required()
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+    
+    def perform_create(self, serializer, **kwargs):
+        validated_data = serializer.validated_data
+        attribute_ids = validated_data.pop('attributes', [])
+        if kwargs:
+            validated_data.update(kwargs)
+        product_instance = product_service.create_product(
+            product_data=validated_data,
+            attribute_ids=attribute_ids
+        )
+        return product_instance
+        
     
 class ProductUpdateAPI(UpdateMixin):
     queryset = Product.objects.all()
@@ -51,7 +64,13 @@ class ProductChangeStatusAPI(UpdateMixin):
     
 
 class ProductDetailAPI(DetailMixin):
-    queryset = Product.objects.select_related('category').prefetch_related('variants').all()
+    queryset = (
+        Product.objects
+        .select_related('category')
+        .prefetch_related('variants')
+        .prefetch_related('product_attributes')
+        .all()
+    )
     serializer_class_detail = ProductDetailSerializer
     @validate_exception()
     # @token_required()

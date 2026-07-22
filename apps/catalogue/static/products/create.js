@@ -14,12 +14,9 @@ $(document).ready(function () {
         {
             submitHandler: async function (form, event) {
                 event.preventDefault();
-                const formdata = FormValidateLoader.formData(frm$);
-                let dataAttributes = [];
-                if (formdata.attributes) {
-                    dataAttributes = formdata.attributes;
-                    delete formdata.attributes;
-                }
+                const formdata = FormValidateLoader.formData(frm$, {
+                    name_type_list: ["attributes"]
+                });
                 const changed = UppyUploader.hasChanged(uppyInstance);
                 const check_confirmed = await SweetAlertHelper.confirmSave({});
                 if (!check_confirmed) return;
@@ -65,27 +62,11 @@ $(document).ready(function () {
                             validator.showErrors(resultProduct.errors);
                             return;
                         }
-                        const productId = resultProduct.data.id;
-                        if (dataAttributes.length > 0){
-                            const resultAttribute = await CallApi.request({
-                            url: frm$.data('url-add-product-attribute'),
-                            method: 'POST',
-                            data: {
-                                product: productId,
-                                attributes: dataAttributes
-                            }
-                            })
-                            if (resultAttribute.status_code !== 1) {
-                                ToastHelper.showError();
-                                validator.showErrors(result_api.errors);
-                                return;
-                            }
-                        }
                         ToastHelper.showSuccess();
                         FormValidateLoader.savedNext(event, {
                             url_save: frm$.data('url-list'),
                             url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__pk__', productId),
+                            url_continue_editing: frm$.data('url-detail').replace('__pk__', resultProduct.data.id),
                         });
                     }catch{
                         SweetAlertHelper.NotiError();

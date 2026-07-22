@@ -28,9 +28,13 @@ class ProductVariantListSerializer(serializers.ModelSerializer):
             return ''
     
 class ProductVariantCreateSerializer(serializers.ModelSerializer):
+    attribute_values = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=False
+    )
     class Meta:
         model = ProductVariant
-        fields = ['name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active']
+        fields = ['name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active', 'attribute_values']
 
     def validate_sku(self, value):
         product = self.initial_data.get('product')

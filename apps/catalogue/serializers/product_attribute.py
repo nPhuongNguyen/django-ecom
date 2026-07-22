@@ -1,11 +1,22 @@
 from rest_framework import serializers
 
-from apps.catalogue.models.products import M2MProductAttribute
+from apps.catalogue.models.products import Attribute, M2MProductAttribute
 
 class ProductAttributeCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = M2MProductAttribute
         fields = ['product', 'attribute']
+        
+class AttributeDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attribute
+        fields = ['id', 'name', 'is_active']
+        
+class ProductAttributeInProductSerializer(serializers.ModelSerializer):
+    attribute = AttributeDetailSerializer(read_only=True)
+    class Meta:
+        model = M2MProductAttribute
+        fields = ['id', 'attribute', 'is_active']
         
 class ProductAttributeInputSerializer(serializers.Serializer):
     product = serializers.IntegerField()
