@@ -26,15 +26,12 @@ class ProductVariantListSerializer(serializers.ModelSerializer):
             }
         except:
             return ''
-    
+          
 class ProductVariantCreateSerializer(serializers.ModelSerializer):
-    attribute_values = serializers.ListField(
-        child=serializers.IntegerField(),
-        allow_empty=False
-    )
+    attribute_value_list = serializers.ListField(child=serializers.IntegerField(), required=False, allow_empty=True)
     class Meta:
         model = ProductVariant
-        fields = ['name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active', 'attribute_values']
+        fields = ['name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active', 'attribute_value_list']
 
     def validate_sku(self, value):
         product = self.initial_data.get('product')
