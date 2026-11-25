@@ -17,7 +17,7 @@
             <table class="kt-table hover cursor-pointer" id="datatables-user"
                 data-url="{% url 'ProductListAPI' %}" data-url-list="{% url 'ProductListView' %}"
                 data-url-delete="{% url 'ProductDestroyAPI' %}" data-url-add="{% url 'ProductCreateView' %}"
-                data-url-detail="{% url 'ProductDetailView' slug='__slug__' %}"
+                data-url-detail="{% url 'ProductDetailView' pk='__pk__' %}"
                 data-url-change-status="{% url 'ProductChangeStatusAPI' pk='__pk__' %}">
                 <thead>
                     <tr>

@@ -19,30 +19,11 @@ $(document).ready(function () {
         },
     });
 
-
-    const priceInput = frm$.find("#inp_price");
-    function formatPriceOnInput(value) {
-        if (!value) return "";
-
-        // đổi về dạng số với dấu phẩy
-        value = value.toString().replace(".", ",");
-
-        // tách phần nguyên + thập phân
-        let parts = value.split(",");
-
-        // format phần nguyên: 100000 → 100.000
-        parts[0] = Number(parts[0]).toLocaleString("vi-VN");
-
-        return parts.join(",");
-    }
     const validator = FormValidateLoader.init(
         frm$,
         {
             submitHandler: async function (form, event) {
                 event.preventDefault();
-                let price = priceInput.val();
-                price = price.replace(/\./g, "").replace(",", ".");
-                priceInput.val(price);
                 const formdata = FormValidateLoader.formData(frm$);
                 const changed = UppyUploader.hasChanged(uppyInstance);
                 let result = null;
@@ -80,8 +61,6 @@ $(document).ready(function () {
                     data: formdata 
                 });
                 if (!result.confirmed || !result.data) {
-                    un_formart_price = formatPriceOnInput(price)
-                    priceInput.val(un_formart_price)
                     return;
                 }
                 const res = result.data;

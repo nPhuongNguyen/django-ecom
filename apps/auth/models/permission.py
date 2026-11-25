@@ -4,4 +4,4 @@ class Permission(BaseModelInt, BaseModelActive, BaseModelCreated, BaseModelUpdat
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=100)
     class Meta:
-        db_table = 'core_permissions'
+        db_table = 'core_permission'

@@ -5,8 +5,9 @@ from ...shared.decorator.views import mask_view
 
 
 MASK_VIEW_CONFIG ={
-    "accordion": "ecommerce",
-    "accordion_child": "user"
+    "accordion": "account",
+    "accordion_child": "user",
+    "menu_item_show" : "user"
 }
 
 class UserListView(View):

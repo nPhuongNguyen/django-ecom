@@ -103,13 +103,11 @@ class DataTableLoader {
         if (selectrow === 'multi') return { style: 'multi', info: false };
         return null;
     }
-    static info_selected_row(table$, options, select_info, selectedRows) {
+    static info_selected_row(select_info, selectedRows, options) {
         const count = selectedRows.length;
         if (count === 0) {
             return select_info.empty().hide();
         }
-
-        // Hiển thị nội dung khi có hàng được chọn
         const htmlContent = `
             <div class="dt-select-info-rows flex gap-3 rounded-lg">
     
@@ -130,10 +128,9 @@ class DataTableLoader {
         if (options && typeof options.selectRowRender === 'function') {
             const dt_select_rows$ = select_info.find('.dt-select-info-rows');
             const actionContainer = dt_select_rows$.find('.info-actions-container');
-            options.selectRowRender(actionContainer, selectedRows, table$);
+            options.selectRowRender(actionContainer, selectedRows);
         } 
     }
-
 
     static _init_select_row(settings, json, options, table$, dtb) {
         const dt_search$ = DataTableLoader.dt_search$(table$);
@@ -143,14 +140,10 @@ class DataTableLoader {
                 searchInput$.addClass('kt-input w-48');
             }
         }
-        /* 
-            draw để bắt sự kiện load lại datatable
-            select deselect để bắt sự kiện chọn hàng
-        */
         const dt_select_info$ = DataTableLoader.dt_select_info$(table$);
         dtb.on('draw select deselect', function () {
             const selectedRowData$ = DataTableLoader.get_selected_row_data(table$);
-            DataTableLoader.info_selected_row(table$, options, dt_select_info$, selectedRowData$);
+            DataTableLoader.info_selected_row(dt_select_info$, selectedRowData$, options);
         });
        
     }
@@ -176,18 +169,27 @@ class DataTableLoader {
         
     }
 
-    static initAddButton(table$, label = 'Thêm mới') {
+    static initAddButton(table$, options, label = 'Thêm mới') {
         const dt_add$ = DataTableLoader.dt_add$(table$);
         if (!dt_add$ || dt_add$.length === 0) return;
-
-        const addBtn$ = $(`<button class="kt-btn kt-btn-primary">${label}</button>`);
-        dt_add$.append(addBtn$); 
+        const addBtn$ = $(`<button type="button" class="kt-btn kt-btn-primary flex items-center gap-2"><i class="ki-filled ki-plus"></i>${label}</button>`);
+        dt_add$.append(addBtn$);
+        if (options && typeof options.onAddButtonCreated === 'function') {
+            options.onAddButtonCreated(addBtn$, table$);
+            return;
+        }
+        const urlAdd = table$.data('url-add');
+        if (urlAdd) {
+            addBtn$.on('click', () => {
+                window.location.href = urlAdd;
+            });
+        }
     }
 
     static baseInitComplete(settings, json, options, table$){
         const dtb = table$.DataTable();
         DataTableLoader._init_select_row(settings, json, options, table$, dtb);
-        DataTableLoader.initAddButton(table$);
+        DataTableLoader.initAddButton(table$, options);
     }
 
     // --- INIT ---
@@ -216,40 +218,14 @@ class DataTableLoader {
         if (checkOnToggle && typeof checkOnToggle === "function"){
             const dtb$ = table$.DataTable();
             dtb$.on("change", ".toggle-active", function () {
-                const id = $(this).data("id");
-                checkOnToggle(id);
+                const $checkbox = $(this);
+                const id = $checkbox.data("id");
+                const newState = $checkbox.prop("checked");
+                const oldState = !newState;
+                checkOnToggle(id, newState, oldState, $checkbox);
             });
         }
         return dt; 
-    }
-
-    static formatPriceOnInput(value) {
-        if (!value) return "";
-        value = value.toString().replace(".", ",");
-        let parts = value.split(",");
-        parts[0] = Number(parts[0]).toLocaleString("vi-VN");
-        return parts.join(",");
-    }
-    static col_is_price(opts) {
-        const {
-            visible,
-            orderable,
-            ...restProps
-        } = {
-            visible: true,
-            orderable: false,
-            ...opts,
-        }
-        return {
-            ...restProps,
-            data: 'price',
-            name: 'price',
-            orderable: !!orderable,
-            visible: !!visible,
-            render:  function(data, type, row) {
-                return DataTableLoader.formatPriceOnInput(data) || '-';
-            }
-        };
     }
 
     static col_is_status(opts) {

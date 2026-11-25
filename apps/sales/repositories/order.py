@@ -24,3 +24,5 @@ class OrderRepository:
                 serializer_order_item.is_valid(raise_exception=True)
                 self.perform_create(serializer_order_item, order_id=order.id)
         return order
+    
+order_repository = OrderRepository()

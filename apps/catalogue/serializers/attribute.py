@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .attribute_value import AttributeValueListSerializer
 
-from ..models.products import Attribute, M2MAttribute
+from ..models.products import Attribute
 class AttributeListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attribute

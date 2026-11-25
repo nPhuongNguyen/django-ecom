@@ -3,12 +3,12 @@ from pathlib import Path
 from decouple import config
 from dotenv import load_dotenv
 
-# 1. INITIALIZATION
+# INITIALIZATION
 # ----------------------------------------------------------------------
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 2. CORE SETTINGS
+# CORE SETTINGS
 # ----------------------------------------------------------------------
 SECRET_KEY = os.environ.get("SECRET_KEY", 'django-insecure--hchd8vtd!q0xl-z+mu@4&n%!uax+)d1p$7i7ti$rvc#h@#3^l')
 TOKEN_SECRET_KEY = os.environ.get("TOKEN_SECRET_KEY")
@@ -24,7 +24,7 @@ ROOT_URLCONF = 'ecom.urls_base'
 WSGI_APPLICATION = 'ecom.wsgi.application'
 APPEND_SLASH = False
 
-# 3. APPS & MIDDLEWARE
+# APPS & MIDDLEWARE
 # ----------------------------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.staticfiles',
@@ -36,13 +36,14 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.shared',
     'apps.sales',
+    'apps.qdrant'
 ]
 
 MIDDLEWARE = [
     "apps.middleware.request_middleware.RequestMiddleware",
 ]
 
-# 4. DATABASES
+# DATABASES
 # ----------------------------------------------------------------------
 DATABASES = {
     'default': {
@@ -58,7 +59,7 @@ DATABASES = {
     }
 }
 
-# 5. CACHES (REDIS)
+# CACHES (REDIS)
 # ----------------------------------------------------------------------
 def get_redis_url(prefix="REDIS"):
     host = os.getenv(f"{prefix}_HOST")
@@ -90,7 +91,13 @@ CACHES = {
     }
 }
 
-# 6. CELERY & MESSAGE BROKERS
+#QDRANT
+# ----------------------------------------------------------------------
+QDRANT_HOST = os.getenv("QDRANT_HOST")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT"))
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY") if os.getenv("QDRANT_API_KEY") else None
+                           
+# CELERY & MESSAGE BROKERS
 # ----------------------------------------------------------------------
 # Celery
 CELERY_BROKER_URL = get_redis_url("REDIS")
@@ -104,7 +111,7 @@ CELERY_RESULT_EXTENDED = False
 LIST_BROKERS = os.environ.get('LIST_BROKERS', '').split(',')
 KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
 
-# 7. STORAGE (MINIO)
+# STORAGE (MINIO)
 # ----------------------------------------------------------------------
 MINIO_ENDPOINT = config("MINIO_ENDPOINT")
 MINIO_ACCESS_KEY = config("MINIO_ACCESS_KEY")
@@ -123,7 +130,7 @@ STORAGES = {
     },
 }
 
-# 8. REST FRAMEWORK CONFIG
+# REST FRAMEWORK CONFIG
 # ----------------------------------------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
@@ -141,7 +148,7 @@ REST_FRAMEWORK = {
     'DATE_FORMAT': '%Y-%m-%d',
 }
 
-# 9. LOGGING
+# LOGGING
 # ----------------------------------------------------------------------
 LOGGING = {
     "version": 1,
@@ -171,7 +178,7 @@ LOGGING = {
 
 }
 
-# 10. EMAIL & NOTIFICATIONS
+# EMAIL & NOTIFICATIONS
 # ----------------------------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
@@ -184,7 +191,7 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 TOKEN_TELEGRAM_BOT = os.environ.get("TOKEN_TELEGRAM_BOT")
 CHAT_ID_TELEGRAM_BOT = os.environ.get('CHAT_ID_TELEGRAM_BOT')
 
-# 11. INTERNATIONALIZATION & STATIC
+# INTERNATIONALIZATION & STATIC
 # ----------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Ho_Chi_Minh'

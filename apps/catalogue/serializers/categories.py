@@ -5,3 +5,8 @@ class CategoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'sku', 'is_active']
+        
+class CategoryInProduct(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
