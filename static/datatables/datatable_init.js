@@ -103,7 +103,7 @@ class DataTableLoader {
         if (selectrow === 'multi') return { style: 'multi', info: false };
         return null;
     }
-    static info_selected_row(table$, options, select_info, selectedRows) {
+    static info_selected_row(select_info, selectedRows, options) {
         const count = selectedRows.length;
         if (count === 0) {
             return select_info.empty().hide();
@@ -128,7 +128,7 @@ class DataTableLoader {
         if (options && typeof options.selectRowRender === 'function') {
             const dt_select_rows$ = select_info.find('.dt-select-info-rows');
             const actionContainer = dt_select_rows$.find('.info-actions-container');
-            options.selectRowRender(actionContainer, selectedRows, table$);
+            options.selectRowRender(actionContainer, selectedRows);
         } 
     }
 
@@ -143,7 +143,7 @@ class DataTableLoader {
         const dt_select_info$ = DataTableLoader.dt_select_info$(table$);
         dtb.on('draw select deselect', function () {
             const selectedRowData$ = DataTableLoader.get_selected_row_data(table$);
-            DataTableLoader.info_selected_row(table$, options, dt_select_info$, selectedRowData$);
+            DataTableLoader.info_selected_row(dt_select_info$, selectedRowData$, options);
         });
        
     }
@@ -169,14 +169,20 @@ class DataTableLoader {
         
     }
 
-    static initAddButton(table$,options, label = 'Thêm mới') {
-        if (options && typeof options.onAddButtonCreated  === 'function'){
-            const dt_add$ = DataTableLoader.dt_add$(table$);
-            if (!dt_add$ || dt_add$.length === 0) return;
-
-            const addBtn$ = $(`<button class="kt-btn kt-btn-primary">${label}</button>`);
-            dt_add$.append(addBtn$);
-            options.onAddButtonCreated(addBtn$)
+    static initAddButton(table$, options, label = 'Thêm mới') {
+        const dt_add$ = DataTableLoader.dt_add$(table$);
+        if (!dt_add$ || dt_add$.length === 0) return;
+        const addBtn$ = $(`<button type="button" class="kt-btn kt-btn-primary flex items-center gap-2"><i class="ki-filled ki-plus"></i>${label}</button>`);
+        dt_add$.append(addBtn$);
+        if (options && typeof options.onAddButtonCreated === 'function') {
+            options.onAddButtonCreated(addBtn$, table$);
+            return;
+        }
+        const urlAdd = table$.data('url-add');
+        if (urlAdd) {
+            addBtn$.on('click', () => {
+                window.location.href = urlAdd;
+            });
         }
     }
 
@@ -212,8 +218,11 @@ class DataTableLoader {
         if (checkOnToggle && typeof checkOnToggle === "function"){
             const dtb$ = table$.DataTable();
             dtb$.on("change", ".toggle-active", function () {
-                const id = $(this).data("id");
-                checkOnToggle(id);
+                const $checkbox = $(this);
+                const id = $checkbox.data("id");
+                const newState = $checkbox.prop("checked");
+                const oldState = !newState;
+                checkOnToggle(id, newState, oldState, $checkbox);
             });
         }
         return dt; 

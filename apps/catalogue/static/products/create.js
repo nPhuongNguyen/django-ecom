@@ -14,88 +14,77 @@ $(document).ready(function () {
         {
             submitHandler: async function (form, event) {
                 event.preventDefault();
-                const formdata = FormValidateLoader.formData(frm$);
-                let dataAttributes = [];
-                if (formdata.attributes) {
-                    dataAttributes = formdata.attributes;
-                    delete formdata.attributes;
-                }
-                const changed = UppyUploader.hasChanged(uppyInstance);
+
                 const check_confirmed = await SweetAlertHelper.confirmSave({});
                 if (!check_confirmed) return;
-                MyLoading.show();
+
                 try {
-                    if (changed) {
+                    MyLoading.show();
+
+                    const formdata = FormValidateLoader.formData(frm$, {
+                        name_type_list: ["attributes"]
+                    });
+
+                    const changed_img = UppyUploader.hasChanged(uppyInstance);
+                    let hasError = false; 
+
+                    if (changed_img) {
                         const files = UppyUploader.getFiles(uppyInstance);
                         if (files.length > 0) {
                             const formDataImage = new FormData();
                             files.forEach(file => formDataImage.append('list_image', file.data));
+                            
                             const api_upload = frm$.data('url-upload');
-                            try{
+                            try {
                                 const result_api_image = await CallApi.request({
-                                url: api_upload,
-                                method: 'POST',
-                                data: formDataImage
-                                })
-                                if(result_api_image.status_code !== 1){
+                                    url: api_upload,
+                                    method: 'POST',
+                                    data: formDataImage
+                                });
+
+                                if (result_api_image.status_code !== 1) {
                                     SweetAlertHelper.NotiError({
-                                        text: result_api_image.message
+                                        text: result_api_image.message || 'Lỗi tải ảnh lên'
                                     });
-                                    return;
-                                }else{
-                                    formdata['img'] = result_api_image.data.list_img
+                                    hasError = true;
+                                } else {
+                                    formdata['img'] = result_api_image.data.list_img;
                                 }
-                            }catch{
+                            } catch {
                                 SweetAlertHelper.NotiError();
-                                return;
+                                hasError = true;
                             }
-                        }
-                        else{
-                            formdata['img'] = "";
+                        } else {
+                            formdata['img'] = ""; 
                         }
                     }
-                    try{
-                        const resultProduct  = await CallApi.request({
+                    if (hasError) return;
+                    const result_api_create_product = await CallApi.request({
                         url: frm$.data('url'),
                         method: 'POST',
                         data: formdata
-                        })
-                        if (resultProduct .status_code !== 1) {
-                            ToastHelper.showError();
-                            validator.showErrors(resultProduct.errors);
-                            return;
-                        }
-                        const productId = resultProduct.data.id;
-                        if (dataAttributes.length > 0){
-                            const resultAttribute = await CallApi.request({
-                            url: frm$.data('url-add-product-attribute'),
-                            method: 'POST',
-                            data: {
-                                product: productId,
-                                attributes: dataAttributes
-                            }
-                            })
-                            if (resultAttribute.status_code !== 1) {
-                                ToastHelper.showError();
-                                validator.showErrors(result_api.errors);
-                                return;
-                            }
-                        }
-                        ToastHelper.showSuccess();
-                        FormValidateLoader.savedNext(event, {
-                            url_save: frm$.data('url-list'),
-                            url_add_another: frm$.data('url-add'),
-                            url_continue_editing: frm$.data('url-detail').replace('__pk__', productId),
-                        });
-                    }catch{
-                        SweetAlertHelper.NotiError();
+                    });
+
+                    if (result_api_create_product.status_code !== 1) {
+                        ToastHelper.showError();
+                        validator.showErrors(result_api_create_product.errors);
                         return;
                     }
-                }finally {
+
+                    ToastHelper.showSuccess();
+                    FormValidateLoader.savedNext(event, {
+                        url_save: frm$.data('url-list'),
+                        url_add_another: frm$.data('url-add'),
+                        url_continue_editing: frm$.data('url-detail').replace('__pk__', result_api_create_product.data.id),
+                    });
+
+                } catch (error) {
+                    SweetAlertHelper.NotiError();
+                } finally {
                     MyLoading.close();
                 }
             }
-        },
+        }
     );
     
     const selectCategory$ = $('#inp_select_category');

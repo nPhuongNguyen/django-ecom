@@ -1,75 +1,48 @@
 from rest_framework import serializers
+import unidecode
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from apps.catalogue.serializers.categories import CategoryInProduct
-from ..models.categories import Category
-from apps.catalogue.models.products import M2MProductAttribute, Product
-from .product_variants import ProductVariantInProductSerializer, ProductVariantListSerializer
+from apps.catalogue.models.products import Product, ProductVariant
+from apps.catalogue.serializers.product_attribute import M2MProductAttributeSerializer
+
+class ProductVariantInProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductVariant
+        fields = [
+            'id', 'name', 'img', 'sku',
+            'price', 'stock_qty', 'is_active'
+        ]   
+        
 class ProductListSerializer(serializers.ModelSerializer):
-    variants = ProductVariantInProductSerializer(many=True)
-    category = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id','name', 'slug', 'description', 'is_active', 'img', 'category','variants']
-
-    def get_category(self, obj):
-        return {
-            "id": obj.id,
-            "name": obj.name
-        }
+        fields = ['id','name', 'slug', 'description', 'is_active', 'img']
     
 class ProductCreateSerializer(serializers.ModelSerializer):
+    attributes = serializers.ListField(
+        child=serializers.IntegerField(), 
+        write_only=True, 
+        required=False
+    )
     class Meta:
         model = Product
-        fields = ['name', 'description', 'is_active', 'category', 'img']
-
-    def validate(self, attrs):
-        if "name" in attrs:
-            name = attrs["name"]
-            slug_base = slugify(name)
-            slug = slug_base
-
-            counter = 1
-            while Product.objects.filter(slug=slug).exclude(
-                id=self.instance.id if self.instance else None
-            ).exists():
-                slug = f"{slug_base}-{counter}"
-                counter += 1
-
-            attrs["slug"] = slug
-
-        return attrs
+        fields = ['name', 'description', 'is_active', 'category', 'img', 'attributes']
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     variants = ProductVariantInProductSerializer(many=True)
     category = CategoryInProduct(allow_null=True)
+    attributes = M2MProductAttributeSerializer(many=True, source='product_attributes')
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'is_active', 'category', 'slug', 'img', 'variants', 'updated_by']
+        fields = ['id', 'name', 'description', 'is_active', 'category', 'slug', 'img', 'variants', 'attributes', 'updated_by']
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required = False)
     class Meta:
         model = Product
         fields = ['name', 'description', 'is_active', 'category', 'img']
-
-    def validate(self, attrs):
-        if "name" in attrs:
-            name = attrs["name"]
-            slug_base = slugify(name)
-            slug = slug_base
-
-            counter = 1
-            while Product.objects.filter(slug=slug).exclude(
-                id=self.instance.id if self.instance else None
-            ).exists():
-                slug = f"{slug_base}-{counter}"
-                counter += 1
-
-            attrs["slug"] = slug
-
-        return attrs
     
 class ProductDestroySerializer(serializers.ModelSerializer):
     class Meta:

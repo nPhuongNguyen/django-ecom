@@ -1,36 +1,47 @@
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
-from apps.catalogue.models.products import Product, ProductVariant
+from apps.catalogue.models.products import M2MAttributeValue, M2MVariantAttributeValue, Product, ProductVariant
+from apps.catalogue.serializers.attribute import AttributeDetailSerializer
+from apps.catalogue.serializers.attribute_value import AttributeValueDetailSerializer
+  
+class M2MAttributeValueSerializer(serializers.ModelSerializer):
+    attribute = AttributeDetailSerializer()
+    attribute_value = AttributeValueDetailSerializer()
 
-class ProductVariantInProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductVariant
+        model = M2MAttributeValue
         fields = [
-            'id', 'name', 'img', 'sku',
-            'price', 'stock_qty', 'is_active'
+            'id',
+            'attribute',
+            'attribute_value',
+        ]
+  
+class M2MVariantAttributeValueSerializer(serializers.ModelSerializer):
+    m2m_attribute_value = M2MAttributeValueSerializer()
+
+    class Meta:
+        model = M2MVariantAttributeValue
+        fields = [
+            'id',
+            'm2m_attribute_value',
         ]
 
+class ProductInProductVariantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'slug', 'description', 'is_active']
+        
 class ProductVariantListSerializer(serializers.ModelSerializer): 
-    product = serializers.SerializerMethodField()
+    product = ProductInProductVariantSerializer()
     class Meta:
         model = ProductVariant
         fields = ['id', 'name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active']
-
-    def get_product(self, obj):
-        try:
-            product = Product.objects.get(pk=obj.product.id)
-            return {
-                'id': product.id,
-                'name': product.name,
-                'slug': product.slug
-            }
-        except:
-            return ''
-    
+          
 class ProductVariantCreateSerializer(serializers.ModelSerializer):
+    attribute_value_list = serializers.ListField(child=serializers.IntegerField(), required=False, allow_empty=True)
     class Meta:
         model = ProductVariant
-        fields = ['name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active']
+        fields = ['name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active', 'attribute_value_list']
 
     def validate_sku(self, value):
         product = self.initial_data.get('product')
@@ -39,16 +50,14 @@ class ProductVariantCreateSerializer(serializers.ModelSerializer):
         return value
     
 class ProductVariantDetailSerializer(serializers.ModelSerializer):
-    product = serializers.SerializerMethodField()
-    def get_product(self, obj):
-        return{
-            'id': obj.product.id,
-            'name': obj.product.name
-        }
+    product = ProductInProductVariantSerializer()
+    variant_attribute_values = M2MVariantAttributeValueSerializer(
+        many=True
+    )
     class Meta:
         model = ProductVariant
-        fields = ['id', 'name', 'img', 'sku', 'price', 'stock_qty', 'product', 'is_active', 'updated_by']
-    
+        fields = ['id', 'name', 'img', 'sku', 'price', 'stock_qty', 'is_active', 'product', 'variant_attribute_values', 'updated_by']
+
 class ProductVariantUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:

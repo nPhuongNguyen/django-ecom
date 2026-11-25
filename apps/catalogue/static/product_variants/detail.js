@@ -4,7 +4,7 @@ async function getProductVariant(url) {
         method: 'GET'
     });
     if (result.status_code !== 1) {
-        throw new Error(result.message);
+        SweetAlertHelper.NotiError();
     }
     return result.data;
 }

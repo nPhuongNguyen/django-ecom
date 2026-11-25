@@ -17,6 +17,14 @@ def validate_exception():
         def wrapper(self, request, *args, **kwargs):
             try:
                 return func(self, request, *args, **kwargs)
+            except ValidationError as val_ex:
+                lg.log_warn(
+                    message=f"[EXCEPTION][VALIDATION] Input không hợp lệ: {val_ex.detail}"
+                )
+                return ResponseBuilder.build(
+                    code=ResponseCodes.INVALID_INPUT,
+                    errors=val_ex.detail
+                )
             except Exception:
                 lg.log_error(
                     message="[EXCEPTION][UNHANDLED]"

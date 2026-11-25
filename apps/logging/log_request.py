@@ -1,6 +1,4 @@
 import json
-
-from urllib3 import request
 class RequestLogger:
     @staticmethod
     def process_request(request):
