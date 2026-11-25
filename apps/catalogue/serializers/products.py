@@ -4,9 +4,17 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from apps.catalogue.serializers.categories import CategoryInProduct
-from apps.catalogue.models.products import Product
-from apps.catalogue.serializers.product_attribute import ProductAttributeInProductSerializer
-from .product_variants import ProductVariantInProductSerializer
+from apps.catalogue.models.products import Product, ProductVariant
+from apps.catalogue.serializers.product_attribute import M2MProductAttributeSerializer
+
+class ProductVariantInProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductVariant
+        fields = [
+            'id', 'name', 'img', 'sku',
+            'price', 'stock_qty', 'is_active'
+        ]   
+        
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -24,11 +32,11 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     variants = ProductVariantInProductSerializer(many=True)
-    product_attributes = ProductAttributeInProductSerializer(many=True)
     category = CategoryInProduct(allow_null=True)
+    attributes = M2MProductAttributeSerializer(many=True, source='product_attributes')
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'is_active', 'category', 'slug', 'img', 'variants', 'product_attributes', 'updated_by']
+        fields = ['id', 'name', 'description', 'is_active', 'category', 'slug', 'img', 'variants', 'attributes', 'updated_by']
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required = False)

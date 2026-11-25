@@ -29,7 +29,7 @@ class ProductCreateAPI(CreateMixin):
         attribute_ids = validated_data.pop('attributes', [])
         if kwargs:
             validated_data.update(kwargs)
-        product_instance = product_service.create_product(
+        product_instance = product_service.create(
             product_data=validated_data,
             attribute_ids=attribute_ids
         )
@@ -67,8 +67,7 @@ class ProductDetailAPI(DetailMixin):
     queryset = (
         Product.objects
         .select_related('category')
-        .prefetch_related('variants')
-        .prefetch_related('product_attributes')
+        .prefetch_related('variants', 'product_attributes')
         .all()
     )
     serializer_class_detail = ProductDetailSerializer

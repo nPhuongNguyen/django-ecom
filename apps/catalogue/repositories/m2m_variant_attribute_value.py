@@ -8,7 +8,7 @@ class M2MVariantAttributeValueRepository:
     def get_by_ids(self, attr_ids):
         return M2MVariantAttributeValue.objects.filter(id__in=attr_ids)
     
-    def create(self, attribute, attribute_value):
-        return M2MVariantAttributeValue.objects.create(attribute=attribute, attribute_value=attribute_value)
+    def create(self, variant, m2m_attribute_value):
+        return M2MVariantAttributeValue.objects.create(variant=variant, m2m_attribute_value=m2m_attribute_value)
 
 m2m_variant_attribute_value_repository = M2MVariantAttributeValueRepository()

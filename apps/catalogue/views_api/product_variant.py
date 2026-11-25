@@ -28,7 +28,7 @@ class ProductVariantCreateAPI(CreateMixin):
         attribute_value_list = validated_data.pop('attribute_value_list', [])
         if kwargs:
             validated_data.update(kwargs)
-        product_variant_create = product_variant_service.create(
+        return product_variant_service.create(
             product_variant_data=validated_data,
             attribute_value_list=attribute_value_list
         )

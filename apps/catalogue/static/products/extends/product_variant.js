@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(async function () {
     const tbl$ = $('#datatables-product-variants');
     const dtb$ = DataTableLoader.init(tbl$, {
         ajax: {
